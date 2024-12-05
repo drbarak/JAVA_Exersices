@@ -89,7 +89,8 @@ public class Tester
             // Page 8 in file Exercises
             // in a series of integers, an arrow is a subSeries with increasing numbers
             // and we need to fins the longest arrow
-            int[][] array = {{},{1},{7,6},{-1,6},{1,6,12},{1,6,-12},{1,6,12,-2},{1,-6,4,12,-2,3,-8},{1,6,12,-2,3,5,-8,0,3,10}};
+            int[][] array = {{},{1},{7,6},{-1,6},{1,6,12},{1,6,-12},{1,-6,-6},
+                {1,6,12,-2},{1,-6,4,12,-2,3,-8},{1,6,12,-2,3,5,-8,0,3,10}};
             for (int[] subArray: array)
             {
                 int i, pos, len, longest, a, b;
@@ -98,18 +99,20 @@ public class Tester
                 {
                     pos = len = 1;
                     a = b = subArray[i++];
-                    if (subArray.length > 4)
-                        p = true;
-                    else
-                        p = false;
+                    //if (subArray.length > 7 ? true : false);
                 }
                 while (i < subArray.length)
                 {
                     b = subArray[i]; 
-                    if (p) System.out.println(""+1000+","+a+","+b+","+i+","+len+","+pos+","+longest);
+                    if (p) System.out.println(""+1000+","+a+","+b+","+i+","+pos+","+len+","+longest);
                     if (a > b)
                     {
-                        if (longest < len) longest = len;
+                        if (longest < len)
+                        {
+                            if (longest > 0) pos = i + 1 - len;
+                            if (p) System.out.println(""+1100+","+a+","+b+","+i+","+pos);
+                            longest = len;
+                        }
                         while (a > b && i < subArray.length)
                         {
                             a = b;
@@ -117,42 +120,20 @@ public class Tester
                                 b = subArray[++i];
                         }
                         if (p) Print.p(2000, a, b);
-                        len = 0;
-                        //break;
+                        len = (i < subArray.length - 1? 1 : 0);
                     }
                     len++;
                     a = subArray[i++];
-                /*                 
-                    while (i < subArray.length && a > subArray[i])
-                    {
-                        if (p) Print.p(1200, len, longest);
-                        longest = len + 1;
-                        len = 1;
-                        a = subArray[i++];
-                        if (p) Print.p(i, a, pos);
-                    }
-                    if (p) Print.p(1500, len, longest);
-                    if (i < subArray.length)
-                    {
-                        if (p) Print.p(2000, a, subArray[i]);
-                        if (a < subArray[i])
-                            len++;
-                    }
-                    else if (i > 1 && a >= subArray[i - 2]) // end of array
-                        len++;
-                    if (p) Print.p(2500, len, longest);
-                    if (longest < len)
-                    {
-                        longest = len;
-                        pos = i - len + 1;
-                    }
-                    if (p) Print.p(longest, len);
-                */
                 }
-                if (p) System.out.println(""+3000+","+a+","+b+","+i+","+len+","+len+","+longest);
-                if (longest < len) longest = len;
-                if (a < b)
-                    longest--;// = i - 1;
+                if (p) System.out.println(""+3000+","+a+","+b+","+i+","+pos+","+len+","+longest);
+                if (longest < len)
+                {
+                    if (longest > 0) pos = i + 1 - len;
+                    if (p) System.out.println(""+1100+","+a+","+b+","+i+","+pos);
+                    longest = len;
+                }
+                
+                //if (a < b) longest--;// = i - 1;
                 System.out.println("The longest arrow is of length " + longest + 
                 " starting at position " + pos + " in " + Arrays.toString(subArray));
             }
