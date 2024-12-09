@@ -1,4 +1,3 @@
-//import Print;
 /**
  * Disco class, from lectures of the course, to find whether a set of lights
  * can be equsl to another set by pressing on lights of the first set, starting
@@ -8,7 +7,7 @@
  * only and simillarly for a light at the other end changes just the light 
  * before it only (in addition to it's own light).
  *
- * @author (your name)
+ * @author (Zvi Barak)
  * @version (01.12.2024)
  */
 public class Disco

@@ -9,28 +9,65 @@ public class Tester
 {
     public static void main()
     {
-        int run = 1;//1000+100+10+1;
         boolean p = false;
-        if (run >= 10000)
+        int[] run = {0,0,0,0,0,0,0,0,0,1};
+        if (run[9] == 1)
+        {
+            Print.p("------ Recursion 1 - power set ------");
+            int[] X = {1,2,3};
+            Print.p(Recursion.powerSet("{}", X, X));
+        }
+        if (run[8] == 1)
+        {
+            Print.p("------ Recursion 1 - interleaving ------");
+            Print.p(Recursion.findInterleavings("", "12", "34").substring(1));
+        }
+        if (run[7] == 1)
+        {
+            Print.p("------ Edit Distance ------");
+            String[] dict = {"applet","lake","banana","rice","mouse","bottle","apple",
+                "ape","applets","appel"};
+            //dict = new String[]{"A","b","aP"};//"APPLETS","APPLES"
+            int indexWord = EditDistance.editDistance(dict, true, p);
+            Print.p(dict[indexWord]);
+        }
+        if (run[6] == 1)
+        {
+            Print.p("------ Conway Game Of Life ------");
+            char [][]grid = ConwayGameOfLife.createRandomGrid(10);
+            Print.p("Original grid");
+            Print.p(grid);
+            ConwayGameOfLife.run(grid, 20);
+        }
+        if (run[5] == 1)
+        {
+            Print.p("------ Last Match ------");
+            // these data need to be accepted from the user
+            int[] gameData = {5, 2, 3, 1};
+            int numMatches = gameData[0], maxMatches = gameData[1], 
+                numGames = gameData[2], startPlayer = gameData[3];
+            LastMatch.lastMatch(numMatches, maxMatches, numGames, startPlayer);
+        }
+        if (run[4] == 1)
         {
             Print.p("------ array of lights ------");
             boolean[] arr1 = {false, true, false, false, true};
             boolean[] arr2 = {false, false, true, false, false};
             Print.p("" + Disco.disco(arr1, arr2, 0));
         }
-        if (run % 10000 >= 1000)
+        if (run[3] == 1)
         {
             Point pt = new Point(1,2);
             System.out.println(pt);
         }
-        if (run % 1000 >= 100)
+        if (run[2] == 1)
         {
             Print.p("\n------ factorial ------");
             int[] arr = new int []{-2, 0, 1, 2, 3, 5, 6};
             for (int n: arr)    
                 Print.p("factorial of = " + n + " is: " + fact(n));
         }
-        if (run % 100 >= 10)
+        if (run[1] == 1)
         {
             Print.p("\n------ how many ------");
             // checking number of times a subsring appear in a string
@@ -82,7 +119,7 @@ public class Tester
                 "]\toccurs " + count + " times");
             }
         }
-        if (run % 10 >= 1)
+        if (run[0] == 1)
         {
             Print.p("\n------ longest arrow ------");
             p = false;
@@ -93,6 +130,33 @@ public class Tester
                 {1,6,12,-2},{1,-6,4,12,-2,3,-8},{1,6,12,-2,3,5,-8,0,3,10}};
             for (int[] subArray: array)
             {
+                int a, b, len, longest, pos, maxPos, i;
+                len = longest = pos = maxPos = a = b = 0;
+                i = 0;
+                if (subArray.length > 0)
+                {
+                    maxPos = pos = len = longest = 1;
+                    a = b = subArray[i++];
+                }
+                while (i < subArray.length)
+                {
+                    b = subArray[i++];
+                    if (b > a) 
+                        len++;   // still monotone
+                    else // breaking a monotone sequence�
+                    {
+                        len = 1;    // a new sequence starts here, its length is 1�
+                        pos = i;
+                    }
+                    if (len > longest)  // if we're currently breaking a record
+                    {
+                        longest = len;  // update records�
+                        maxPos = pos;
+                    }
+                    a = b;
+                }
+                pos = maxPos;
+                /*
                 int i, pos, len, longest, a, b;
                 i = pos = len = longest = a = b = 0;
                 if (subArray.length > 0)
@@ -132,8 +196,7 @@ public class Tester
                     if (p) System.out.println(""+1100+","+a+","+b+","+i+","+pos);
                     longest = len;
                 }
-                
-                //if (a < b) longest--;// = i - 1;
+                */
                 System.out.println("The longest arrow is of length " + longest + 
                 " starting at position " + pos + " in " + Arrays.toString(subArray));
             }
