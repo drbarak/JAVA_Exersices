@@ -10,17 +10,26 @@ public class Tester
     public static void main()
     {
         boolean p = false;
-        int[] run = {0,0,0,0,0,0,0,0,0,1};
+        int[] run = {0,0,0,0,0,0,0,0,0,0,1};
+        
+        if (run[10] == 1)
+        {
+            Print.p("------ Recursion 2 - permutation ------");
+            String X = "123";
+            Print.p(Recursion.permutation(X));
+        }
         if (run[9] == 1)
         {
             Print.p("------ Recursion 1 - power set ------");
-            int[] X = {1,2,3};
-            Print.p(Recursion.powerSet("{}", X, X));
+            /*  int[] X = {1,2,3};
+                Print.p(Recursion.powerSet(X));
+            */
+            Print.p(Recursion.powerSet("1234"));
         }
         if (run[8] == 1)
         {
             Print.p("------ Recursion 1 - interleaving ------");
-            Print.p(Recursion.findInterleavings("", "12", "34").substring(1));
+            Print.p(Recursion.findInterleavings("12", "34").substring(1));
         }
         if (run[7] == 1)
         {
@@ -63,9 +72,10 @@ public class Tester
         if (run[2] == 1)
         {
             Print.p("\n------ factorial ------");
-            int[] arr = new int []{-2, 0, 1, 2, 3, 5, 6};
+            int[] arr = {-2, 0, 1, 2, 3, 5, 6};
+            arr = new int[]{4};
             for (int n: arr)    
-                Print.p("factorial of = " + n + " is: " + fact(n));
+                Print.p("factorial of = " + n + " is: " + Recursion.factorial(n));
         }
         if (run[1] == 1)
         {
@@ -201,11 +211,5 @@ public class Tester
                 " starting at position " + pos + " in " + Arrays.toString(subArray));
             }
         }
-    }
-    private static int fact(int n)
-    {
-        if (n < 0) return 0;
-        if (n < 2) return 1;
-        return n * fact(n-1);
     }
 }
