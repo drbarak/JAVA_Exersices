@@ -10,17 +10,47 @@ public class Tester
     public static void main()
     {
         boolean p = false;
-        int[] run = {0,0,0,0,0,0,0,0,0,0,1};
-        
+        int[] run = {0,0,0,0,0,0,0,0,0,0,0,1,1};
+        if (run[12] == 1)
+        {
+            Print.p("------ Recursion 4 - findAllNumsEqualN ------");
+            int n = 5;
+            Print.p("n="+n+",numbers=[" + 
+                    Recursion.findAllNumsEqualN(n) + "]");
+
+        }
+        if (run[11] == 1)
+        {
+            Print.p("------ Recursion 4 - findNumbersEqualSum ------");
+            int[][] nArr = {{0,1},{1,13},{1,3},{2,20},{2,13},{2,6},{2,18},
+                {3,6},{3,13},{3,20},{4,6},{4,13},{5,42}};
+            int n, sum;
+            int start = 0, last = (int) Math.min(30, nArr.length);
+            start = last - 1;
+            start = 5;
+            last = start + 1;
+            for (int i=start; i < last; i++)
+            {
+                n = nArr[i][0];
+                sum = nArr[i][1];
+                    long startTime = System.currentTimeMillis();
+                String result = Recursion.findNumbersEqualSum(n, sum, true).substring(1);
+                Print.p("n="+n+",sum="+sum+",numbers=[" + 
+                    result.substring(0, result.length() - 1) + "]");
+                    long endTime = System.currentTimeMillis();
+                    long elapsedTime = endTime - startTime;
+                    System.out.println("Elapsed time: " + elapsedTime + " milliseconds");
+            }
+        }
         if (run[10] == 1)
         {
-            Print.p("------ Recursion 2 - permutation ------");
-            String X = "123";
-            Print.p(Recursion.permutation(X));
+            Print.p("------ Recursion 3 - permutation ------");
+            //String X = "123";
+            Print.p(Recursion.permutation("123"));
         }
         if (run[9] == 1)
         {
-            Print.p("------ Recursion 1 - power set ------");
+            Print.p("------ Recursion 2 - power set ------");
             /*  int[] X = {1,2,3};
                 Print.p(Recursion.powerSet(X));
             */

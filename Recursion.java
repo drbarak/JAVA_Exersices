@@ -10,15 +10,246 @@ public class Recursion
     static String used = "";    // to prevent duplicates
     static boolean p = false;
     //static IntNodeMat head, tail;
+    static int count = 0;
+    // To find all combinations of numbers from 1 to `n` having sum 'n' 
+    // but not including the digit '0' and only one permutation per number
+    // that is '41' is not allowed if '14' is already in the list by 
+    // allowing only numbers with increasing values of the digits, thus '41'
+    // has decreasing digits: start with 4 then 1
+    public static String findAllNumsEqualN(int n)
+    {
+        int countN = 0;
+        for (int i=1; i<=n;i++)
+        {
+            //used = " ";
+            used += findNumbersEqualSum(i, n, false).substring(1);
+            if (p) Print.p("900," + used);
+            countN += count;
+        }
+        Print.p(countN);
+        return used.substring(0, used.length() - 1);
+    }
+    public static String findNumbersEqualSum(int n, int _sum, boolean allowZero)
+    {
+        //Find all n-digit numbers with a given sum of digits
+        used = " ";
+        count = 0;
+        findNdigitNums("", 0, n, _sum, 0, allowZero, 0);
+        if (p && !allowZero) Print.p(count);
+        return used;
+    }
+    // To find all n–digit numbers with a sum of digits equal
+    //      to '_sum` in a bottom-up manner
+    private static void findNdigitNums(String result, int index, int n, 
+            int _sum, int value, boolean allowZero,int highest)
+    {
+        // if the number is less than n–digit and its sum of digits is
+        // less than the given sum
+        p = false;
+        if (p) Print.p(1000,index, n, _sum);
+        if (p) Print.p("1500,[" + result + "]");
+        count++;
+        if (index < n && _sum >= 0)
+        {
+            int d = (index == 0 ? 1 : 0);  // special case: number cannot start from 0
+            // consider every valid digit and put it in the current
+            // index and recur for the next index
+            if (p) Print.p("1800," + (index + 1) + ","+ d + ",[" + value + "]");
+            if (index + 1 == n)
+                d = _sum - value;
+            if (!allowZero && d == 0) d = 1;
+            while (d <= 9)
+            {
+                //if (index + 1 == n)
+                //result = "" + d + result;
+                if (p) Print.p("Calling 2000," + index + ","+ d + ",[" + result);
+                if (_sum - d < 0) break;
+                if (!allowZero)
+                {
+                    //if (p) Print.p("1900," + highest + ","+ d );                
+                    if (d < highest) 
+                        return;
+                    highest = d;
+                    if (p) Print.p("1950," + highest + ","+ d );                
+                }
+                findNdigitNums(result + d, index + 1, n, _sum - d, value, 
+                    allowZero, highest);
+                if (p) Print.p("Returning 2000," + index + ","+d + ",[" + result);
+                d++;
+            }
+        }
+        // if the number becomes n–digit and its sum of digits is
+        // equal to the given sum, print it
+        else if (index == n && _sum == 0)
+                used += result + ",";
+    }
+     public static String findNumbersEqualSum1(int n, int _sum)
+    {
+        //Find all n-digit numbers with a given sum of digits
+        used = " ";
+        count = 0;
+        p = false;
+        if (n == 1 && _sum < 10) return "" + _sum; // single digit
+        if (n <= 0 || _sum <= 0) return "";
+        int maxSum = 9;
+        for (int j=1; j<n; j++) 
+            maxSum += 9;
+        //Print.p(max, _sum);
+        if (_sum > maxSum) return "";
+        int start = pow(10,n-1);//(int)Math.pow(10,n-1);
+        int max = pow(10,n)-1;//(int)Math.pow(10,n)-1;
+        int sum = 0;
+        int tensDig, digit;
+        int lastCalledSumToTen = -1;
+        for (int i=start; i<=max; i++) // go over all values of sum of digits
+        {
+            count++;
+            if (p) Print.p(1000, i, n, _sum);
+            int sumToTens = 0;
+             // to save calls to getSumUpToTenDigit()
+            if (lastCalledSumToTen < 0 || i-lastCalledSumToTen > 1)
+                sumToTens = getSumUpToTenDigit(i, n);
+            else
+            {
+                lastCalledSumToTen = i;
+                sumToTens++;
+            }
+            if (p) Print.p(1503, i, _sum, sumToTens);
+            if (sumToTens + 9 < _sum)
+            {
+                i += 10 - 1;
+                continue;
+            }
+            if (p) Print.p(1504,_sum, sumToTens);
+            if (_sum - sumToTens <= 9)
+            {
+                boolean exit = false;
+                for (int j=9; j >= 0; j--)
+                {
+                    count++;
+                    if (sumToTens + j == _sum)
+                    {
+                        used += "," + (i + j);
+                        if (p) Print.p(used);
+                        //Print.p(i, j, 10-j, i+9);
+                        i += 9;
+                        exit = true;
+                        break;
+                    }
+                }
+                if (exit) continue;
+            }
+            // finished all possible values with tens now move to hundreds
+            if (p) Print.p(2003, i, sumToTens, _sum);
+            i = goTo99(i, n);
+            if (p) Print.p(2004, i, sumToTens, _sum);
+        }
+        Print.p(count);
+        return (used.length() > 2 ? used.substring(2) : ""); // skip space and comma
+    }
+    private static int goTo99(int i, int n)
+    {
+        count++;
+        // get the digits to the ten digit
+        int power = 100;//(int) Math.pow(10, 2);
+        return (i / power)*power + 99;
+    }
+    private static int getSumUpToTenDigit(int i, int n)
+    {
+        int sum = 0;
+        while (n > 0)
+        {
+            int power = pow(10, n);//(int) Math.pow(10, n);
+            int digit = (i / power) % 10;
+            sum += digit;
+            //Print.p(i, n, digit);
+            n--;
+            count++;
+        }
+        return sum; // The first digit remains
+    }
+    private static int pow(int num, int n)
+    {
+        int r = num;
+        while (--n > 0)
+            r *= num;
+        return r;
+    }
+    private static int getTensDigit(int i, int n)
+    {
+        count++;
+        return (i / pow(10, n-2) % 10); //(int) Math.pow(10, n-2) % 10);
+    }
     public static String permutation(String X)
     {
         used = "";
-        p = true;
-        //head = tail = null;
-        permutation(X.toCharArray(), 0);
+        p = false;
+        //permutationWithOutLoop(X.toCharArray(), 0);
+        //permutationWithLoop(X.toCharArray(), 0); // s
+        X = "123";
+        Print.p("myPermutationWithLoop");
+        myPermutationWithLoop(X, "");
+        Print.p(used);
+        used = "";
+        Print.p("myPermutationWithOutLoop");
+        myPermutationWithOutLoop(X, "");
+        //Print.p(used.length()/(1 + X.length()));
         return used.substring(1);
     }
-    private static void permutation(char[] str, int index)
+    private static void myPermutationWithOutLoop(String X, String curr)
+    {
+        //char a = (char)0;
+        if (p) Print.p(X + ", curr=[" + curr + "]");
+        if (X.length() == 0)
+        {
+            used +=  "," + curr;
+            return;
+        }
+        myRecursiveLoop(X, curr, 0); // Start the recursive loop
+        /*
+        for (int i=0; i<X.length(); i++)
+        {
+            a = X.charAt(i);
+            String remainingX = X.substring(0,i) + X.substring(i+1);
+            myPermutationWithOutLoop(remainingX, curr + a);
+        }
+        */
+    }
+    private static void myRecursiveLoop(String X, String curr, int i)
+    {
+        if (i < X.length())
+        {
+            char a = X.charAt(i);
+            if (p) Print.p("100,"+i+","+X);
+            if (p) Print.p("1000,"+i+","+X.substring(0,i));
+            if (p) Print.p("2000,"+i+","+X.substring(i+1));
+            String remainingX = X.substring(0,i) + X.substring(i+1);
+            myPermutationWithOutLoop(remainingX, curr + a);
+            
+            myRecursiveLoop(X, curr, i + 1); // Continue with the next value of i
+        }
+    }
+    // the following my solution using for-loop
+    private static void myPermutationWithLoop(String X, String curr)
+    {
+        if (p) Print.p(X + ", curr=[" + curr + "]");
+        if (X.length() == 0)
+        {
+            used +=  "," + curr;
+            return;
+        }
+        for (int i=0; i<X.length(); i++)
+        {
+            char a = X.charAt(i);
+            if (p) Print.p("100,"+i+","+X);
+            if (p) Print.p("1000,"+i+","+X.substring(0,i));
+            if (p) Print.p("2000,"+i+","+X.substring(i+1));
+            String remainingX = X.substring(0,i) + X.substring(i+1);
+            myPermutationWithLoop(remainingX, curr + a);
+        }
+    }
+    // the following chatGPT solution using only recursive functions
+    private static void permutationWithOutLoop(char[] str, int index)
     {
         if (index == str.length)
         {
@@ -32,14 +263,14 @@ public class Recursion
         if (i < str.length)
         {
             swap(str, index, i); // Swap the characters at index and i
-            permutation(str, index + 1); // Recurse for the next index
+            permutationWithOutLoop(str, index + 1); // Recurse for the next index
             swap(str, index, i); // Backtrack by swapping back
         
             recursiveLoop(str, index, i + 1); // Continue with the next value of i
         }
     }
-    // the above solution using for-loop but avoiding 2 recursive functions
-    private static void _permutation(char[] str, int index)
+    // the following chatGPT solution using for-loop but avoiding an extra recursive function
+    private static void permutationWithLoop(char[] str, int index)
     {
         if (index == str.length)
         {
@@ -50,7 +281,7 @@ public class Recursion
         for (int i = index; i < str.length; i++)
         {
             swap(str, index, i);  // Swap the characters at index and i
-            _permutation(str, index + 1);  // Recurse for the next index
+            permutationWithLoop(str, index + 1);  // Recurse for the next index
             swap(str, index, i);  // Backtrack by swapping the characters back
         }
     }
@@ -67,23 +298,11 @@ public class Recursion
         str[i] = str[j];
         str[j] = temp;
     }
-    /*  Not working' keeping code for the usage of a TREE
-    private static String toString(IntNodeMat head)
+    /*  Not working, keeping code for the usage of a TREE
+     * need to do "head = tail = null;" before calling the method
+     private static String permutation(String curr, String X, String Y, int index, int level)
     {
-        IntNodeMat cell = head;
-        String s = "";
-        while (cell != null)
-        {
-            //if (p) System.out.println(cell);
-            s += cell.toString();
-            //Print.p(s);
-            cell = cell.getDown();
-            s += ",";
-        }
-        return s;
-    }
-    private static String permutation(String curr, String X, String Y, int index, int level)
-    {
+        // head = tail = null;
         if (index < X.length()) Y = X.substring(index, index + 1);
         if (p) Print.p("index=[" + index + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
         if (index >= X.length())
@@ -146,6 +365,20 @@ public class Recursion
         return used;
     }
     */
+    private static String toString(IntNodeMat head)
+    {
+        IntNodeMat cell = head;
+        String s = "";
+        while (cell != null)
+        {
+            //if (p) System.out.println(cell);
+            s += cell.toString();
+            //Print.p(s);
+            cell = cell.getDown();
+            s += ",";
+        }
+        return s;
+    }
     public static int factorial(int n)
     {
         //Print.p(1000, n);
