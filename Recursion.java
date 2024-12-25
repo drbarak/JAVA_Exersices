@@ -11,6 +11,54 @@ public class Recursion
     static boolean p = false;
     //static IntNodeMat head, tail;
     static int count = 0;
+    // to find smallest number in array of int
+    static int val = 100;
+    public static int smallest(int[] a, int i)
+    {
+        p = true;
+        if (p) Print.p(1000, i, a.length);        
+        if (i == a.length - 1)
+            return i;
+        int val = smallest(a, i + 1);
+        if (p) Print.p(2000, i, a[val], a[i]);
+        if (a[val] < a[i])
+            return val;
+        return i;
+    }
+    // does not use global variable and returns index pointing to smallest value
+    public static int findSmallestIndex(int[] arr, int i)
+    {
+        //p = true;
+        if (arr.length == 0) return -1;
+        int index = 0; // first item in array
+        if (p) Print.p(1000, i, arr.length);
+        if (i < arr.length)
+        {
+            index = findSmallestIndex(arr, i + 1);
+            if (p) Print.p(2000, i, index, arr.length);
+            if (arr[index] > arr[i])
+                index = i;
+            if (p) Print.p(2100, i, index, arr[i]);
+        }
+        return index;
+    }
+    // use global variable and returns smallest value
+    public static int findSmallestVal(int[] arr, int i)
+    {
+        p = true;
+        if (arr.length == 0) return 0;
+        if (p) Print.p(1000, i, val, arr.length);
+        if (i < arr.length)
+        {
+            if (p) Print.p(1500, i, val, arr.length);
+            val = findSmallestVal(arr, i + 1);
+            if (val > arr[i])
+                val = arr[i];
+            if (p) Print.p(2000, i, val, arr[i]);
+        }
+        if (p) Print.p(3000, i, val);
+        return val;
+    }
     // To find all combinations of numbers from 1 to `n` having sum 'n' 
     // but not including the digit '0' and only one permutation per number
     // that is '41' is not allowed if '14' is already in the list by 
@@ -34,18 +82,18 @@ public class Recursion
         //Find all n-digit numbers with a given sum of digits
         used = " ";
         count = 0;
+        //p = true;
         findNdigitNums("", 0, n, _sum, 0, allowZero, 0);
-        if (p && !allowZero) Print.p(count);
+        if (allowZero) Print.p(count);
         return used;
     }
     // To find all n–digit numbers with a sum of digits equal
-    //      to '_sum` in a bottom-up manner
+    //      to '_sum` in a bottom-up manner using recursion
     private static void findNdigitNums(String result, int index, int n, 
             int _sum, int value, boolean allowZero,int highest)
     {
         // if the number is less than n–digit and its sum of digits is
         // less than the given sum
-        p = false;
         if (p) Print.p(1000,index, n, _sum);
         if (p) Print.p("1500,[" + result + "]");
         count++;
@@ -83,15 +131,12 @@ public class Recursion
         else if (index == n && _sum == 0)
                 used += result + ",";
     }
-     public static String findNumbersEqualSum1(int n, int _sum)
+    //Find all n-digit numbers with a given sum of digits not using recursion
+    public static String findNumbersEqualSum1(int n, int _sum, boolean stam)
     {
-        //Find all n-digit numbers with a given sum of digits
         used = " ";
         count = 0;
-        p = false;
-        if (n == 1 && _sum < 10) return "" + _sum; // single digit
-        if (n <= 0 || _sum <= 0) return "";
-        int maxSum = 9;
+        p = true;        int maxSum = 9;
         for (int j=1; j<n; j++) 
             maxSum += 9;
         //Print.p(max, _sum);
@@ -145,7 +190,7 @@ public class Recursion
             if (p) Print.p(2004, i, sumToTens, _sum);
         }
         Print.p(count);
-        return (used.length() > 2 ? used.substring(2) : ""); // skip space and comma
+        return (used.length() > 2 ? used.substring(1) + " " : "  "); // allow print with skipping space and comma
     }
     private static int goTo99(int i, int n)
     {

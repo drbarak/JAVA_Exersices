@@ -10,7 +10,46 @@ public class Tester
     public static void main()
     {
         boolean p = false;
-        int[] run = {0,0,0,0,0,0,0,0,0,0,0,1,1};
+        int[] run = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
+        
+        if (run[16] == 1)
+        {
+            Print.p("------ Efficiancy 2 - findLargestAverageDiff ------");
+            int[] arr = new int[]{5,7,-2,10};
+            int index = Efficiancy.findLargestAverageDiff(arr);
+            Print.p(Arrays.toString(arr)+",findLargestAverageDiff="+index);
+        }
+        if (run[15] == 1)
+        {
+            Print.p("------ Efficiancy 2 - findDuplicate ------");
+            int[] arr = new int[]{2,3,1,4,3,5};
+            int num = Efficiancy.findDuplicate(arr);
+            Print.p(Arrays.toString(arr)+",findDuplicate="+num);
+        }
+        if (run[14] == 1)
+        {
+            Print.p("------ Efficiancy 1 - SuperIncreasing ------");
+            int[] arr = new int[]{1, 2, 4, 8, 16};
+            boolean ok = Efficiancy.isSuperIncreasing(arr);
+            Print.p(Arrays.toString(arr)+",isSuperIncreasing="+ok);
+            if (ok)
+                Print.p("superIncreasingRepresentation="+ 
+                    Arrays.toString(Efficiancy.superIncreasingRepresentation(arr, 32)));//16,20,15,32
+            arr = new int[]{1, 2, 3, 8, 16};
+            ok = Efficiancy.isSuperIncreasing(arr);
+            Print.p(Arrays.toString(arr)+",isSuperIncreasing="+ok);
+            if (ok)
+                Print.p("superIncreasingRepresentation="+ 
+                    Efficiancy.superIncreasingRepresentation(arr, 16));
+        }
+        if (run[13] == 1)
+        {
+            Print.p("------ Recursion 4 - findAllNumsEqualN ------");
+            int[] arr = new int[]{10, 10, 3, 2};
+            Print.p(Arrays.toString(arr) + ",smallest=[" + 
+                    //Recursion.smallest(arr, 0));
+                    Recursion.findSmallestIndex(arr, 0));
+        }
         if (run[12] == 1)
         {
             Print.p("------ Recursion 4 - findAllNumsEqualN ------");
@@ -27,14 +66,15 @@ public class Tester
             int n, sum;
             int start = 0, last = (int) Math.min(30, nArr.length);
             start = last - 1;
-            start = 5;
+            start = 9;
             last = start + 1;
             for (int i=start; i < last; i++)
             {
                 n = nArr[i][0];
                 sum = nArr[i][1];
                     long startTime = System.currentTimeMillis();
-                String result = Recursion.findNumbersEqualSum(n, sum, true).substring(1);
+                String result = Recursion.findNumbersEqualSum1(n, sum, true).substring(1);
+                if (result == "") result = " ";
                 Print.p("n="+n+",sum="+sum+",numbers=[" + 
                     result.substring(0, result.length() - 1) + "]");
                     long endTime = System.currentTimeMillis();
