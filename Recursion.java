@@ -7,15 +7,124 @@ import java.util.Arrays;
  */
 public class Recursion
 {
-    static String used = "";    // to prevent duplicates
     static boolean p = false;
-    //static IntNodeMat head, tail;
     static int count = 0;
-    // to find smallest number in array of int
-    static int val = 100;
+    /**
+     * Find the number of possible ways to climb a ladder of n steps,
+     * where at each step one can go up 2 or 2 steps at once
+     * 
+     * Example: a ladder with 5 steps has 5 possible ways:
+     *  1111,112,121,211,22
+     */
+    public static int ladder(int n)
+    {
+        if (n < 1) return 1;
+        String[] path = new String[]{""};
+        int steps = ladder(n, 0, 0, "", path);
+        //int steps = ladder(n, 0);
+        Print.p(path[0].substring(0, path[0].length()-1));
+        return steps;
+    }
+    private static int ladder(int n, int index)
+    {
+        if (index == n - 1)
+            return 1;
+        if (index > n - 1)
+            return 0;
+        int step = ladder(n, index + 1);
+        step += ladder(n, index + 2);
+        return step;
+    }
+    private static int ladder(int n, int index, int step, String s, String[] path)
+    {
+        if (index == n - 1)
+        {
+            path[0] += s + ",";
+            return step + 1;
+        }
+        step = ladder(n, index + 1, step, s+"1", path);
+        if (index < n - 2)
+            step = ladder(n, index + 2, step, s+"2", path);
+        return step;
+    }
+    /**
+     * Given 2 arrays of integers of same size n.
+     * Find the path with smallest sum of n numbers, from both arrays, such
+     * that it starts at one array and it is allowed one move from that array
+     * to the other, diagonlly to the next index, and then continue to the end
+     * of that array.
+     * 
+     * Example: array1={1,2,5}, array2={2,-1,6}
+     * The path is 1,-1,6 which gives 6
+     */
+    public static int smallestSumIn2Arrays(int[] a, int[] b)
+    {
+        if (a.length != b.length) return Integer.MAX_VALUE;
+        if (a.length == 1) return (int)Math.min(a[0], b[0]);
+        int[][] m = new int[2][a.length];
+        m[0] = a;
+        m[1] = b;
+        int[] minSum = new int []{Integer.MAX_VALUE};  // to store the min sim 
+        String[] minPath = new String[]{""};
+        int temp00 = m[0][0];   // using m[0][0] as global var to keep min
+            // not really needed - we can make the method return min which
+            // is then a global var (also pass it as a var so can compare
+            // inside the method
+        smallestSumIn2Arrays(m, 0, 0, 0, "", 1, minPath, m[0][0]); // start in 1st array
+        smallestSumIn2Arrays(m, 0, 1, 0, "", 2, minPath, m[0][0]); // start in 2nd array
+        Print.p(minPath[0], m[0][0]);//, minSum[0]);
+        int result = m[0][0];
+        m[0][0] = temp00;
+        return result;
+    }
+    private static void smallestSumIn2Arrays(int[][] m, int sum, int x, int y, 
+        String path, int step, String[] minPath, int temp00)
+    {
+        String point = makePt(x, y);
+        path += point;
+        if (p) Print.p(x, y, sum, temp00);
+        if (p) Print.p(path, m[x][y]);
+        int xy = (x==0 && y==0 ? temp00 : m[x][y]);
+        if (y == m[0].length - 1)
+        {
+            sum += xy;
+            if (y == m[0].length - 1 && m[0][0] > sum)
+            {
+                m[0][0] = sum;
+                minPath[0] = path;
+            }
+            if (p) Print.p(1000, m[0][0], sum);
+            return;
+        }
+        //sum = smallestSumIn2Arrays(a, b, sum + a[i], i+1, step);
+        if (y < m[0].length)
+        {
+            if (p) Print.p("calling R " + point, sum);
+            smallestSumIn2Arrays(m, sum + xy, x, y+1, path, step, minPath, temp00);
+            if (p) Print.p("returning R " + point, sum);
+        }
+        if (step == 1 && x < m.length-1)//1st array moves to the 2nd array
+        {
+            if (p) Print.p("calling D " + point, sum);
+            smallestSumIn2Arrays(m, sum + xy, x+1, y+1, path, step, minPath, temp00);
+            if (p) Print.p("returning D " + point, sum);
+        }
+        if (step == 2 && x == m.length-1)//2nd array moves to the 1st array
+        {
+            if (p) Print.p("calling U " + point, sum);
+            smallestSumIn2Arrays(m, sum + xy, x-1, y+1, path, step, minPath, temp00);
+            if (p) Print.p("returning U " + point, sum);
+        }
+        return;
+    }
+    private static String makePt(int x, int y)
+    {
+        return "(" + x + "," + y + ")";
+    }
+    // to find smallest number in array of int, using recursion and noglobal variable
     public static int smallest(int[] a, int i)
     {
-        p = true;
+        //p = false;
         if (p) Print.p(1000, i, a.length);        
         if (i == a.length - 1)
             return i;
@@ -43,9 +152,10 @@ public class Recursion
         return index;
     }
     // use global variable and returns smallest value
+    static int val = 100;
     public static int findSmallestVal(int[] arr, int i)
     {
-        p = true;
+        //p = true;
         if (arr.length == 0) return 0;
         if (p) Print.p(1000, i, val, arr.length);
         if (i < arr.length)
@@ -64,31 +174,38 @@ public class Recursion
     // that is '41' is not allowed if '14' is already in the list by 
     // allowing only numbers with increasing values of the digits, thus '41'
     // has decreasing digits: start with 4 then 1
+    static String used = "";    // to prevent duplicates
     public static String findAllNumsEqualN(int n)
     {
-        int countN = 0;
+        return findAllNumsEqualN(1, n);
+    }
+    public static String findAllNumsEqualN(int nDigits, int n)
+    {
+        if (nDigits > n) return used.substring(0, used.length()-1);
+        used += findNumbersEqualSum(nDigits, n, false).substring(1);
+        if (p) Print.p("910," + used);
+        return findAllNumsEqualN(nDigits + 1, n);
+    }
+    public static String findAllNumsEqualNLoop(int n)
+    {
         for (int i=1; i<=n;i++)
         {
-            //used = " ";
             used += findNumbersEqualSum(i, n, false).substring(1);
             if (p) Print.p("900," + used);
-            countN += count;
         }
-        Print.p(countN);
+        Print.p(count);
         return used.substring(0, used.length() - 1);
     }
+    // Find all n–digit numbers with a given sum of digits equal
+    //  to '_sum` in a bottom-up manner using recursion
     public static String findNumbersEqualSum(int n, int _sum, boolean allowZero)
     {
-        //Find all n-digit numbers with a given sum of digits
         used = " ";
-        count = 0;
-        //p = true;
+        //count = 0;
         findNdigitNums("", 0, n, _sum, 0, allowZero, 0);
         if (allowZero) Print.p(count);
         return used;
     }
-    // To find all n–digit numbers with a sum of digits equal
-    //      to '_sum` in a bottom-up manner using recursion
     private static void findNdigitNums(String result, int index, int n, 
             int _sum, int value, boolean allowZero,int highest)
     {
@@ -132,11 +249,12 @@ public class Recursion
                 used += result + ",";
     }
     //Find all n-digit numbers with a given sum of digits not using recursion
-    public static String findNumbersEqualSum1(int n, int _sum, boolean stam)
+    public static String findNumbersEqualSumLoop(int n, int _sum, boolean stam)
     {
         used = " ";
         count = 0;
-        p = true;        int maxSum = 9;
+        p = true;        
+        int maxSum = 9;
         for (int j=1; j<n; j++) 
             maxSum += 9;
         //Print.p(max, _sum);
@@ -307,9 +425,9 @@ public class Recursion
     {
         if (i < str.length)
         {
-            swap(str, index, i); // Swap the characters at index and i
+            MyLibrary.swap(str, index, i); // Swap the characters at index and i
             permutationWithOutLoop(str, index + 1); // Recurse for the next index
-            swap(str, index, i); // Backtrack by swapping back
+            MyLibrary.swap(str, index, i); // Backtrack by swapping back
         
             recursiveLoop(str, index, i + 1); // Continue with the next value of i
         }
@@ -325,27 +443,15 @@ public class Recursion
         // Recursively generate permutations by swapping characters
         for (int i = index; i < str.length; i++)
         {
-            swap(str, index, i);  // Swap the characters at index and i
+            MyLibrary.swap(str, index, i);  // Swap the characters at index and i
             permutationWithLoop(str, index + 1);  // Recurse for the next index
-            swap(str, index, i);  // Backtrack by swapping the characters back
+            MyLibrary.swap(str, index, i);  // Backtrack by swapping the characters back
         }
-    }
-    private static String swap(String str, int i, int j)
-    {
-        char[] arr = str.toCharArray();
-        swap(arr, i, j);
-        return new String(arr);
-    }
-    private static void swap(char[] str, int i, int j)
-    {
-        if (i == j) return;
-        char temp = str[i];
-        str[i] = str[j];
-        str[j] = temp;
     }
     /*  Not working, keeping code for the usage of a TREE
      * need to do "head = tail = null;" before calling the method
-     private static String permutation(String curr, String X, String Y, int index, int level)
+    static IntNodeMat head, tail;
+    private static String permutation(String curr, String X, String Y, int index, int level)
     {
         // head = tail = null;
         if (index < X.length()) Y = X.substring(index, index + 1);
