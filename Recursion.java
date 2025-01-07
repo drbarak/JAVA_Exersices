@@ -9,6 +9,102 @@ public class Recursion
 {
     static boolean p = false;
     static int count = 0;
+    public static int ladderSoccer(int n, int m)
+    {
+        if (n < 0 || m < 0) return -1;
+        if (n == 0 && m == 0) return 0;
+        return ladderSoccer1(n, m);
+    }
+    private static int ladderSoccer1(int n, int m)
+    {
+        //Print.p(n, m);
+        if (n == 0 && m == 0)
+            return 1;
+        if (n < 0 || m < 0) return 0;
+        return ladderSoccer1(n - 1, m) + 
+            ladderSoccer1(n, m - 1);
+    }
+    /**
+     * A method to find a path from starting point (0,0) of a grid size nXn
+     *  to the end point (b-1, n-1)
+     */
+    private static final int MAZE_WALL = 0;  // the value of a cell marking a wall
+    private static final int MAZE_FREE = 1;  // the value of a cell marking a possible path
+    private static final int MAZE_VISITED = 2;  // the value of a cell marking already visited
+    public static boolean maze(int[][] grid)
+    {
+        // verify grid is square
+        int n = grid.length;
+        if (n < 2)
+        {
+            grid = new int[][] {};
+            return false;
+        }
+        else
+        {
+            for (int i=0; i<n;i++)
+            {
+                //Print.p(i, grid[i].length, n);
+                if (grid[i].length != n)
+                {
+                    grid = new int[][] {};
+                    return false;
+                }
+                
+            }
+        }
+        /*
+        int [][] solution = new int[n][n];
+        Print.p("solution");
+        boolean solved = maze(grid, 0, 0, solution);
+        Print.p(solution);
+        return solved;
+        */
+       return maze(grid, 0, 0);
+    }
+    // without the 'solution array'
+    private static boolean maze(int[][] grid, int x, int y)
+    {
+        int n = grid.length;
+        if (x < 0 || y < 0 || x >= n || y >= n)// verify cell in boundries
+            return false;
+        if (grid[x][y] != MAZE_FREE)    // verify not visited yet
+            return false;
+        grid[x][y] = MAZE_VISITED; // mark as used
+        if (x == n-1 && y == x)
+            return true;
+        if (maze(grid, x, y-1) ||
+                maze(grid, x+1, y) ||
+                maze(grid, x, y+1) ||
+                maze(grid, x-1, y))
+            return true;
+        grid[x][y] = MAZE_FREE; // restore value
+        return false;
+    }
+    // method using 'solution array'
+    private static boolean maze(int[][] grid, int x, int y, int solution[][])
+    {
+        int n = grid.length;
+        if (x == n-1 && y == x)
+        {
+            grid[x][y] = MAZE_VISITED; // mark as used
+            return true;
+        }
+        grid[x][y] = MAZE_VISITED; // mark as used
+        solution[x][y] = MAZE_VISITED;
+        if (y > 0 && grid[x][y-1] == MAZE_FREE)    // move up
+            if (maze(grid, x, y-1, solution)) return true;
+        if (x < n-1 && grid[x+1][y] == MAZE_FREE)    // move right
+            if (maze(grid, x+1, y, solution)) return true;
+        if (y < n-1 && grid[x][y+1] == MAZE_FREE)    // move down
+            if (maze(grid, x, y+1, solution)) return true;
+        if (x > 0 && grid[x-1][y] == MAZE_FREE)    // move left
+            if (maze(grid, x-1, y, solution)) return true;
+        grid[x][y] = MAZE_FREE; // restore value
+        solution[x][y] = 0;
+        return false;
+    }
+
     /**
      * Find the number of possible ways to climb a ladder of n steps,
      * where at each step one can go up 2 or 2 steps at once
@@ -20,9 +116,15 @@ public class Recursion
     {
         if (n < 1) return 1;
         String[] path = new String[]{""};
-        int steps = ladder(n, 0, 0, "", path);
-        //int steps = ladder(n, 0);
-        Print.p(path[0].substring(0, path[0].length()-1));
+        int steps;
+        boolean paths = true;
+        if (paths)
+        {
+            steps = ladder(n, 0, 0, "", path);
+            Print.p(path[0].substring(0, path[0].length()-1));
+        }
+        else
+            steps = ladder(n, 0); // without keeping the paths
         return steps;
     }
     private static int ladder(int n, int index)
@@ -31,10 +133,9 @@ public class Recursion
             return 1;
         if (index > n - 1)
             return 0;
-        int step = ladder(n, index + 1);
-        step += ladder(n, index + 2);
-        return step;
+        return ladder(n, index + 1) + ladder(n, index + 2);
     }
+    // keep all the possible paths 
     private static int ladder(int n, int index, int step, String s, String[] path)
     {
         if (index == n - 1)
@@ -42,10 +143,10 @@ public class Recursion
             path[0] += s + ",";
             return step + 1;
         }
-        step = ladder(n, index + 1, step, s+"1", path);
-        if (index < n - 2)
-            step = ladder(n, index + 2, step, s+"2", path);
-        return step;
+        if (index > n - 1)
+            return 0;
+        return ladder(n, index + 1, step, s+"1", path)+
+            ladder(n, index + 2, step, s+"2", path);
     }
     /**
      * Given 2 arrays of integers of same size n.

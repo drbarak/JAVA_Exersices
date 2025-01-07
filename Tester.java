@@ -10,21 +10,133 @@ public class Tester
     public static void main()
     {
         boolean p = false;
-        int[] run = {0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0};
+        int[] run = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
+        int[] arr;
 
+        if (run[26] == 1)
+        {
+            Print.p("------ Recursion 11 - selectioSort(int[] n) ------");
+            arr  = new int[]{170, 45, 75, 90, 802, 24, 2, 66};
+            //arr  = new int[]{101, 12, 5};
+            //arr  = new int[]{3,-1};
+            //arr  = new int[]{-1};
+            //arr  = new int[]{};
+            Print.p("Original array: ", arr);
+            Sort.selectioSort(arr);
+            Print.p("Sorted array: ", arr);
+        }
+        if (run[25] == 1)
+        {
+            Print.p("------ Recursion 10 - ladderSoccer(int n, int m) G1:G2 ------");
+            int G1 = 2, G2 = 1, test = 3;
+            //G1 = 3; G2 = 1; test = 4;
+            //G1 = G2 = test = 0;
+            //G1 = -1; G2 = 0; test = -1;
+            Print.p("Steps to to get to score ["+G1+":"+G2+"] is: "+Recursion.ladderSoccer(G1, G2)+", test="+test);
+        }
+        if (run[24] == 1)
+        {
+            Print.p("------ Recursion 9 - Maze מבוך ------");
+            int[][] grid = { // no solution
+                {1, 0, 0, 0, 0, 0, 0, 0}, // line 0
+                {1, 1, 0, 0, 0, 0, 0, 0}, // line 1
+                {0, 1, 0, 0, 0, 0, 0, 0}, // line 2
+                {0, 1, 1, 1, 0, 0, 0, 0}, // line 3
+                {0, 0, 0, 1, 0, 0, 0, 0}, // line 4
+                {0, 0, 0, 1, 1, 1, 1, 0}, // line 5
+                {0, 0, 0, 0, 0, 0, 1, 0}, // line 6
+                {0, 0, 0, 0, 0, 0, 1, 0}};  // line 7
+            grid = new int[][] {    // with solution
+                {1, 0, 0, 0, 0, 0, 0, 0}, // line 0
+                {1, 1, 0, 0, 0, 0, 0, 0}, // line 1
+                {0, 1, 1, 0, 0, 0, 0, 0}, // line 2
+                {0, 0, 1, 1, 1, 0, 0, 0}, // line 3
+                {0, 0, 0, 0, 1, 0, 0, 0}, // line 4
+                {0, 0, 0, 0, 1, 1, 1, 0}, // line 5
+                {0, 0, 0, 0, 0, 0, 1, 0}, // line 6
+                {0, 0, 0, 0, 0, 0, 1, 1}};  // line 7
+            grid = new int[][] { // with solution but on the way hit a wall and must go back
+                {1, 0, 0, 1, 1, 0, 0, 0}, // line 0
+                {1, 1, 1, 1, 0, 0, 0, 0}, // line 1
+                {0, 0, 0, 1, 0, 0, 0, 0}, // line 2
+                {0, 0, 1, 1, 1, 0, 0, 0}, // line 3
+                {0, 0, 0, 0, 1, 0, 0, 0}, // line 4
+                {0, 0, 0, 0, 1, 1, 1, 0}, // line 5
+                {0, 0, 0, 0, 0, 0, 1, 0}, // line 6
+                {0, 0, 0, 0, 0, 0, 1, 1}};  // line 7
+            Print.p("Original maze: ");
+            Print.p(grid);
+            boolean solution = Recursion.maze(grid);
+            if (grid.length == 0)
+                Print.p("invalid grid - must be square matrix ");
+            else
+            {
+                if (!solution)
+                    Print.p("No solution found!!!");
+                else
+                Print.p("Solution maze (the '2' show the path out): ");
+            }
+            Print.p(grid);
+        }
+        if (run[23] == 1)
+        {
+            Print.p("------ radixSort Loop ------");
+            arr  = new int[]{170, 45, 75, 90, 802, 24, 2, 66};
+            arr  = new int[]{101, 12, 5};
+            Print.p("Original array: ", arr);
+            Sort.radixSort(arr);
+            Print.p("Sorted array: ", arr);
+        }
+        if (run[22] == 1)
+        {
+            Print.p("------ quickSort Recursion ------");
+            arr = new int[]{3, 8, 15, 1, 7};
+            arr = new int[]{-10,-3,-7,-1,9,8};
+            arr = new int[]{45,33,69,97,82,36,73,91,40,88,32};
+            arr = new int[]{45,44,43,42,41,40,39,38,37,36,35};
+            arr = new int[]{45,37,44,40,42,36,43,41,40,38,35};
+            int n=50;
+            arr = new int[n];
+            for (int i=0; i<n; i++)
+                arr[i] = i;
+            //arr = new int[] {3, 8, 15, 1, 7};    
+            Print.p("Original array:", arr);
+            Sort.quickSort(arr, false);
+            Print.p("Sorted array: ", arr);
+        }
+        if (run[21] == 1)
+        {
+            Print.p("------ quickSortLoop ------");
+            arr = new int[]{3, 8, 15, 1, 7};
+            arr = new int[]{-10,-3,-7,-1,9,8};
+            arr = new int[]{45,33,69,97,82,36,73,91,40,88,32};
+            //arr = new int[]{45,44,43,42,41,40,39,38,37,36,35};
+            arr = new int[]{45,37,44,40,42,36,43,41,40,38,35};
+            Print.p("Original array:", arr);
+            Sort.quickSortLoop(arr, false);
+            Print.p("Sorted array: ", arr);
+        }
         if (run[20] == 1)
         {
-            Print.p("------ sort ------");
-            int[] nums = {3, 8, 15, 1, 7};
-            //nums = new int[]{-10,-3,-7,-1,9,8};
-            //nums = new int[]{-10,-3,-1,-1,9,8};
-            Print.p("Original array:", nums);
-            Print.p("Sorted array: ", Sort.mySort(nums, true));
+            Print.p("------ My sort ------");
+            arr = new int[]{3, 8, 15, 1, 7};
+            //arr = new int[]{-10,-3,-7,-1,9,8};
+            //arr = new int[]{-10,-3,-1,-1,9,8};
+            //arr = new int[]{45,33,69,97,82,36,73,91,40,88,32};
+            //arr = new int[]{45,44,43,42,41,40,39,38,37,36,35};
+            arr = new int[]{45,37,44,40,42,36,43,41,40,38,35};
+            int n=50;
+            arr = new int[n];
+            for (int i=0; i<n; i++)
+                arr[i] = i;
+            Print.p("Original array:", arr);
+            Print.p("Sorted array: ", Sort.mySort(arr, false));
         }
         if (run[19] == 1)
         {
             Print.p("------ Recursion 8 - ladder(int n) ------");
             int n = 5;
+            n = 6;
             Print.p("steps to climb a ladder of "+n+" steps is: "+Recursion.ladder(n));
         }
         if (run[18] == 1)
@@ -39,7 +151,7 @@ public class Tester
         if (run[17] == 1)
         {
             Print.p("------ Efficiancy 4- findSubarray ------");
-            int[] arr = new int[]{2,6,1,9,7,3,1,4,1,2,8};
+            arr  = new int[]{2,6,1,9,7,3,1,4,1,2,8};
             arr = new int[]{3,3,-7,-1,3,3,1,-4};
             int[] result = Efficiancy.findSubarraySumTarget(arr, 7);
             Print.p(Arrays.toString(arr)+",findSubarray="+Arrays.toString(result));
@@ -49,21 +161,21 @@ public class Tester
         if (run[16] == 1)
         {
             Print.p("------ Efficiancy 3 - findLargestAverageDiff ------");
-            int[] arr = new int[]{5,7,-2,10};
+            arr  = new int[]{5,7,-2,10};
             int index = Efficiancy.findLargestAverageDiff(arr);
             Print.p(Arrays.toString(arr)+",findLargestAverageDiff="+index);
         }
         if (run[15] == 1)
         {
             Print.p("------ Efficiancy 2 - findDuplicateNumInArray ------");
-            int[] arr = new int[]{2,3,1,4,3,5};
+            arr  = new int[]{2,3,1,4,3,5};
             int num = Efficiancy.findDuplicateNumInArray(arr);
             Print.p(Arrays.toString(arr)+",findDuplicateNumInArray="+num);
         }
         if (run[14] == 1)
         {
             Print.p("------ Efficiancy 1 - SuperIncreasing ------");
-            int[] arr = new int[]{1, 2, 4, 8, 16};
+            arr  = new int[]{1, 2, 4, 8, 16};
             boolean ok = Efficiancy.isSuperIncreasing(arr);
             Print.p(Arrays.toString(arr)+",isSuperIncreasing="+ok);
             if (ok)
@@ -79,7 +191,7 @@ public class Tester
         if (run[13] == 1)
         {
             Print.p("------ Recursion 6 - smallest ------");
-            int[] arr = new int[]{10, 10, 3, 2};
+            arr  = new int[]{10, 10, 3, 2};
             Print.p(Arrays.toString(arr) + ",smallest=[" + 
                     arr[Recursion.smallest(arr, 0)]);
                     //Recursion.findSmallestIndex(arr, 0));
@@ -87,7 +199,7 @@ public class Tester
         }
         if (run[12] == 1)
         {
-            Print.p("------ Recursion 5 - findAllNumsEqualN ------");
+            Print.p("------ Recursion 5 - findAllarrEqualN ------");
             int n = 5;
             Print.p("n="+n+",numbers=[" + 
                     Recursion.findAllNumsEqualN(n) + "]");
@@ -176,7 +288,7 @@ public class Tester
         if (run[2] == 1)
         {
             Print.p("\n------Recursion 0 - factorial ------");
-            int[] arr = {-2, 0, 1, 2, 3, 5, 6};
+            arr  = new int[]{-2, 0, 1, 2, 3, 5, 6};
             arr = new int[]{4};
             for (int n: arr)    
                 Print.p("factorial of = " + n + " is: " + Recursion.factorial(n));
