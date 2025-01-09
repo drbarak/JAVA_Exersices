@@ -10,9 +10,219 @@ public class Tester
     public static void main()
     {
         boolean p = false;
-        int[] run = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
+        int[] run = new int[100];
         int[] arr;
-
+        int ar[][] = new int[117][];
+        
+        int runMethod = 33;
+        run[runMethod] = 1;
+        
+        if (run[34] == 1)
+        {
+            Print.p("------ Recursion 19 - findSumInMatrix ------");
+            int[][] grid = {
+                {2, 41, 3, 14}, // line 0
+                {2, 2, 24, 7}, // line 1
+                {2, 15, 0, 0, 0, 1, 1, 0}, // line 2
+                {0, 1, 1, 0, 0, 0, 0, 0}, // line 3
+                {0, 0, 0, 1, 0, 0, 0, 0}, // line 4
+                {0, 0, 0, 0, 1, 1, 0, 0}, // line 5
+                {1, 0, 0, 0, 0, 0, 1, 0}, // line 6
+                {1, 1, 1, 0, 0, 0, 1, 0}};  // line 7
+            Print.p("Matrix: ");
+            Print.p(grid);
+            int sum = 9;
+            int[][] path = new int[grid.length][grid.length];
+            //Print.p("Found path with sum "+sum+": "+Recursion.findSumInMatrix(grid, sum, path));
+            Print.p(grid);
+        }
+        if (run[33] == 1)
+        {
+            Print.p("------ Recursion 18 - findStains ------");
+            int[][] grid = {
+                {0, 1, 0, 0, 0, 0, 0, 1}, // line 0
+                {1, 0, 0, 0, 0, 0, 1, 1}, // line 1
+                {0, 0, 0, 0, 0, 1, 1, 0}, // line 2
+                {0, 1, 1, 0, 0, 0, 0, 0}, // line 3
+                {0, 0, 0, 1, 0, 0, 0, 0}, // line 4
+                {0, 0, 0, 0, 1, 1, 0, 0}, // line 5
+                {1, 0, 0, 0, 0, 0, 1, 0}, // line 6
+                {1, 1, 1, 0, 0, 0, 1, 0}};  // line 7
+            Print.p("Matrix: ");
+            Print.p(grid);
+            Print.p("number of stains is: " + Recursion.findStains(grid));
+            Print.p(grid);
+            grid = new int[][]{
+                {0,1,0,0,1}, // line 0
+                {1,0,0,1,1}, // line 1
+                {0,0,1,1,0}, // line 2
+                {1,0,0,0,0}, // line 3
+                {1,1,1,0,0}};// line 4
+            Print.p(grid);
+            Print.p("number of stains is: " + Recursion.findStains(grid));
+            Print.p(grid);
+            grid = new int[][]{
+                {0,1,0,0,1}, // line 0
+                {1,0,0,0,1}, // line 1
+                {0,0,1,0,0}, // line 2
+                {1,0,0,0,1}, // line 3
+                {1,1,1,0,0}};// line 4
+            Print.p(grid);
+            Print.p("number of stains is: " + Recursion.findStains(grid));
+            Print.p(grid);
+        }
+        if (run[32] == 1)
+        {
+            Print.p("------ Recursion 17 - findStainSizeAtXY ------");
+            int[][] grid = {
+                {0, 1, 0, 0, 0, 0, 0, 1}, // line 0
+                {1, 0, 0, 0, 0, 0, 1, 1}, // line 1
+                {0, 0, 0, 0, 0, 1, 1, 0}, // line 2
+                {0, 1, 1, 0, 0, 0, 0, 0}, // line 3
+                {0, 0, 0, 1, 0, 0, 0, 0}, // line 4
+                {0, 0, 0, 0, 1, 1, 0, 0}, // line 5
+                {1, 0, 0, 0, 0, 0, 1, 0}, // line 6
+                {1, 1, 1, 0, 0, 0, 1, 0}};  // line 7
+            Print.p("Matrix: ");
+            Print.p(grid);
+            int x = 4, y = 3;
+            Print.p("Size of stain at "+Recursion.makePt(x,y)+" is: " + Recursion.stains(grid, x, y));
+            grid = new int[][]{
+                {0,1,0,0,1}, // line 0
+                {1,0,0,1,1}, // line 1
+                {0,0,1,1,0}, // line 2
+                {1,0,0,0,0}, // line 3
+                {1,1,1,0,0}};// line 4
+            Print.p(grid);
+            x = 2; y = 2;
+            Print.p("Size of stain at "+Recursion.makePt(x,y)+" is: " + Recursion.stains(grid, x, y));
+            grid = new int[][]{
+                {0,1,0,0,1}, // line 0
+                {1,0,0,0,1}, // line 1
+                {0,0,1,0,0}, // line 2
+                {1,0,0,0,1}, // line 3
+                {1,1,1,0,0}};// line 4
+            Print.p(grid);
+            x = 0; y = 0;
+            Print.p("Size of stain at "+Recursion.makePt(x,y)+" is: " + Recursion.stains(grid, x, y));
+        }
+        if (run[31] == 1)
+        {
+            Print.p("------ Recursion 16 - princeToVilan(int[][] m) ------");
+            int[][] grid = {
+                {2, 0, 1, 2, 3}, // line 0
+                {2, 3, 5, 5, 4}, // line 1
+                {8, -1, 6, 8, 7}, // line 2
+                {3, 4, 7, 2, 4}, // line 3
+                {2, 4, 3, 1, 2}, // line 4
+                }; // line 5
+            Print.p("Matrix: ");
+            Print.p(grid);
+            Print.p("princeToVilan: "+Recursion.princeToVilan(grid, 0, 0));
+            Print.p(grid);
+            grid = new int[][] { // no solution
+                {12, 0, 1, 2, 3}, // line 0
+                {2, 3, 5, 5, 4}, // line 1
+                {8, -1, 6, 8, 7}, // line 2
+                {3, 4, 7, 2, 4}, // line 3
+                {2, 4, 3, 1, 2}, // line 4
+                }; // line 5
+            Print.p("Matrix: ");
+            Print.p(grid);
+            Print.p("princeToVilan: "+Recursion.princeToVilan(grid, 0, 0));
+            Print.p(grid);
+        }
+        if (run[30] == 1)
+        {
+            Print.p("------ Recursion 15 - countPathsInMatrix(int[][] m) ------");
+            int[][] grid = { // no solution
+                {12, 22, 23, 54}, // line 0
+                {43, 35, 21, 20}, // line 1
+                {34, 21, 43, 21}, // line 2
+                {25, 30, 0, 20}, // line 3
+                {0, 22, 10, 10}, // line 4
+                {20, 13, 3, 45}}; // line 5
+            Print.p("Matrix: ");
+            Print.p(grid);
+            Print.p("countPathsInMatrix: "+Recursion.countPathsInMatrix(grid));
+        }
+        if (run[29] == 1)
+        {
+            Print.p("------ Recursion 14 - areThereNumbersEqualSumWithRepeatition(int[] a, int sum) ------");
+            int i = 0;
+            int[] target = new int[20];
+            ar[i]  = new int[]{170, 45, 75, 90, 802, 24, 2, 66};
+            target[i++] = 92;
+            ar[i]  = new int[]{-1, 2, 75, 90, 802, 24, 2, 66};
+            target[i++] = 93;
+            ar[i]  = new int[]{170, 45, 75, 90, 802, 24, 2, 66};
+            target[i++] = 91;
+            ar[i]  = new int[]{101, 12, 5};
+            target[i++] = 118;
+            ar[i]  = new int[]{92,-1};
+            target[i++] = 91;
+            ar[i]  = new int[]{92,-1};
+            target[i++] = 80;
+            ar[i]  = new int[]{91};
+            target[i++] = 91;
+            ar[i]  = new int[]{-1};
+            target[i++] = 91;
+            ar[i]  = new int[]{};
+            target[i++] = 0;
+            for (int j=0; j<i; j++)
+                Print.p("areThereNumbersEqualSumWithRepeatition: "+target[j]+" ["+
+                Recursion.areThereNumbersEqualSumWithRepeatition(ar[j], target[j])+
+                "]", ar[j]);
+        }
+        if (run[28] == 1)
+        {
+            Print.p("------ Recursion 13 - areThereNumbersEqualSum(int[] a, int sum) ------");
+            int i = 0;
+            int[] target = new int[20];
+            ar[i]  = new int[]{170, 45, 75, 90, 802, 24, 2, 66};
+            target[i++] = 92;
+            ar[i]  = new int[]{-1, 2, 75, 90, 802, 24, 2, 66};
+            target[i++] = 93;
+            ar[i]  = new int[]{170, 45, 75, 90, 802, 24, 2, 66};
+            target[i++] = 91;
+            ar[i]  = new int[]{101, 12, 5};
+            target[i++] = 118;
+            ar[i]  = new int[]{92,-1};
+            target[i++] = 91;
+            ar[i]  = new int[]{91};
+            target[i++] = 91;
+            ar[i]  = new int[]{-1};
+            target[i++] = 91;
+            ar[i]  = new int[]{};
+            for (int j=0; j<i; j++)
+                Print.p("areThereNumbersEqualSum: "+target[j]+" ["+
+                Recursion.areThereNumbersEqualSum(ar[j], target[j])+
+                //Recursion.cover(ar[j], target[j])+
+                "]", ar[j]);
+        }
+        if (run[27] == 1)
+        {
+            Print.p("------ Recursion 12 - areThere2NumbersEqualSum(int[] a, int sum) ------");
+            int i = 0;
+            int[] target = new int[20];
+            ar[i]  = new int[]{170, 45, 75, 90, 802, 24, 2, 66};
+            target[i++] = 92;
+            ar[i]  = new int[]{170, 45, 75, 90, 802, 24, 2, 66};
+            target[i++] = 91;
+            ar[i]  = new int[]{101, 12, 5};
+            target[i++] = 118;
+            ar[i]  = new int[]{119,-1};
+            target[i++] = 118;
+            ar[i]  = new int[]{target[i-1]};
+            target[i++] = 91;
+            ar[i]  = new int[]{-1};
+            target[i++] = 91;
+            ar[i]  = new int[]{};
+            for (int j=0; j<i; j++)
+                Print.p("areThere2NumbersEqualSum: "+target[j]+" ["+
+                Recursion.areThere2NumbersEqualSum(ar[j], target[j])+
+                "]", ar[j]);
+        }
         if (run[26] == 1)
         {
             Print.p("------ Recursion 11 - selectioSort(int[] n) ------");

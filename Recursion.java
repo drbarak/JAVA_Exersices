@@ -9,6 +9,379 @@ public class Recursion
 {
     static boolean p = false;
     static int count = 0;
+    
+    /**
+     * Given a 2-dim matrix with cells marked with 'x' or '1' as occupied.
+     * A region of connected occupied cells, horizontally, vertically or 
+     * diagonlly (total of possible 8 neighbours to inner cell of the matrix)
+     * is called a 'Stain'.
+     * Write a method that calculate the size of a stain at a given cell x,y.
+     * If that cell is empty, it returns 0.
+     */
+    private static final int STAIN_FREE = 0;  // the value of a cell marking empty
+    public static int stains(int[][] grid, int x, int y)
+    {
+        boolean[][] visited = new boolean[grid.length][grid[0].length];// assuming rectangulr grid
+        int stains = stains(grid, x, y, visited);
+        print(visited);
+        return stains;
+    }
+    private static void print(boolean[][] arr)
+    {
+        // not using Arrays.deepToString(arr)) because print all lines in one row
+        for (int i = 0; i < arr.length; i++)
+            System.out.println(Arrays.toString(arr[i]));
+    }
+    private static int stains(int[][] grid, int x, int y, boolean [][] visited)
+    {
+        int n = grid.length;
+        if (x < 0 || y < 0 || x >= n) return 0;// verify cell in boundries
+        int m = grid[x].length;
+        if (y >= m || visited[x][y]) return 0; // in case matrix not square or rectangular
+        int gxy = grid[x][y];
+        if (gxy == STAIN_FREE)  // not counting empty cells
+            return 0;
+              // alrady visited or not occupied 
+        if (p) Print.p(100, x, y, gxy);
+        visited[x][y] = true;
+        if (p) Print.p(1000, x, y, gxy);
+        return 1 + 
+            stains(grid, x, y-1, visited)+
+                stains(grid, x+1, y, visited)+
+                stains(grid, x, y+1, visited)+
+                stains(grid, x-1, y, visited)+
+            stains(grid, x-1, y-1, visited)+
+                stains(grid, x+1, y+1, visited)+
+                stains(grid, x+1, y-1, visited)+
+                stains(grid, x-1, y+1, visited);
+    }
+    /**
+     * Given a 2-dim matrix with cells marked with 'x' or '1' as occupied.
+     * A region of connected occupied cells, horizontally, vertically or 
+     * diagonlly (total of possible 8 neighbour to inner cell of the matrix)
+     * is called a 'Stain'.
+     * Write a method that calculate the number of dis-connected stains in a
+     * given matrix.
+     */
+    private static final int STAIN_OCCUPIED = 1;  // the value of a cell marking occupied
+    private static final int STAIN_VISITED = -10;
+    public static int findStains(int[][] grid)
+    {
+        boolean[][] visited = new boolean[grid.length][grid[0].length];// assuming rectangulr grid        //p = true;
+        return findStains(grid, 0, 0, 0, visited);
+    }
+    private static int findStains(int[][] grid, int x, int y, int numOfStains, boolean[][] visited)
+    {
+        int n = grid.length;
+        if (x < 0 || y < 0 || x >= n) return 0;// verify cell in boundries
+        int m = grid[x].length;
+        if (y >= m) return 0;   // in case matrix not square or rectangular
+        int gxy = grid[x][y];
+        //if (x == n-1 && y == m-1) return 0;// end of matrix
+              // alrady visited or not occupied 
+        if (p) Print.p(100, x, y, gxy); 
+        if (gxy > STAIN_OCCUPIED || gxy == STAIN_VISITED) return 0;
+        // verify current cell has at least one more neighbour, otherwise
+        // finished the stain.
+        // In order not to count grid twice we mark it as visited
+        // find if it is part of stain we already started
+        if (p) Print.p(1000, x, y, gxy);
+        if (gxy == STAIN_OCCUPIED) // check if a new stain or part of an existing one
+        {
+            numOfStains++;
+            if (p) 
+            {
+                Print.p(1100, numOfStains);
+                Print.p(grid);
+                Print.p("----------------------");
+            }
+            markSstains(grid, x, y, visited, numOfStains + STAIN_OCCUPIED + 10);
+            if (p) Print.p(grid);
+            /*
+            int[] _numOfStains = new int[]{numOfStains};
+            int stainId = STAIN_FREE;
+            stainId = stainValue(grid, x-1, y, stainId, _numOfStains);
+            stainId = stainValue(grid, x-1, y-1, stainId, _numOfStains);
+            stainId = stainValue(grid, x-1, y+1, stainId, _numOfStains);
+            stainId = stainValue(grid, x+1, y, stainId, _numOfStains);
+            stainId = stainValue(grid, x+1, y-1, stainId, _numOfStains);
+            stainId = stainValue(grid, x+1, y+1, stainId, _numOfStains);
+            stainId = stainValue(grid, x, y-1, stainId, _numOfStains);
+            stainId = stainValue(grid, x, y+1, stainId, _numOfStains);
+            if (stainId <= STAIN_OCCUPIED) // new stain
+            {
+                numOfStains = _numOfStains[0];
+                grid[x][y] = numOfStains + STAIN_OCCUPIED + 10;
+                numOfStains++;
+                _numOfStains[0]++;
+            }
+            else 
+                grid[x][y] = stainId;   // part of an existing stain
+            numOfStains = _numOfStains[0];
+            */
+        }
+        else
+            grid[x][y] = STAIN_VISITED;
+        if (p) Print.p(2000, x, y, grid[x][y]); 
+        int numOfStains1 = maxOf4(findStains(grid, x, y-1, numOfStains, visited),
+                findStains(grid, x+1, y, numOfStains, visited),
+                findStains(grid, x, y+1, numOfStains, visited),
+                findStains(grid, x-1, y, numOfStains, visited));
+        int numOfStains2 = maxOf4(findStains(grid, x-1, y-1, numOfStains, visited),
+                findStains(grid, x+1, y+1, numOfStains, visited),
+                findStains(grid, x+1, y-1, numOfStains, visited),
+                findStains(grid, x-1, y+1, numOfStains, visited));
+        return Math.max(numOfStains, Math.max(numOfStains1,numOfStains2));
+    }
+    private static int markSstains(int[][] grid, int x, int y, boolean [][] visited, int mark)
+    {
+        int n = grid.length;
+        if (x < 0 || y < 0 || x >= n) return 0;// verify cell in boundries
+        int m = grid[x].length;
+        if (y >= m || visited[x][y]) return 0; // in case matrix not square or rectangular
+        int gxy = grid[x][y];
+        if (gxy == STAIN_FREE || gxy == STAIN_VISITED)  // not counting empty cells
+            return 0;
+              // alrady visited or not occupied 
+        if (p) Print.p(100, x, y, gxy);
+        visited[x][y] = true;
+        if (p) Print.p(1000, x, y, gxy);
+        if (gxy == STAIN_OCCUPIED) grid[x][y] = mark;
+        return 1 + // count size of stain
+            markSstains(grid, x, y-1, visited, mark)+
+                markSstains(grid, x+1, y, visited, mark)+
+                markSstains(grid, x, y+1, visited, mark)+
+                markSstains(grid, x-1, y, visited, mark)+
+            markSstains(grid, x-1, y-1, visited, mark)+
+                markSstains(grid, x+1, y+1, visited, mark)+
+                markSstains(grid, x+1, y-1, visited, mark)+
+                markSstains(grid, x-1, y+1, visited, mark);
+    }
+    private static int stainValue(int[][] grid, int x, int y, int stainId, int[] numOfStains)
+    {
+        int n = grid.length;
+        if (x < 0 || y < 0 || x >= n) return stainId;// verify cell in boundries
+        int m = grid[x].length;
+        if (y >= m) return stainId;   // in case matrix not square or rectangular
+            // correct wrong stainId that was set because that cell is too 
+            // far from the cell set already (the stain span more than 2 rows
+            // or column, and we are checking only close neighbours so
+            // we thought it is a new stain, but it is not
+        if (stainId > STAIN_OCCUPIED && grid[x][y] > stainId)
+        {
+           Print.p("fixing cell"+makePt(x,y)+" cur "+grid[x][y]+" but stain belongs to " + stainId);
+           grid[x][y] = stainId;
+           numOfStains[0]--;
+           return stainId;
+        }
+        if (stainId <= STAIN_OCCUPIED && grid[x][y] > stainId)
+            stainId = grid[x][y];
+        return stainId;
+    }
+    private static int maxOf4(int num1, int num2, int num3, int num4)
+    {   // since we now return Integer.MAX_VALUE and not -1 no need to worry about it
+        return Math.max(Math.max(num1, num2), Math.max(num3, num4));
+    }
+
+    /**
+     * Given a 2-dim matrix with whole non negative numbers, except the vilan's one.
+     * A valid path, starting from a given (i,j) to a cell which has the value
+     * -1, marking the place of the vilan. The prince moves based on the allowed
+     * step, up, down, left or right. A +ve number in a cell mark the height
+     * of a roof, where the prince is jumping between the city roofs to reach
+     * the vilan, in order to save the princess (the game is also called the 
+     * "jumping prince"). if the neighbour cell has the same +ve value as the 
+     * current it means the roof are of the same height and the prince can move
+     * to that cell. In addition, the prince can go up one level, which means
+     * only if tha +ve value of that cell (roof) is 1 more than the current cell.
+     * He can also jump down 1 or 2 levels, if the height of the roof allows it.
+     * If the prince reaches a cell which is a neighbour of the vilan he is allowed
+     * to jump, no matter what height he is now.
+     * Need to find the shortest valid path from the starting cell to the vilan
+     * cell. If no valid path, return -1, the original array must return to it's
+     * original state, if it was changed.
+     */
+    private static int princeToVilan(int[][] m, int i, int j, int prev, int steps, String path)
+    {
+        if (i >= m.length || i < 0 || j < 0 || j >= m[i].length) return Integer.MAX_VALUE;
+        String point = makePt(i, j);
+        //if (path.indexOf(point) >= 0) return Integer.MAX_VALUE; 
+        int mij = m[i][j];
+        if (mij <= -10) return Integer.MAX_VALUE;   // already visited
+        if (mij == -1) // found the vilan
+        {
+            path += point;
+            System.out.println(path);
+            return steps;  // valid path
+        }
+        if (!(prev == mij ||  // same height
+                Math.abs(prev - mij) == 1 || // can go up or down 1 level
+                prev - mij == 2))   // can go down 2 levels
+            return Integer.MAX_VALUE;
+        path += point;
+        m[i][j] = -mij - 10;    // mark as used
+        int min = minOf4(princeToVilan(m, i, j + 1, mij, steps+1, path),// move right
+            princeToVilan(m, i, j - 1, mij, steps+1, path), // move left
+            princeToVilan(m, i + 1, j, mij, steps+1, path), // move down
+            princeToVilan(m, i - 1, j, mij, steps+1, path)); // move up
+        m[i][j] = -m[i][j] - 10;
+        return min;
+    }
+    public static int princeToVilan(int[][] m, int i, int j)
+    {
+        //p = true;
+        //int result = princeToVilanOLD(m, i, j, m[i][j], 0, "");
+        int result = princeToVilan(m, i, j, m[i][j], 0, "");
+        if (result == Integer.MAX_VALUE) result = -1;
+        return result;
+    }
+    private static int princeToVilanOLD(int[][] m, int i, int j, int prev, int steps, String path)
+    {
+        if (p) Print.p(100, i, j, m.length);
+        if (p) if (i >= 0 && i < m.length) Print.p(m[i].length);
+        if (i >= m.length || i < 0 || j < 0 || j >= m[i].length) return Integer.MAX_VALUE;
+        int mij = m[i][j];
+        if (mij <= -10) return Integer.MAX_VALUE;   // already visited
+        if (p) Print.p(1000, i, j, mij);
+        String point = makePt(i, j);
+        if (mij == -1) 
+        {
+            path += point;
+            Print.p(path);
+            if (p) Print.p(1500, steps);
+            return steps;  // valid path
+        }
+        if (p) Print.p(2000, prev, mij);
+        if (!(prev == mij ||  // same height
+                Math.abs(prev - mij) == 1 || // can go up or down 1 level
+                prev - mij == 2))
+                return Integer.MAX_VALUE;
+        path += point;
+        m[i][j] = -mij - 10;    // mark as used
+        if (p) Print.p(3000, i, j, m[i][j]);
+        int min = minOf4(princeToVilanOLD(m, i, j + 1, mij, steps+1, path),// move right
+            princeToVilanOLD(m, i, j - 1, mij, steps+1, path), // move left
+            princeToVilanOLD(m, i + 1, j, mij, steps+1, path), // move down
+            princeToVilanOLD(m, i - 1, j, mij, steps+1, path)); // move up
+        m[i][j] = -m[i][j] - 10;
+        if (p) Print.p(4000, i, j, m[i][j]);
+        if (p) Print.p(5000, min);
+        return min;
+    }
+    private static int minOf4(int num1, int num2, int num3, int num4)
+    {   // since we now return Integer.MAX_VALUE and not -1 no need to worry about it
+        return Math.min(Math.min(num1, num2), Math.min(num3, num4));
+    }
+    public static int minOf4Old(int n1, int n2, int n3, int n4)
+    {   // need to ignore -1 which it returns if reached vilan
+        if (p) Print.p(6000, n1, n2, n3);//, n4);
+        int min = n1;
+        min = (n2 == -1 ? min : min == -1 ? n2 : Math.min(min, n2));
+        min = (n3 == -1 ? min : min == -1 ? n3 : Math.min(min, n3));
+        min = (n4 == -1 ? min : min == -1 ? n4 : Math.min(min, n4));
+        return min;
+    }
+
+    /**
+     * Given a 2-dim matrix with whole numbers, non negative, less than 100.
+     * A valid path, starting from 0,0 to n,n to the next cell based on the
+     * value in the current cell such that can move right or down based on the
+     * value of the last digit in the number = d or move right/down based on the
+     * value of the tenth digit = t. That is x+=d, y+=t or x+=t, y+=t.
+     * Return the numbr of possible paths.
+     * The signature of the original question is cntPaths(int[][] m).
+     */
+    public static int countPathsInMatrix(int[][] m)
+    {
+        return countPathsInMatrix(m, 0, 0, 1);
+    }
+    private static int countPathsInMatrix(int[][] m, int x, int y, int code)
+    {
+        int n = m.length;
+        if (x >= n || x < 0 || y < 0 || y >= m[x].length)
+        {
+            if (p) Print.p(x, y, code);
+            return 0;
+        }
+        int mxy = m[x][y];
+        if (x == n-1 && y == m[x].length-1)
+        {
+            if (p) Print.p(x, y, mxy, code);
+            return 1;
+        }
+        if (mxy == 0) return 0;
+        int d = mxy % 10;
+        int t = mxy / 10;
+        if (p) Print.p(""+x+", "+y+", "+mxy+", "+d+", "+t+", "+code);
+        return (countPathsInMatrix(m, x+d, y+t, 1) +
+                    countPathsInMatrix(m, x+t, y+d, 2));
+    }
+    public static boolean areThereNumbersEqualSumWithRepeatition(int[] a, int sum)
+    {
+        boolean addToGetToTarget = true;
+        //if (addToGetToTarget)
+            return areThereNumbersEqualSumWithRepeatition(a, 0, 0, sum);
+        //return areThereNumbersEqualSumWithRepeatition(a, sum, 0);
+    }
+    // adding from 0 to reach target
+    private static boolean areThereNumbersEqualSumWithRepeatition(int[] a, int sum, int i, int target)
+    {
+        int n = a.length;
+        if (sum == target) return true; // must be before out of boundries, in case sum=0 at the last item
+        if (i >= n || sum > target || a[i] <= 0) return false; // only +ve numbers
+        if (p) Print.p(i, sum, a[i], target);
+        if (areThereNumbersEqualSumWithRepeatition(a, sum+a[i], i+1, target) || // use this number
+            areThereNumbersEqualSumWithRepeatition(a, sum, i+1, target) ||  // do not use this number
+            areThereNumbersEqualSumWithRepeatition(a, sum+a[i], i, target)) // add the same number again
+            return true;
+        return false;
+    }
+    // same as cover() learned in class if subtractin from target
+    public static boolean areThereNumbersEqualSum(int[] a, int sum)
+    {
+        boolean addToGetToTarget = false;
+        if (addToGetToTarget)
+            return areThereNumbersEqualSum(a, 0, 0, sum);
+        return areThereNumbersEqualSum(a, sum, 0);
+    }
+    // adding from 0 to reach target
+    private static boolean areThereNumbersEqualSum(int[] a, int sum, int i, int target)
+    {
+        int n = a.length;
+        if (sum == target) return true; // must be before out of boundries, in case sum=0 at the last item
+        if (i >= n) return false;
+        if (p) Print.p(i, sum, a[i]);
+        if (areThereNumbersEqualSum(a, sum+a[i], i+1, target) || // use this number
+            areThereNumbersEqualSum(a, sum, i+1, target))  // do not use this number
+            return true;
+        return false;
+    }
+    // subtracting from target
+    private static boolean areThereNumbersEqualSum(int[] a, int sum, int i)
+    {
+        int n = a.length;
+        if (sum == 0) return true; // must be before out of boundries, in case sum=0 at the last item
+        if (i >= n) return false;
+        if (p) Print.p(i, sum, a[i]);
+        if (areThereNumbersEqualSum(a, sum-a[i], i+1) || // use this number
+            areThereNumbersEqualSum(a, sum, i+1))  // do not use this number
+            return true;
+        return false;
+    }
+    public static boolean areThere2NumbersEqualSum(int[] a, int sum)
+    {
+        return areThere2NumbersEqualSum(a, sum, 0, 0);
+    }
+    private static boolean areThere2NumbersEqualSum(int[] a, int sum, int pivot, int i)
+    {
+        int n = a.length;
+        if (pivot >= n || i >= n) return false;
+        if (sum == a[pivot]+a[i]) return true;
+        //Print.p(pivot, i, sum);
+        return (areThere2NumbersEqualSum(a, sum, pivot, i+1) ||
+            //areThere2NumbersEqualSum(a, sum, pivot+1, 0));  // using extra redundant calls
+            areThere2NumbersEqualSum(a, sum, pivot+1, pivot+2));  // using extra redundant calls
+    }
     public static int ladderSoccer(int n, int m)
     {
         if (n < 0 || m < 0) return -1;
@@ -218,7 +591,7 @@ public class Recursion
         }
         return;
     }
-    private static String makePt(int x, int y)
+    public static String makePt(int x, int y) // public because Tester calls it too
     {
         return "(" + x + "," + y + ")";
     }
