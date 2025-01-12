@@ -14,27 +14,58 @@ public class Tester
         int[] arr;
         int ar[][] = new int[117][];
         
-        int runMethod = 33;
+        int runMethod = 35;
         run[runMethod] = 1;
         
-        if (run[34] == 1)
+        if (run[35] == 1)
         {
-            Print.p("------ Recursion 19 - findSumInMatrix ------");
-            int[][] grid = {
+            Print.p("------ Recursion 20 - findSumInMatrix ------");
+            int[][] grid = new int[][]{  // 4 solutions for sum = 4
+                {4, 41, 2, 1}, // line 0
+                {2, 1, 1, 1}, // line 1
+                {2, 15, 10, 54}, // line 2
+                {63, 22, 2, 4}}; // line 3
+                /*
+            grid = new int[][]{   // 2 solutions for sum = 4
                 {2, 41, 3, 14}, // line 0
-                {2, 2, 24, 7}, // line 1
-                {2, 15, 0, 0, 0, 1, 1, 0}, // line 2
-                {0, 1, 1, 0, 0, 0, 0, 0}, // line 3
-                {0, 0, 0, 1, 0, 0, 0, 0}, // line 4
-                {0, 0, 0, 0, 1, 1, 0, 0}, // line 5
-                {1, 0, 0, 0, 0, 0, 1, 0}, // line 6
-                {1, 1, 1, 0, 0, 0, 1, 0}};  // line 7
+                {2, 1, 24, 7}, // line 1
+                {3, 15, 1, 54}, // line 2
+                {63, 22, 2, 4}}; // line 3
+                /*
+            grid = new int[][]{ 
+                {1, 1, 3, 14}, // line 0
+                {2, 1, 24, 7}, // line 1
+                {3, 15, 1, 54}, // line 2
+                {63, 22, 2, 4}}; // line 3
+                */
+            int sum = 4;    // 3 solutions
+            //sum = 9;  // no solutions
             Print.p("Matrix: ");
             Print.p(grid);
-            int sum = 9;
             int[][] path = new int[grid.length][grid.length];
-            //Print.p("Found path with sum "+sum+": "+Recursion.findSumInMatrix(grid, sum, path));
+            Print.p("Found path with sum "+sum+": "+Recursion.findSumInMatrix(grid, sum, path));
+            Print.p(path);
+        }
+        if (run[34] == 1)
+        {
+            Print.p("------ Recursion 19 - findSumsInMatrix ------");
+            int[][] grid = new int[][]{ // 6 solutions
+                {4, 41, 2, 1}, // line 0
+                {2, 1, 1, 1}, // line 1
+                {2, 15, 10, 54}, // line 2
+                {63, 22, 2, 4}}; // line 3
+            grid = new int[][]{ 
+                {2, 41, 3, 14}, // line 0
+                {2, 1, 24, 7}, // line 1
+                {3, 15, 10, 54}, // line 2
+                {63, 22, 2, 4}}; // line 3
+            int sum = 4;    // 3 solutions
+            //sum = 9;  // no solutions
+            Print.p("Matrix: ");
             Print.p(grid);
+            int[][] path = new int[grid.length][grid.length];
+            Print.p("Found path with sum "+sum+": "+Recursion.findSumsInMatrix(grid, sum, path));
+            Print.p(path);
         }
         if (run[33] == 1)
         {

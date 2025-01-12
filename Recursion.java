@@ -9,7 +9,397 @@ public class Recursion
 {
     static boolean p = false;
     static int count = 0;
+    public static boolean findSumInMatrix(int[][]grid, int sum, int[][]path)
+    {
+        String[] pathArr = new String[]{"",""};
+        boolean allowMultiplePaths = false;
+        if (allowMultiplePaths)
+            return findSumInMatrix(grid, sum, path, 0, 0, true, pathArr);
+        int x = 0, y = 0, i = 0;
+        boolean res = false;
+        i=6;
+        while (x >= 0)
+        {
+            switch (i++){
+                case 0: x = 0; y = 2; break;
+                case 1: x = y = 3; break;
+                case 2: x = 2; y = 1; break;
+                case 3: x = 0; y = 3; break;
+                case 4: x = 1; y = 1; break;
+                case 5: x = 1; y = 2; break;
+                case 6: x = 1; y = 3; break;
+                default: x = -1;
+            }
+            if (x < 0) break;
+            clearArray(path);
+            res = findSumCorrected(grid, sum, path, x, y);  // find at 0,0
+            if (res)
+                Print.p("found a solution starting at " + makePt(x,y));
+            Print.p(path);
+            //if (i > 5) break;
+        }
+        return res;
+    }
+    private static void clearArray(int[][] path)
+    {
+        for (int i=0; i<path.length; i++)
+            for (int j=0; j<path.length; j++)
+                path[i][j] = 0;
+    }
+    // corrected school solution - search for one path only without the parameter "allowMultiplePaths"
+    public static boolean findSumCorrected(int[][]grid, int sum, int[][]path, 
+            int x, int y)
+    {
+        p = true;
+        int n = grid.length;
+        if (x == n) return false;   // end of matrix
+        if (y == n) // end of a row
+            return findSumCorrected(grid, sum, path, x+1, 0);
+        if (p) Print.p(1000, x, y, sum, grid[x][y], 100000);
+        if (sum >= grid[x][y])
+        {
+            int[] _sum = new int[]{sum, x, y};
+            if (findPathCorrected(grid, x, y, sum, path, x, y, 0, _sum))
+                return true;
+        }
+        if (p) Print.p(1010, x, y, sum, grid[x][y], 1010);
+        if (path[x][y] > 0) // moving to another starting point so need to reset prev cells
+        {
+            path[x][y] = 0;
+            if (isValid(n, x+1, y)) path[x+1][y] = 0;
+            if (isValid(n, x-1, y)) path[x-1][y] = 0;
+            if (isValid(n, x, y+1)) path[x][y+1] = 0;
+            if (isValid(n, x, y-1)) path[x][y-1] = 0;
+        }
+        return findSumCorrected(grid, sum, path, x, y+1);
+    }
+     private static boolean findPathCorrected(int[][] grid, int i, int j, int sum, 
+            int[][] path, int x, int y, int level, int[] _sum)
+    {
+        if (p) Print.p(1100, i, j, sum);
+        if (sum == 0) return true;
+        int n = grid.length;
+        //if (sum < 0 || !isValid(n, i, j) || path[i][j] == 1) return false;
+        if (sum < 0 || !isValid(n, i, j)) return false;
+        // not to discard the starting point as part of the checking neighbours
+        if (path[i][j] == 1) return false;// && !(x == i && y == j)) return false;
+        // to prevent checking cells not close neighbours of the original cell
+        // because we cancelled the "path[i][j] == 1" test
+        if (p) Print.p(1140, i, j, x, y);
+        if (p) Print.p(1150, Math.abs(x-i), Math.abs(y-j), (Math.abs(x-i) + Math.abs(y-j)));
+        if (Math.abs(x-i) > 1 || Math.abs(y-j) > 1 || 
+                (Math.abs(x-i) + Math.abs(y-j)) > 1) return false;
+        path[i][j] = 1;//10 * path[i][j] + 1;
+        if (p) Print.p(1200, i, j, sum, grid[i][j], path[i][j]);
+        if (findPathCorrected(grid, i+1, j, sum-grid[i][j], path, x, y, 1, _sum) ||
+            findPathCorrected(grid, i-1, j, sum-grid[i][j], path, x, y, 2, _sum) ||
+            findPathCorrected(grid, i, j+1, sum-grid[i][j], path, x, y, 3, _sum) ||
+            findPathCorrected(grid, i, j-1, sum-grid[i][j], path, x, y, 4, _sum))
+        {
+            return true;
+        }
+        // not to clear a valid cell if did not finished all recorsive calls
+        if (level == 4 || sum - grid[i][j] < 0)
+        {
+            if (p) Print.p(1250, _sum[0], _sum[1], _sum[2], sum, grid[_sum[1]][_sum[2]]);
+            if (p) Print.p(1260, grid[i][j], _sum[0] - grid[i][j]); 
+            if (_sum[0] - grid[i][j] == 0) return true;
+            path[i][j] = (path[i][j] > 1 ? path[i][j]/10 : 0);
+        }
+        else if (sum - grid[i][j] > 0)
+        {
+            if (p) Print.p(1270, _sum[0], _sum[1], _sum[2], sum, grid[_sum[1]][_sum[2]]);
+            _sum[0] = Math.min(_sum[0], sum) - grid[i][j];
+            _sum[1] = i;
+            _sum[2] = j;
+            if (_sum[0] == 0) return true;
+        }
+        if (p) Print.p(1300, i, j, sum, path[i][j], level);
+        return false;
+    }
+   // school solution - search for one path only without the parameter "allowMultiplePaths"
+    public static boolean findSum(int[][]grid, int sum, int[][]path,int x, int y)
+    {
+        p = true;
+        int n = grid.length;
+        if (x == n) return false;   // end of matrix
+        if (y == n) // end of a row
+            return findSum(grid, sum, path, x+1, 0);
+        if (p) Print.p(1000, x, y, sum, grid[x][y], 100000);
+        if (sum >= grid[x][y])
+        {
+            if (findPath(grid, x, y, sum, path))
+                return true;
+        }
+        return findSum(grid, sum, path, x, y+1);
+    }
+    private static boolean findPath(int[][] grid, int i, int j, int sum, 
+            int[][] path)
+    {
+        if (p) Print.p(1100, i, j, sum);
+        if (sum == 0) return true;
+        int n = grid.length;
+        //if (sum < 0 || !isValid(n, i, j) || path[i][j] == 1) return false;
+        if (sum < 0 || !isValid(n, i, j)) return false;
+        if (path[i][j] == 1) return false;
+        path[i][j] = 10 * path[i][j] + 1;
+        if (p) Print.p(1200, i, j, sum, grid[i][j], path[i][j]);
+        if (findPath(grid, i+1, j, sum-grid[i][j], path) ||
+            findPath(grid, i-1, j, sum-grid[i][j], path) ||
+            findPath(grid, i, j+1, sum-grid[i][j], path) ||
+            findPath(grid, i, j-1, sum-grid[i][j], path))
+        {
+            return true;
+        }
+        path[i][j] = (path[i][j] > 1 ? path[i][j]/10 : 0);
+        if (p) Print.p(1300, i, j, sum, path[i][j], 99999);
+        return false;
+    }
+    public static boolean findSumInMatrix(int[][]grid, int sum, int[][]path, 
+            int x, int y, boolean allowMultiplePaths, String[] pathArr)
+    {
+        //p = true;
+        int n = grid.length;
+        if (x == n) return false;   // end of matrix
+        if (y == n) // end of a row
+            return findSumInMatrix(grid, sum, path, x+1, 0, allowMultiplePaths, pathArr);
+        if (p) Print.p(1000, x, y, sum, grid[x][y], 100000);
+        if (sum >= grid[x][y])
+        {
+            boolean exist = false;//(allowMultiplePaths ? checkExist(path, x, y) : false);
+            if (p) if (p) Print.p(exist);
+            if (findPath(grid, x, y, sum, path, allowMultiplePaths, exist, 
+                        x, y, path[x][y], "", pathArr))
+            {
+                if (!allowMultiplePaths)
+                    return true;
+                    // check for duplicates
+                String curPath = pathArr[1];
+                pathArr[1] = "";
+                if (pathArr[0].indexOf(curPath) > -1)  //exact path already exists
+                {
+                    if (p) Print.p(pathArr[0]);
+                    findPath(grid, x, y, sum, path, allowMultiplePaths, exist, 
+                        x, y, path[x][y], "D", pathArr); // remove the duplicate path
+                }
+                else
+                {
+                    Print.p("found a solution starting at " + makePt(x,y));
+                    if (pathArr[0].length() > 0)
+                        pathArr[0] += ",";
+                    pathArr[0] += "["+curPath+"]";
+                    if (p) Print.p(pathArr[0]);
+                    if (p) Print.p(path);
+                }
+            }
+        }
+        return findSumInMatrix(grid, sum, path, x, y+1, allowMultiplePaths, pathArr);
+    }
+    private static boolean checkExist(int[][]path, int x, int y)
+    {
+        if (!isValid(path.length, x, y)) return false;
+        if (path[x][y] > 0) return true;
+        if (checkExist(path, x+1, y) && checkExist(path, x-1, y) &&
+                checkExist(path, x, y+1) && checkExist(path, x, y-1))
+            return true;
+        return false;
+    }
+    private static boolean findPath(int[][] grid, int i, int j, int sum, 
+            int[][] path, boolean allowMultiplePaths, boolean exist, int x, 
+            int y, int pathXY, String curPath, String[] pathArr)
+    {
+        if (p) Print.p(1100, i, j, sum);
+        if (sum == 0) return true;
+        int n = grid.length;
+        //if (sum < 0 || !isValid(n, i, j) || path[i][j] == 1) return false;
+        if (sum < 0 || !isValid(n, i, j)) return false;
+        if (!allowMultiplePaths && path[i][j] == 1) return false;
+        // top prevent checking cells not close neighbours of the original cell
+        // because we cancelled the "path[i][j] == 1" test
+        if ((x == i && y == j && path[i][j] != pathXY) || // not to check origin=nal cell again
+                Math.abs(x-i) > 1 || Math.abs(y-j) > 1 || 
+                (Math.abs(x-i) + Math.abs(y-j)) > 1) return false;
+        //Print.p(1100, i, j, sum, grid[i][j]);
+        /*        
+        if (path[i][j] == 0 || exist)
+        {
+            path[i][j] = 10 * path[i][j] + 1;
+            exist = false;
+        }
+        */
+        exist = path[i][j] > 0;
+        path[i][j] = 10 * path[i][j] + 1;
+        if (p) Print.p(1200, i, j, sum, grid[i][j], path[i][j]);
+        String pt = makePt(i,j);
+        curPath += pt;
+        if (findPath(grid, i+1, j, sum-grid[i][j], path, allowMultiplePaths, exist, x, y, pathXY, curPath, pathArr) ||
+            findPath(grid, i-1, j, sum-grid[i][j], path, allowMultiplePaths, exist, x, y, pathXY, curPath, pathArr) ||
+            findPath(grid, i, j+1, sum-grid[i][j], path, allowMultiplePaths, exist, x, y, pathXY, curPath, pathArr) ||
+            findPath(grid, i, j-1, sum-grid[i][j], path, allowMultiplePaths, exist, x, y, pathXY, curPath, pathArr))
+        {
+            if (pathArr[1].length() == 0) // not to add from returns below when clearing the stack with partial curPath
+            {
+                if (p) Print.p("1210 " + exist);
+                pathArr[1] = curPath;
+            }
+            return true;
+        }
+        path[i][j] = (path[i][j] > 1 ? path[i][j]/10 : 0);
+        if (p) Print.p(1300, i, j, sum, path[i][j], 99999);
+        if (p) Print.p("["+curPath+"]");
+        curPath = curPath.substring(0, curPath.length() - pt.length());
+        if (p) Print.p("["+curPath+"]");
+        return false;
+    }
     
+    /**
+     * Given a 2-dim square matrix with +ve whole numbers > 0.
+     * The method will find all "path"s of 4 or less close neighbours of a 
+     * cell such that the sum of those cells equal a supplied +ve whole target.
+     * The method returns true or false to indicate if a path was found or not.
+     * The supplied matrix, named path, should hold 1 at the cells which
+     * belong to the path, 0 otherwise. If there are more than one path, any
+     * of them is a valid solution, and will also show with 1 at the proper
+     * cells. If a cell belongs to 2 different paths (at least 1 cell is new)
+     * then it will have 11 (if it belongs to 2 paths, 111 belongs to 3 paths
+     * and so on).
+     * Example: for target 4 and the matrix
+     *          {2, 41, 3, 14}, // line 0
+                {2, 1, 24, 7}, // line 1
+                {2, 15, 10, 54}, // line 2
+                {63, 22, 2, 4}}; // line 3
+        possible solutions are: (0,0)+(0,1), (0,1)+(0,2), (3,3)
+     */
+    public static boolean findSumsInMatrix(int[][]grid, int sum, int[][]path)
+    {
+        int solutions = findSumsInMatrix2(grid, sum, path, 0, 0, 0);
+        Print.p("Found "+solutions+" paths with sum = "+sum);
+        return solutions > 0;
+    }
+    // 2 calls to the recursion method
+    public static int findSumsInMatrix2(int[][]grid, int sum, int[][]path, int x, int y, int solutions)
+    {
+        //p = true;
+        int n = grid.length;
+        if (p) Print.p(1000, x, y, sum);
+        if (x == n) return solutions;   // end of matrix
+        if (y == n) // end of a row
+            return findSumsInMatrix2(grid, sum, path, x+1, 0, solutions);
+        //if (x < 0 || y < 0 || x >= n || y >= n) return solutions;// verify cell in boundries
+        int newSum = sum-grid[x][y];
+        if (p) Print.p(1100, x, y, newSum, grid[x][y]);
+        boolean exist = (path[x][y] > 0);
+        if (newSum < 0)
+            newSum = sum;
+        else if (newSum > 0) // look for neighbour cells
+        {
+            int[] _newSum = new int[]{newSum};
+            exist = findPath(grid, n, x, y, exist, _newSum, path);
+            newSum = _newSum[0];
+        }
+        if (p) Print.p(1800, x, y, newSum, grid[x][y]);
+        if (newSum == 0 && !exist)   // found a new solution
+        {
+            path[x][y] = 10 * path[x][y] + 1;
+            Print.p("1900, Found path starting at "+makePt(x,y)+" with sum "+sum+": true");
+            Print.p(path);
+            solutions++;
+        }
+        if (p) Print.p(2000, y, newSum, solutions);
+        return findSumsInMatrix2(grid, sum, path, x, y+1, solutions);
+    }        
+    private static boolean findPath(int[][] grid, int n, int x, int y, boolean exist, int[] _newSum, int[][] path)
+    {
+        int newSum = _newSum[0];
+        int savSum = newSum;
+        //if (p) Print.p(1200, x, y, newSum, grid[x][y], x+1);
+        exist = setPath(grid, n, x+1, y, exist, _newSum, path);
+        exist = setPath(grid, n, x-1, y, exist, _newSum, path);
+        exist = setPath(grid, n, x, y+1, exist, _newSum, path);
+        exist = setPath(grid, n, x, y-1, exist, _newSum, path);
+        newSum = _newSum[0];
+        if (false && newSum > 0 && savSum != newSum) // not found, restore in reverse order
+        {
+            if (p) Print.p(1700, x, y, newSum, grid[x][y]);
+            //Print.p(path);
+            newSum = resetPath(grid, n, x, y-1, exist, newSum, path);
+            newSum = resetPath(grid, n, x, y+1, exist, newSum, path);
+            newSum = resetPath(grid, n, x-1, y, exist, newSum, path);
+            newSum = resetPath(grid, n, x+1, y, exist, newSum, path);
+            //Print.p(path);                    
+        }
+        return exist;        
+    }
+    private static boolean setPath(int[][] grid, int n, int i, int j, boolean exist, int[] _newSum, int[][] path) 
+    {
+        int newSum = _newSum[0];
+        if (isValid(n, i, j) && newSum >= grid[i][j])
+        {
+            if (p) Print.p(1300+10*i, i, j, newSum, grid[i][j]);
+            newSum -= grid[i][j];
+            if (path[i][j] == 0 || !exist)
+            {
+                path[i][j] = 10 * path[i][j] + 1;
+                exist = false;
+            }
+        }
+        _newSum[0] = newSum;
+        return exist;
+    }
+    private static int resetPath(int[][] grid, int n, int i, int j, boolean exist, int newSum, int[][] path) 
+    {
+        if (isValid(n, i, j) && newSum + grid[i][j] > 0)
+        {
+            newSum += grid[i][j];
+            if (!exist)
+                path[i][j] = (path[i][j] > 1? path[i][j]/10 : 0);
+        }
+        return newSum;
+    }
+    // 1 call to the recursion method
+    public static int findSumsInMatrix(int[][]grid, int sum, int[][]path, int x, int y, int solutions)
+    {
+        //p = true;
+        int n = grid.length;
+        if (p) Print.p(1000, x, y, sum);
+        //if (x < 0 || y < 0 || x >= n || y >= n) return solutions;// verify cell in boundries
+        int newSum = sum-grid[x][y];
+        if (p) Print.p(1100, x, y, newSum, grid[x][y]);
+        boolean exist = (path[x][y] > 0);
+        if (newSum < 0)
+            newSum = sum;
+        else if (newSum > 0) // look for neighbour cells
+        {
+            int[] _newSum = new int[]{newSum};
+            exist = findPath(grid, n, x, y, exist, _newSum, path);
+            newSum = _newSum[0];
+        }
+        if (p) Print.p(1800, x, y, newSum, grid[x][y]);
+        if (newSum == 0 && !exist)   // found a new solution
+        {
+            path[x][y] = 10 * path[x][y] + 1;
+            Print.p("1900, Found path starting at "+makePt(x,y)+" with sum "+sum+": true");
+            Print.p(path);
+            solutions++;
+        }
+        if (p) Print.p(2000, y, newSum, solutions);
+        if (++y == n && x < n-1) // finished the row
+        {
+            if (p) Print.p(2100, y, newSum, solutions);
+            y = 0;
+            x++;
+        }
+        else if (x == n-1 && y == n)
+            return solutions;   // finished the matrix
+        if (p) Print.p(2200, x, y, sum);
+            // continue in the matrix
+        return findSumsInMatrix(grid, sum, path, x, y, solutions);
+    }        
+    private static boolean isValid(int n, int x, int y)
+    {
+        return !(x < 0 || y < 0 || x >= n || y >= n);
+    }
+
     /**
      * Given a 2-dim matrix with cells marked with 'x' or '1' as occupied.
      * A region of connected occupied cells, horizontally, vertically or 
