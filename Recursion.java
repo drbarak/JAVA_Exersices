@@ -9,18 +9,58 @@ public class Recursion
 {
     static boolean p = false;
     static int count = 0;
+    /**
+     * Given a 2-dim square matrix with whole numbers.
+     * The method will find all the longest path from all paths formed by
+     * moving up/down/left/right from a cell to its neighbour, and from any of
+     * these cell move to the next valid cell, such that all cells in the path
+     * form a continuous path.
+     */
+    public static boolean longestWorm(int[][]grid)
+    {
+        return longestWorm(grid, 0, 0, 0, Integer.MAX_VALUE);
+    }
+    public static boolean longestWorm(int[][]grid, int x, int y, int sum, int max)
+    {
+        return max;
+    }
+
+    /**
+     * Given a 2-dim square matrix with +ve whole numbers > 0.
+     * The method will find all "path"s of 4 or less close neighbours of a 
+     * cell such that the sum of those cells equal a supplied +ve whole target.
+     * The method returns true or false to indicate if a path was found or not.
+     * The supplied matrix, named path, should hold 1 at the cells which
+     * belong to the path, 0 otherwise. If there are more than one path, any
+     * of them is a valid solution, and will also show with 1 at the proper
+     * cells. If a cell belongs to 2 different paths (at least 1 cell is new)
+     * then it will have 11 (if it belongs to 2 paths, 111 belongs to 3 paths
+     * and so on).
+     * A variation of this method is when the parameter allowMultiplePaths is
+     * set to false. In that case only the first path from a starting cell is
+     * returned, but the path is not restricted to the cells adjacent to the
+     * cell, but as long as the other cells are neighbours of the previuous
+     * cell such that the form a continuous path, they are valid.
+     * Example: for target 4 and the matrix
+     *          {2, 41, 3, 14}, // line 0
+                {2, 1, 24, 7}, // line 1
+                {2, 15, 10, 54}, // line 2
+                {63, 22, 2, 4}}; // line 3
+        possible solutions are: (0,0)+(0,1), (0,1)+(0,2), (3,3)
+     */
     public static boolean findSumInMatrix(int[][]grid, int sum, int[][]path)
     {
         String[] pathArr = new String[]{"",""};
-        boolean allowMultiplePaths = false;
+        boolean allowMultiplePaths = true;
+        //p = true;
         if (allowMultiplePaths)
             return findSumInMatrix(grid, sum, path, 0, 0, true, pathArr);
-        int x = 0, y = 0, i = 0;
-        boolean res = false;
-        i=6;
-        while (x >= 0)
+        int x = -1, y = -1, i = 0;
+        boolean res = true;
+        while (true)
         {
             switch (i++){
+                case -1: x = 0; y = 0; break;
                 case 0: x = 0; y = 2; break;
                 case 1: x = y = 3; break;
                 case 2: x = 2; y = 1; break;
@@ -28,9 +68,9 @@ public class Recursion
                 case 4: x = 1; y = 1; break;
                 case 5: x = 1; y = 2; break;
                 case 6: x = 1; y = 3; break;
-                default: x = -1;
+                default: i = 100;
             }
-            if (x < 0) break;
+            if (i >= 100) break;
             clearArray(path);
             res = findSumCorrected(grid, sum, path, x, y);  // find at 0,0
             if (res)
@@ -50,7 +90,7 @@ public class Recursion
     public static boolean findSumCorrected(int[][]grid, int sum, int[][]path, 
             int x, int y)
     {
-        p = true;
+        //p = true;
         int n = grid.length;
         if (x == n) return false;   // end of matrix
         if (y == n) // end of a row
@@ -99,12 +139,20 @@ public class Recursion
             return true;
         }
         // not to clear a valid cell if did not finished all recorsive calls
+        if (p) Print.p(1240, i, j, sum, grid[i][j], level);
         if (level == 4 || sum - grid[i][j] < 0)
         {
             if (p) Print.p(1250, _sum[0], _sum[1], _sum[2], sum, grid[_sum[1]][_sum[2]]);
             if (p) Print.p(1260, grid[i][j], _sum[0] - grid[i][j]); 
-            if (_sum[0] - grid[i][j] == 0) return true;
-            path[i][j] = (path[i][j] > 1 ? path[i][j]/10 : 0);
+            if (_sum[0] - grid[i][j] == 0)
+            {
+            // in case need to reset current cell because with it the sum is -ve
+                if (sum - grid[i][j] < 0)
+                    resetCell(_sum[1], _sum[2], path, null);
+                return true;
+            }
+            resetCell(i, j, path, null);
+            //path[i][j] = (path[i][j] > 1 ? path[i][j]/10 : 0);
         }
         else if (sum - grid[i][j] > 0)
         {
@@ -117,10 +165,31 @@ public class Recursion
         if (p) Print.p(1300, i, j, sum, path[i][j], level);
         return false;
     }
-   // school solution - search for one path only without the parameter "allowMultiplePaths"
+    private static void resetCell(int i, int j, int[][] path, String[] pathArr)
+    {
+        path[i][j] = (path[i][j] > 1 ? path[i][j]/10 : 0);
+        if (pathArr != null)
+        {
+            String curPath = pathArr[1];
+            if (curPath.length() > 0)
+            {
+                String pt = makePt(i,j);
+                if (p) Print.p("in resetCell ["+curPath+"],["+pt+"],"+
+                        curPath.indexOf(pt)+", "+(curPath.length() - pt.length()));
+                if (curPath.indexOf(pt) == curPath.length() - pt.length())
+                {
+                    curPath = curPath.substring(0, curPath.length() - pt.length());
+                    pathArr[1] = curPath;
+                    if (p) Print.p("in resetCell2 ["+curPath+"]");
+                }
+            }
+        }
+        if (p) Print.p("in resetCell3 "+i+", "+j+", "+path[i][j]);
+    }
+    // school solution - search for one path only without the parameter "allowMultiplePaths"
     public static boolean findSum(int[][]grid, int sum, int[][]path,int x, int y)
     {
-        p = true;
+        //p = true;
         int n = grid.length;
         if (x == n) return false;   // end of matrix
         if (y == n) // end of a row
@@ -128,12 +197,12 @@ public class Recursion
         if (p) Print.p(1000, x, y, sum, grid[x][y], 100000);
         if (sum >= grid[x][y])
         {
-            if (findPath(grid, x, y, sum, path))
+            if (findPathSchool(grid, x, y, sum, path))
                 return true;
         }
         return findSum(grid, sum, path, x, y+1);
     }
-    private static boolean findPath(int[][] grid, int i, int j, int sum, 
+    private static boolean findPathSchool(int[][] grid, int i, int j, int sum, 
             int[][] path)
     {
         if (p) Print.p(1100, i, j, sum);
@@ -144,14 +213,15 @@ public class Recursion
         if (path[i][j] == 1) return false;
         path[i][j] = 10 * path[i][j] + 1;
         if (p) Print.p(1200, i, j, sum, grid[i][j], path[i][j]);
-        if (findPath(grid, i+1, j, sum-grid[i][j], path) ||
-            findPath(grid, i-1, j, sum-grid[i][j], path) ||
-            findPath(grid, i, j+1, sum-grid[i][j], path) ||
-            findPath(grid, i, j-1, sum-grid[i][j], path))
+        if (findPathSchool(grid, i+1, j, sum-grid[i][j], path) ||
+            findPathSchool(grid, i-1, j, sum-grid[i][j], path) ||
+            findPathSchool(grid, i, j+1, sum-grid[i][j], path) ||
+            findPathSchool(grid, i, j-1, sum-grid[i][j], path))
         {
             return true;
         }
-        path[i][j] = (path[i][j] > 1 ? path[i][j]/10 : 0);
+        resetCell(i, j, path, null);
+        //path[i][j] = (path[i][j] > 1 ? path[i][j]/10 : 0);
         if (p) Print.p(1300, i, j, sum, path[i][j], 99999);
         return false;
     }
@@ -166,21 +236,31 @@ public class Recursion
         if (p) Print.p(1000, x, y, sum, grid[x][y], 100000);
         if (sum >= grid[x][y])
         {
-            boolean exist = false;//(allowMultiplePaths ? checkExist(path, x, y) : false);
-            if (p) if (p) Print.p(exist);
-            if (findPath(grid, x, y, sum, path, allowMultiplePaths, exist, 
-                        x, y, path[x][y], "", pathArr))
+            boolean exist = (allowMultiplePaths ? checkExist(path, x, y) : false);
+            if (p) Print.p(exist);
+            int[] _sum = new int[]{sum, x, y};
+            if (findPathInMatrix(grid, x, y, sum, path, allowMultiplePaths, exist, 
+                        x, y, path[x][y], pathArr, 0, _sum))
             {
                 if (!allowMultiplePaths)
                     return true;
-                    // check for duplicates
                 String curPath = pathArr[1];
+                // check if wrong solution if (x,y) not included which means
+                // other cells sum is the target and we let the other cells to be
+                // the start of the solution (eg. a row has 2,4 we do not want the
+                // 4 to be marked as a soultion from the cell of 2 but from the
+                // cell of 4 (the target is 4)
+                String pt = makePt(x,y);
+                if (curPath.indexOf(pt) < 0)
+                    clearCurPath(path, pathArr);
+
+                    // check for duplicates
                 pathArr[1] = "";
                 if (pathArr[0].indexOf(curPath) > -1)  //exact path already exists
                 {
-                    if (p) Print.p(pathArr[0]);
-                    findPath(grid, x, y, sum, path, allowMultiplePaths, exist, 
-                        x, y, path[x][y], "D", pathArr); // remove the duplicate path
+                    if (p) Print.p("need to delete duplicates paths ["+pathArr[0]+"], ["+curPath+"]");
+                    //findPathInMatrix(grid, x, y, sum, path, allowMultiplePaths, exist, 
+                    //    x, y, path[x][y], "D", pathArr, 0, _sum); // remove the duplicate path
                 }
                 else
                 {
@@ -189,11 +269,39 @@ public class Recursion
                         pathArr[0] += ",";
                     pathArr[0] += "["+curPath+"]";
                     if (p) Print.p(pathArr[0]);
-                    if (p) Print.p(path);
+                    Print.p(path);
+                    //p = true;
                 }
             }
+            else
+            {
+                    // remove partial result
+                String curPath = pathArr[1];
+                if (p) Print.p(1008, x, y, sum, grid[x][y], _sum[0]);
+                if (p) Print.p("1009 ,"+curPath);
+                clearCurPath(path, pathArr);
+            }
         }
+        if (p) Print.p(1010, x, y, sum, grid[x][y], sum-grid[x][y]);
         return findSumInMatrix(grid, sum, path, x, y+1, allowMultiplePaths, pathArr);
+    }
+    private static void clearCurPath(int[][] path, String[] pathArr)
+    {
+        String curPath = pathArr[1];
+        while (curPath.length() > 0)
+        {
+            int k=curPath.length()-1;
+            for (; k>=0 && (curPath.charAt(k) != '('); k--);
+            if (k >= 0)                {
+                int j = curPath.indexOf(',', k+1);
+                int i = Integer.parseInt(curPath.substring(k+1, j));
+                k = curPath.indexOf(')', k+1);
+                j = Integer.parseInt(curPath.substring(j+1, k));
+                resetCell(i, j, path, pathArr);
+            }
+            curPath = pathArr[1];
+        }
+
     }
     private static boolean checkExist(int[][]path, int x, int y)
     {
@@ -204,21 +312,25 @@ public class Recursion
             return true;
         return false;
     }
-    private static boolean findPath(int[][] grid, int i, int j, int sum, 
+    private static boolean findPathInMatrix(int[][] grid, int i, int j, int sum, 
             int[][] path, boolean allowMultiplePaths, boolean exist, int x, 
-            int y, int pathXY, String curPath, String[] pathArr)
+            int y, int pathXY, String[] pathArr, int level, int[] _sum)
     {
         if (p) Print.p(1100, i, j, sum);
-        if (sum == 0) return true;
+        if (sum == 0)
+        {
+            _sum[0] = sum;
+            return true;
+        }
         int n = grid.length;
         //if (sum < 0 || !isValid(n, i, j) || path[i][j] == 1) return false;
         if (sum < 0 || !isValid(n, i, j)) return false;
         if (!allowMultiplePaths && path[i][j] == 1) return false;
-        // top prevent checking cells not close neighbours of the original cell
+        // to prevent checking cells not close neighbours of the original cell
         // because we cancelled the "path[i][j] == 1" test
-        if ((x == i && y == j && path[i][j] != pathXY) || // not to check origin=nal cell again
-                Math.abs(x-i) > 1 || Math.abs(y-j) > 1 || 
+        if (Math.abs(x-i) > 1 || Math.abs(y-j) > 1 || 
                 (Math.abs(x-i) + Math.abs(y-j)) > 1) return false;
+        if (!exist && path[i][j] > 0 && (i == x && j == y)) return false;  // startin cell
         //Print.p(1100, i, j, sum, grid[i][j]);
         /*        
         if (path[i][j] == 0 || exist)
@@ -228,15 +340,29 @@ public class Recursion
         }
         */
         exist = path[i][j] > 0;
-        path[i][j] = 10 * path[i][j] + 1;
-        if (p) Print.p(1200, i, j, sum, grid[i][j], path[i][j]);
+        // to prevent a cell from added twice in the same path
         String pt = makePt(i,j);
-        curPath += pt;
-        if (findPath(grid, i+1, j, sum-grid[i][j], path, allowMultiplePaths, exist, x, y, pathXY, curPath, pathArr) ||
-            findPath(grid, i-1, j, sum-grid[i][j], path, allowMultiplePaths, exist, x, y, pathXY, curPath, pathArr) ||
-            findPath(grid, i, j+1, sum-grid[i][j], path, allowMultiplePaths, exist, x, y, pathXY, curPath, pathArr) ||
-            findPath(grid, i, j-1, sum-grid[i][j], path, allowMultiplePaths, exist, x, y, pathXY, curPath, pathArr))
+        String curPath = pathArr[1];
+        if (exist)
         {
+            if (p) Print.p("["+curPath+"]");
+            if (curPath.indexOf(pt) < 0)
+                exist = false;  // allow to add
+        }
+        if (!exist)
+        {
+            path[i][j] = 10 * path[i][j] + 1;
+            curPath += pt;  // creates a new string but the original string maintains it's original value
+            pathArr[1] = curPath; // to keep it's new value between recursive calls
+            if (p) Print.p("1195 [" + pathArr[1] + "], ["+curPath+"]");
+        }
+        if (p) Print.p(1200, i, j, sum, grid[i][j], path[i][j]);
+        if (findPathInMatrix(grid, i+1, j, sum-grid[i][j], path, allowMultiplePaths, exist, x, y, pathXY, pathArr, 1, _sum) ||
+            findPathInMatrix(grid, i-1, j, sum-grid[i][j], path, allowMultiplePaths, exist, x, y, pathXY, pathArr, 2, _sum) ||
+            findPathInMatrix(grid, i, j+1, sum-grid[i][j], path, allowMultiplePaths, exist, x, y, pathXY, pathArr, 3, _sum) ||
+            findPathInMatrix(grid, i, j-1, sum-grid[i][j], path, allowMultiplePaths, exist, x, y, pathXY, pathArr, 4, _sum))
+        {
+            if (p) Print.p("1205 [" + pathArr[1] + "], ["+curPath+"]");
             if (pathArr[1].length() == 0) // not to add from returns below when clearing the stack with partial curPath
             {
                 if (p) Print.p("1210 " + exist);
@@ -244,11 +370,49 @@ public class Recursion
             }
             return true;
         }
-        path[i][j] = (path[i][j] > 1 ? path[i][j]/10 : 0);
-        if (p) Print.p(1300, i, j, sum, path[i][j], 99999);
+        // not to clear a valid cell if did not finished all recorsive calls
+        if (p) Print.p(1240, i, j, sum, grid[i][j], level);
+        if (level == 4 || sum - grid[i][j] < 0)
+        {
+            if (p) Print.p(1250, _sum[0], _sum[1], _sum[2], sum, grid[_sum[1]][_sum[2]]);
+            if (p) Print.p(1260, grid[i][j], _sum[0] - grid[i][j]); 
+            if (_sum[0] - grid[i][j] == 0)
+            {
+            // in case need to reset current cell because with it the sum is -ve
+                if (sum - grid[i][j] < 0)
+                {
+                    if (_sum[1] == x && _sum[2] == y) // if removing origianl point then it is a wrong solution
+                    {
+                        sum = _sum[0];
+                        clearCurPath(path, pathArr);
+                        if (p) Print.p(1265, x, y, sum, path[x][y]); 
+                        return false;
+                    }
+                    resetCell(_sum[1], _sum[2], path, pathArr);
+                }
+                _sum[0] = sum;
+                return true;
+            }
+            resetCell(i, j, path, pathArr);
+            //path[i][j] = (path[i][j] > 1 ? path[i][j]/10 : 0);
+        }
+        else if (sum - grid[i][j] > 0)
+        {
+            if (p) Print.p(1270, _sum[0], _sum[1], _sum[2], sum, grid[_sum[1]][_sum[2]]);
+            _sum[0] = Math.min(_sum[0], sum) - grid[i][j];
+            _sum[1] = i;
+            _sum[2] = j;
+            if (_sum[0] == 0) return true;
+        }
+        if (p) Print.p(1290, i, j, sum, path[i][j], level);
+        /*
+        resetCell(i, j, path);
+        //path[i][j] = (path[i][j] > 1 ? path[i][j]/10 : 0);
         if (p) Print.p("["+curPath+"]");
         curPath = curPath.substring(0, curPath.length() - pt.length());
         if (p) Print.p("["+curPath+"]");
+        */
+        if (p) Print.p(1300, i, j, sum, path[i][j], 99999);
         return false;
     }
     
@@ -276,7 +440,7 @@ public class Recursion
         Print.p("Found "+solutions+" paths with sum = "+sum);
         return solutions > 0;
     }
-    // 2 calls to the recursion method
+    // no recursion method to find path
     public static int findSumsInMatrix2(int[][]grid, int sum, int[][]path, int x, int y, int solutions)
     {
         //p = true;
@@ -294,7 +458,7 @@ public class Recursion
         else if (newSum > 0) // look for neighbour cells
         {
             int[] _newSum = new int[]{newSum};
-            exist = findPath(grid, n, x, y, exist, _newSum, path);
+            exist = findPathInMatrix2(grid, n, x, y, exist, _newSum, path);
             newSum = _newSum[0];
         }
         if (p) Print.p(1800, x, y, newSum, grid[x][y]);
@@ -308,7 +472,8 @@ public class Recursion
         if (p) Print.p(2000, y, newSum, solutions);
         return findSumsInMatrix2(grid, sum, path, x, y+1, solutions);
     }        
-    private static boolean findPath(int[][] grid, int n, int x, int y, boolean exist, int[] _newSum, int[][] path)
+    private static boolean findPathInMatrix2(int[][] grid, int n, int x, int y, 
+            boolean exist, int[] _newSum, int[][] path)
     {
         int newSum = _newSum[0];
         int savSum = newSum;
@@ -352,7 +517,8 @@ public class Recursion
         {
             newSum += grid[i][j];
             if (!exist)
-                path[i][j] = (path[i][j] > 1? path[i][j]/10 : 0);
+                resetCell(i, j, path, null); //? what about curPath
+                //path[i][j] = (path[i][j] > 1? path[i][j]/10 : 0);
         }
         return newSum;
     }
@@ -371,7 +537,7 @@ public class Recursion
         else if (newSum > 0) // look for neighbour cells
         {
             int[] _newSum = new int[]{newSum};
-            exist = findPath(grid, n, x, y, exist, _newSum, path);
+            exist = findPathInMatrix2(grid, n, x, y, exist, _newSum, path);
             newSum = _newSum[0];
         }
         if (p) Print.p(1800, x, y, newSum, grid[x][y]);

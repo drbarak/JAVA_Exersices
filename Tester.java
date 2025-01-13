@@ -14,9 +14,22 @@ public class Tester
         int[] arr;
         int ar[][] = new int[117][];
         
-        int runMethod = 35;
+        int runMethod = 36;
         run[runMethod] = 1;
         
+        if (run[35] == 1)
+        {
+            Print.p("------ Recursion 21 - LongestWorm(int[][]) ------");
+            int[][] grid = new int[][]{  // 4 solutions for sum = 4
+                {4, 41, 2, 1}, // line 0
+                {2, 1, 1, 1}, // line 1
+                {2, 15, 10, 54}, // line 2
+                {63, 22, 2, 4}}; // line 3
+            int sum = 4;    // 3 solutions
+            Print.p("Matrix: ");
+            Print.p(grid);
+            Print.p("Found worm of length "+Recursion.longestWorm(grid));
+        }
         if (run[35] == 1)
         {
             Print.p("------ Recursion 20 - findSumInMatrix ------");
