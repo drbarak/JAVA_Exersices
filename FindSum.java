@@ -1,3 +1,7 @@
+package תרגילים_נוספים;
+
+import static Library.Print.p;
+import static Library.MyLibrary.*;
 import java.util.Arrays;
 /**
  * Write a description of class FindSum here.
@@ -31,7 +35,7 @@ public class FindSum
             clearArray(path);
             res = findSum(grid, sum, path, x, y);  // find at 0,0
             if (res)
-                Print.p("found a solution starting at " + "(" + x + "," + y + ")");
+               p("found a solution starting at " + "(" + x + "," + y + ")");
             print(path);
             switch (i++){
                 case 0: x = 0; y = 2; break;

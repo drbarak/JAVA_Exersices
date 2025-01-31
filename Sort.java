@@ -1,4 +1,7 @@
+package תרגילים_נוספים;
 
+import static Library.Print.p;
+import static Library.MyLibrary.*;
 
 public class Sort
 {
@@ -6,32 +9,32 @@ public class Sort
     private static int count;
     
     // selection sort using recursion
-    public static void selectioSort(int[]a)
+    public static void selectionSort(int[]a)
     {
-        if (a.length > 0) selectioSort(a, 0);
+        if (a.length > 0) selectionSort(a, 0);
         return;
     }
-    private static int selectioSort(int[]a, int i)
+    private static int selectionSort(int[]a, int i)
     {
         int n = a.length;
         if (i == n - 1) return a[i];
             // find the minimum from the partial array starting from position i
-        int minIndex = selectioSort(a, i + 1, i);
-        if (p) Print.p(i, minIndex, a[minIndex], a[i]);
+        int minIndex = selectionSort(a, i + 1, i);
+        if (p) p(i, minIndex, a[minIndex], a[i]);
         if (a[minIndex] < a[i])
-            MyLibrary.swap(a, i, minIndex);
-        if (p) Print.p(a);
-        return selectioSort(a, i + 1);
+            swap(a, i, minIndex);
+        if (p) p(a);
+        return selectionSort(a, i + 1);
     }
-    private static int selectioSort(int[]a, int i, int minIndex)
+    private static int selectionSort(int[]a, int i, int minIndex)
     {
         int n = a.length;
         if (i >= n) return minIndex;
             // find the minimum from the partial array starting from position i
-        if (p) Print.p(i, minIndex, a[minIndex], a[i]);
+        if (p) p(i, minIndex, a[minIndex], a[i]);
         if (a[minIndex] > a[i])
             minIndex = i;
-        return selectioSort(a, i + 1, minIndex);
+        return selectionSort(a, i + 1, minIndex);
     }
     // Main method to sort an array using Radix Sort - chatGPT
     public static void radixSort(int[] arr) {
@@ -96,14 +99,14 @@ public class Sort
         quickSortOK(nums, descending, top, stack);
         */
         quickSort(nums, descending, low, high);
-        Print.p("count = "+count);
+        p("count = "+count);
     }
     public static void quickSort(int[] nums, boolean descending, int low, int high)
     {
         if (low < high) 
         {
             int mid = partition(nums, low, high, descending, low-1);
-            if (p) Print.p(low,high, mid);
+            if (p) p(low,high, mid);
             if (low < mid - 1)
                 quickSort(nums, descending, low, mid - 1);
             if (mid + 1 < high)
@@ -120,7 +123,7 @@ public class Sort
             int high = stack[top--];
             int low = stack[top--];
             int mid = partition(nums, low, high, descending, low-1);
-            if (p) Print.p(low,high, mid);
+            if (p) p(low,high, mid);
             // Push the 2 partitions to the stack
             if (mid - 1 > low)
             {
@@ -141,20 +144,20 @@ public class Sort
         p=false;
         if (j == high)
         {
-            MyLibrary.swap(nums, index+1, high); // place the pivot in the right position
+            swap(nums, index+1, high); // place the pivot in the right position
             return index+1;    // return the pivot index
         }
         count++;
-        if (p) Print.p(index,j, nums[j], nums[high]);
-        if (p) Print.p(count,j,high);
+        if (p) p(index,j, nums[j], nums[high]);
+        if (p) p(count,j,high);
         if ((!descending && nums[j] <= nums[high]) ||
                     (descending && nums[j] >= nums[high]))
         {
             index++;
             if (index != j)
-                MyLibrary.swap(nums, index, j);
+                swap(nums, index, j);
         }
-        if (p) Print.p(nums);
+        if (p) p(nums);
         index = partition(nums, j + 1, high, descending, index);
         return index;
     }
@@ -178,7 +181,7 @@ public class Sort
             high = stack[top--];
             low = stack[top--];
             int mid = partition(nums, low, high, descending);
-            if (p) Print.p(low,high, mid);
+            if (p) p(low,high, mid);
             // Push the 2 partitions to the stack
             if (mid - 1 > low)
             {
@@ -191,7 +194,7 @@ public class Sort
                 stack[++top] = high;
             }
         }
-        Print.p("count = "+count);
+        p("count = "+count);
         return;
     }
     private static int partition(int[] nums, int low, int high, boolean descending)
@@ -200,17 +203,17 @@ public class Sort
         for (int j=low;j<high;j++)
         {
             count++;
-            if (p) Print.p(i,j);
+            if (p) p(i,j);
             if ((!descending && nums[j] <= nums[high]) ||
                     (descending && nums[j] >= nums[high]))
             {
                 i++;
                 if (i != j)
-                    MyLibrary.swap(nums, i, j);
+                    swap(nums, i, j);
             }
-            if (p) Print.p(nums);
+            if (p) p(nums);
         }
-        MyLibrary.swap(nums, i+1, high); // place the pivot inthe right position
+        swap(nums, i+1, high); // place the pivot inthe right position
         return i+1;    // return the pivot index
     }
     /**
@@ -250,7 +253,7 @@ public class Sort
         }
         // step 2: create an array of differnces with min, size of max-min+1
         int[] frequency = new int[max - min + 1];
-        if (p) Print.p(max-min+1);
+        if (p) p(max-min+1);
         for (int num : nums)
         {
             count++;
@@ -269,7 +272,7 @@ public class Sort
                 frequency[i]--;
             }
         }
-        Print.p("count = "+count);
+        p("count = "+count);
         return sorted;
     }
     public static int[] mySortWithPrinting(int[] nums, boolean descending) // with modifications for clarity and bravity from chatGPT
@@ -283,12 +286,12 @@ public class Sort
             if (min > num) min = num;
             if (max < num) max = num;
         }
-        if (p) Print.p(min, max);
+        if (p) p(min, max);
         // step 2: create an array of differnces with min, size of max-min+1
         int[] frequency = new int[max - min + 1];
         for (int num : nums)
             frequency[descending? max-num : num-min]++;
-        if (p) Print.p(frequency);
+        if (p) p(frequency);
         //Step 3: sort
         int[] sorted = new int[nums.length];
         int index = 0;

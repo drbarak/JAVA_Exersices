@@ -1,3 +1,8 @@
+package תרגילים_נוספים;
+
+import static Library.Print.p;
+import static Library.MyLibrary.*;
+
 import java.util.Arrays;
 public class Stains
 {

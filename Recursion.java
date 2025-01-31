@@ -1,3 +1,7 @@
+package תרגילים_נוספים;
+
+import static Library.Print.p;
+import static Library.MyLibrary.*;
 import java.util.Arrays;
 /**
  * Write a description of class Recursion here.
@@ -10,19 +14,90 @@ public class Recursion
     static boolean p = false;
     static int count = 0;
     /**
-     * Given a 2-dim square matrix with whole numbers.
+     * Given a 2-dim rectangular matrix with whole numbers.
      * The method will find all the longest path from all paths formed by
      * moving up/down/left/right from a cell to its neighbour, and from any of
      * these cell move to the next valid cell, such that all cells in the path
-     * form a continuous path.
+     * form a continuous path and each new cell has a value larger by 1 than
+     * the previuos cell in the path. Thus the path can not move to cell which
+     * is less or equal the current one, so that it prevents duplicates or 
+     * moving endlessly back and forth between cells, without the need to mark
+     * those cells that are part of the path.
+     * Note that the same cell can be the start of multiple pats, in different
+     * directions.
+     * Example:
+     *          {3, 13, 15, 28,30}, // line 0
+                {50,51,52,29,30}, // line 1
+                {51,10,53,54,55}, // line 2
+                {53,12,14,53,11}; // line 3
+        has 3 worms: starting in (0,3) 28,29,30 ending in (1,4),
+                     starting in (1,0) 50,51,52,53,54,55 ending in (2,4)
+                     starting in (1,0) 50,51 ending in (2,0)
      */
-    public static boolean longestWorm(int[][]grid)
+    public static int longestWorm(int[][]grid)
     {
-        return longestWorm(grid, 0, 0, 0, Integer.MAX_VALUE);
+        //return longestWorm(grid, 0, 0, -1, 0, 0, 0);
+        return longestWorm(grid, 0, 0, 0);  // school
     }
-    public static boolean longestWorm(int[][]grid, int x, int y, int sum, int max)
+    public static int longestWorm(int[][]grid, int x, int y, int max)
     {
-        return max;
+        p = true;
+        int n = grid.length;
+        if (x == n) return max;   // end of matrix
+        int m = grid[x].length;
+        if (y == m) // end of a row
+            return longestWorm(grid, x+1, 0, max);
+        if (p) p(900, x, y, max);
+        int num = longestWormLoop(grid, x, y, grid[x][y]-1);
+        max = Math.max(max, num);
+        if (p) p(910, x, y, max);
+        return longestWorm(grid, x, y+1, max);
+    }
+    public static int longestWormLoop(int[][]grid, int x, int y, int prev)
+    {
+        if (!isValid(grid, x, y) || grid[x][y]-1 != prev) return 0;
+        //if (max <= len) max = len+1;
+        if (p) p(1000, x, y, grid[x][y], prev);
+        return maxOf4(1 + longestWormLoop(grid, x+1, y, grid[x][y]),
+            1 + longestWormLoop(grid, x-1, y, grid[x][y]),
+            1 + longestWormLoop(grid, x, y+1, grid[x][y]),
+            1 + longestWormLoop(grid, x, y-1, grid[x][y]));
+    }
+    public static int longestWorm(int[][]grid, int x, int y, int prevX, int prevY, int len, int max)
+    {
+        p = true;
+        int n = grid.length;
+        if (x == n) return max;   // end of matrix
+        int m = grid[x].length;
+        if (y == m) // end of a row
+            return longestWorm(grid, x+1, 0, prevX, prevY, len, max);
+        if (p) p(900, x, y, len, prevX, prevY);
+        int num=0;// = findWorm(grid, x, y, grid[x][y]-1);
+        if (num >= 0)
+            return Math.max(max, num);
+        max = Math.max(max, -num);
+        if (p) p(910, x, y, len, prevX, prevY);
+        return longestWorm(grid, x, y+1, prevX, prevY, len, max);
+    }
+    public static int findWorm(int[][]grid, int x, int y, int prevX, int prevY, int len, int max)
+    {
+        int n = grid.length;
+        int m = grid[0].length;
+        if (prevX >= 0 && (!isValid(n, x, m, y) || grid[x][y]-1 != grid[prevX][prevY])) return -1;
+        if (max <= len) max = len+1;
+        if (p) p(1000, x, y, len, grid[x][y], max);
+        if (findWorm(grid, x+1, y, x, y, len+1, max) > 0 ||
+            findWorm(grid, x-1, y, x, y, len+1, max) > 0 ||
+            findWorm(grid, x, y+1, x, y, len+1, max) > 0 ||
+            findWorm(grid, x, y-1, x, y, len+1, max) > 0)
+        {            
+            if (p) p(1100, x, y, len, grid[x][y], max);
+            if (max <= len) max = len+1;
+            return max;
+        }
+        if (p) p(1200, x, y, len, grid[x][y], max);
+        if (max <= len) max = len+1;
+        return -max;//findWorm(grid, x, y+1, x, y, 0, max);
     }
 
     /**
@@ -51,11 +126,11 @@ public class Recursion
     public static boolean findSumInMatrix(int[][]grid, int sum, int[][]path)
     {
         String[] pathArr = new String[]{"",""};
-        boolean allowMultiplePaths = true;
-        //p = true;
+        boolean allowMultiplePaths = false;
+        p = true;
         if (allowMultiplePaths)
             return findSumInMatrix(grid, sum, path, 0, 0, true, pathArr);
-        int x = -1, y = -1, i = 0;
+        int x = -1, y = -1, i = -1;
         boolean res = true;
         while (true)
         {
@@ -70,12 +145,13 @@ public class Recursion
                 case 6: x = 1; y = 3; break;
                 default: i = 100;
             }
-            if (i >= 100) break;
+            if (i >= 1) break;
             clearArray(path);
-            res = findSumCorrected(grid, sum, path, x, y);  // find at 0,0
+            //res = findSumCorrected(grid, sum, path, x, y);  // find at 0,0
+            res = findSum(grid, sum, path, x, y);  // find at 0,0
             if (res)
-                Print.p("found a solution starting at " + makePt(x,y));
-            Print.p(path);
+                p("found a solution starting at " + makePt(x,y));
+            p(path);
             //if (i > 5) break;
         }
         return res;
@@ -95,14 +171,14 @@ public class Recursion
         if (x == n) return false;   // end of matrix
         if (y == n) // end of a row
             return findSumCorrected(grid, sum, path, x+1, 0);
-        if (p) Print.p(1000, x, y, sum, grid[x][y], 100000);
+        if (p) p(1000, x, y, sum, grid[x][y], 100000);
         if (sum >= grid[x][y])
         {
             int[] _sum = new int[]{sum, x, y};
             if (findPathCorrected(grid, x, y, sum, path, x, y, 0, _sum))
                 return true;
         }
-        if (p) Print.p(1010, x, y, sum, grid[x][y], 1010);
+        if (p) p(1010, x, y, sum, grid[x][y], 1010);
         if (path[x][y] > 0) // moving to another starting point so need to reset prev cells
         {
             path[x][y] = 0;
@@ -116,7 +192,7 @@ public class Recursion
      private static boolean findPathCorrected(int[][] grid, int i, int j, int sum, 
             int[][] path, int x, int y, int level, int[] _sum)
     {
-        if (p) Print.p(1100, i, j, sum);
+        if (p) p(1100, i, j, sum);
         if (sum == 0) return true;
         int n = grid.length;
         //if (sum < 0 || !isValid(n, i, j) || path[i][j] == 1) return false;
@@ -125,12 +201,12 @@ public class Recursion
         if (path[i][j] == 1) return false;// && !(x == i && y == j)) return false;
         // to prevent checking cells not close neighbours of the original cell
         // because we cancelled the "path[i][j] == 1" test
-        if (p) Print.p(1140, i, j, x, y);
-        if (p) Print.p(1150, Math.abs(x-i), Math.abs(y-j), (Math.abs(x-i) + Math.abs(y-j)));
+        if (p) p(1140, i, j, x, y);
+        if (p) p(1150, Math.abs(x-i), Math.abs(y-j), (Math.abs(x-i) + Math.abs(y-j)));
         if (Math.abs(x-i) > 1 || Math.abs(y-j) > 1 || 
                 (Math.abs(x-i) + Math.abs(y-j)) > 1) return false;
         path[i][j] = 1;//10 * path[i][j] + 1;
-        if (p) Print.p(1200, i, j, sum, grid[i][j], path[i][j]);
+        if (p) p(1200, i, j, sum, grid[i][j], path[i][j]);
         if (findPathCorrected(grid, i+1, j, sum-grid[i][j], path, x, y, 1, _sum) ||
             findPathCorrected(grid, i-1, j, sum-grid[i][j], path, x, y, 2, _sum) ||
             findPathCorrected(grid, i, j+1, sum-grid[i][j], path, x, y, 3, _sum) ||
@@ -139,11 +215,11 @@ public class Recursion
             return true;
         }
         // not to clear a valid cell if did not finished all recorsive calls
-        if (p) Print.p(1240, i, j, sum, grid[i][j], level);
+        if (p) p(1240, i, j, sum, grid[i][j], level);
         if (level == 4 || sum - grid[i][j] < 0)
         {
-            if (p) Print.p(1250, _sum[0], _sum[1], _sum[2], sum, grid[_sum[1]][_sum[2]]);
-            if (p) Print.p(1260, grid[i][j], _sum[0] - grid[i][j]); 
+            if (p) p(1250, _sum[0], _sum[1], _sum[2], sum, grid[_sum[1]][_sum[2]]);
+            if (p) p(1260, grid[i][j], _sum[0] - grid[i][j]); 
             if (_sum[0] - grid[i][j] == 0)
             {
             // in case need to reset current cell because with it the sum is -ve
@@ -156,13 +232,13 @@ public class Recursion
         }
         else if (sum - grid[i][j] > 0)
         {
-            if (p) Print.p(1270, _sum[0], _sum[1], _sum[2], sum, grid[_sum[1]][_sum[2]]);
+            if (p) p(1270, _sum[0], _sum[1], _sum[2], sum, grid[_sum[1]][_sum[2]]);
             _sum[0] = Math.min(_sum[0], sum) - grid[i][j];
             _sum[1] = i;
             _sum[2] = j;
             if (_sum[0] == 0) return true;
         }
-        if (p) Print.p(1300, i, j, sum, path[i][j], level);
+        if (p) p(1300, i, j, sum, path[i][j], level);
         return false;
     }
     private static void resetCell(int i, int j, int[][] path, String[] pathArr)
@@ -174,17 +250,17 @@ public class Recursion
             if (curPath.length() > 0)
             {
                 String pt = makePt(i,j);
-                if (p) Print.p("in resetCell ["+curPath+"],["+pt+"],"+
+                if (p) p("in resetCell ["+curPath+"],["+pt+"],"+
                         curPath.indexOf(pt)+", "+(curPath.length() - pt.length()));
                 if (curPath.indexOf(pt) == curPath.length() - pt.length())
                 {
                     curPath = curPath.substring(0, curPath.length() - pt.length());
                     pathArr[1] = curPath;
-                    if (p) Print.p("in resetCell2 ["+curPath+"]");
+                    if (p) p("in resetCell2 ["+curPath+"]");
                 }
             }
         }
-        if (p) Print.p("in resetCell3 "+i+", "+j+", "+path[i][j]);
+        if (p) p("in resetCell3 "+i+", "+j+", "+path[i][j]);
     }
     // school solution - search for one path only without the parameter "allowMultiplePaths"
     public static boolean findSum(int[][]grid, int sum, int[][]path,int x, int y)
@@ -194,7 +270,7 @@ public class Recursion
         if (x == n) return false;   // end of matrix
         if (y == n) // end of a row
             return findSum(grid, sum, path, x+1, 0);
-        if (p) Print.p(1000, x, y, sum, grid[x][y], 100000);
+        if (p) p(1000, x, y, sum, grid[x][y], 100000);
         if (sum >= grid[x][y])
         {
             if (findPathSchool(grid, x, y, sum, path))
@@ -205,14 +281,14 @@ public class Recursion
     private static boolean findPathSchool(int[][] grid, int i, int j, int sum, 
             int[][] path)
     {
-        if (p) Print.p(1100, i, j, sum);
+        if (p) p(1100, i, j, sum);
         if (sum == 0) return true;
         int n = grid.length;
         //if (sum < 0 || !isValid(n, i, j) || path[i][j] == 1) return false;
         if (sum < 0 || !isValid(n, i, j)) return false;
         if (path[i][j] == 1) return false;
         path[i][j] = 10 * path[i][j] + 1;
-        if (p) Print.p(1200, i, j, sum, grid[i][j], path[i][j]);
+        if (p) p(1200, i, j, sum, grid[i][j], path[i][j]);
         if (findPathSchool(grid, i+1, j, sum-grid[i][j], path) ||
             findPathSchool(grid, i-1, j, sum-grid[i][j], path) ||
             findPathSchool(grid, i, j+1, sum-grid[i][j], path) ||
@@ -222,7 +298,7 @@ public class Recursion
         }
         resetCell(i, j, path, null);
         //path[i][j] = (path[i][j] > 1 ? path[i][j]/10 : 0);
-        if (p) Print.p(1300, i, j, sum, path[i][j], 99999);
+        if (p) p(1300, i, j, sum, path[i][j], 99999);
         return false;
     }
     public static boolean findSumInMatrix(int[][]grid, int sum, int[][]path, 
@@ -233,11 +309,11 @@ public class Recursion
         if (x == n) return false;   // end of matrix
         if (y == n) // end of a row
             return findSumInMatrix(grid, sum, path, x+1, 0, allowMultiplePaths, pathArr);
-        if (p) Print.p(1000, x, y, sum, grid[x][y], 100000);
+        if (p) p(1000, x, y, sum, grid[x][y], 100000);
         if (sum >= grid[x][y])
         {
             boolean exist = (allowMultiplePaths ? checkExist(path, x, y) : false);
-            if (p) Print.p(exist);
+            if (p) p(exist);
             int[] _sum = new int[]{sum, x, y};
             if (findPathInMatrix(grid, x, y, sum, path, allowMultiplePaths, exist, 
                         x, y, path[x][y], pathArr, 0, _sum))
@@ -258,18 +334,18 @@ public class Recursion
                 pathArr[1] = "";
                 if (pathArr[0].indexOf(curPath) > -1)  //exact path already exists
                 {
-                    if (p) Print.p("need to delete duplicates paths ["+pathArr[0]+"], ["+curPath+"]");
+                    if (p) p("need to delete duplicates paths ["+pathArr[0]+"], ["+curPath+"]");
                     //findPathInMatrix(grid, x, y, sum, path, allowMultiplePaths, exist, 
                     //    x, y, path[x][y], "D", pathArr, 0, _sum); // remove the duplicate path
                 }
                 else
                 {
-                    Print.p("found a solution starting at " + makePt(x,y));
+                    p("found a solution starting at " + makePt(x,y));
                     if (pathArr[0].length() > 0)
                         pathArr[0] += ",";
                     pathArr[0] += "["+curPath+"]";
-                    if (p) Print.p(pathArr[0]);
-                    Print.p(path);
+                    if (p) p(pathArr[0]);
+                    p(path);
                     //p = true;
                 }
             }
@@ -277,12 +353,12 @@ public class Recursion
             {
                     // remove partial result
                 String curPath = pathArr[1];
-                if (p) Print.p(1008, x, y, sum, grid[x][y], _sum[0]);
-                if (p) Print.p("1009 ,"+curPath);
+                if (p) p(1008, x, y, sum, grid[x][y], _sum[0]);
+                if (p) p("1009 ,"+curPath);
                 clearCurPath(path, pathArr);
             }
         }
-        if (p) Print.p(1010, x, y, sum, grid[x][y], sum-grid[x][y]);
+        if (p) p(1010, x, y, sum, grid[x][y], sum-grid[x][y]);
         return findSumInMatrix(grid, sum, path, x, y+1, allowMultiplePaths, pathArr);
     }
     private static void clearCurPath(int[][] path, String[] pathArr)
@@ -316,7 +392,7 @@ public class Recursion
             int[][] path, boolean allowMultiplePaths, boolean exist, int x, 
             int y, int pathXY, String[] pathArr, int level, int[] _sum)
     {
-        if (p) Print.p(1100, i, j, sum);
+        if (p) p(1100, i, j, sum);
         if (sum == 0)
         {
             _sum[0] = sum;
@@ -331,7 +407,7 @@ public class Recursion
         if (Math.abs(x-i) > 1 || Math.abs(y-j) > 1 || 
                 (Math.abs(x-i) + Math.abs(y-j)) > 1) return false;
         if (!exist && path[i][j] > 0 && (i == x && j == y)) return false;  // startin cell
-        //Print.p(1100, i, j, sum, grid[i][j]);
+        //p(1100, i, j, sum, grid[i][j]);
         /*        
         if (path[i][j] == 0 || exist)
         {
@@ -345,7 +421,7 @@ public class Recursion
         String curPath = pathArr[1];
         if (exist)
         {
-            if (p) Print.p("["+curPath+"]");
+            if (p) p("["+curPath+"]");
             if (curPath.indexOf(pt) < 0)
                 exist = false;  // allow to add
         }
@@ -354,28 +430,28 @@ public class Recursion
             path[i][j] = 10 * path[i][j] + 1;
             curPath += pt;  // creates a new string but the original string maintains it's original value
             pathArr[1] = curPath; // to keep it's new value between recursive calls
-            if (p) Print.p("1195 [" + pathArr[1] + "], ["+curPath+"]");
+            if (p) p("1195 [" + pathArr[1] + "], ["+curPath+"]");
         }
-        if (p) Print.p(1200, i, j, sum, grid[i][j], path[i][j]);
+        if (p) p(1200, i, j, sum, grid[i][j], path[i][j]);
         if (findPathInMatrix(grid, i+1, j, sum-grid[i][j], path, allowMultiplePaths, exist, x, y, pathXY, pathArr, 1, _sum) ||
             findPathInMatrix(grid, i-1, j, sum-grid[i][j], path, allowMultiplePaths, exist, x, y, pathXY, pathArr, 2, _sum) ||
             findPathInMatrix(grid, i, j+1, sum-grid[i][j], path, allowMultiplePaths, exist, x, y, pathXY, pathArr, 3, _sum) ||
             findPathInMatrix(grid, i, j-1, sum-grid[i][j], path, allowMultiplePaths, exist, x, y, pathXY, pathArr, 4, _sum))
         {
-            if (p) Print.p("1205 [" + pathArr[1] + "], ["+curPath+"]");
+            if (p) p("1205 [" + pathArr[1] + "], ["+curPath+"]");
             if (pathArr[1].length() == 0) // not to add from returns below when clearing the stack with partial curPath
             {
-                if (p) Print.p("1210 " + exist);
+                if (p) p("1210 " + exist);
                 pathArr[1] = curPath;
             }
             return true;
         }
         // not to clear a valid cell if did not finished all recorsive calls
-        if (p) Print.p(1240, i, j, sum, grid[i][j], level);
+        if (p) p(1240, i, j, sum, grid[i][j], level);
         if (level == 4 || sum - grid[i][j] < 0)
         {
-            if (p) Print.p(1250, _sum[0], _sum[1], _sum[2], sum, grid[_sum[1]][_sum[2]]);
-            if (p) Print.p(1260, grid[i][j], _sum[0] - grid[i][j]); 
+            if (p) p(1250, _sum[0], _sum[1], _sum[2], sum, grid[_sum[1]][_sum[2]]);
+            if (p) p(1260, grid[i][j], _sum[0] - grid[i][j]); 
             if (_sum[0] - grid[i][j] == 0)
             {
             // in case need to reset current cell because with it the sum is -ve
@@ -385,7 +461,7 @@ public class Recursion
                     {
                         sum = _sum[0];
                         clearCurPath(path, pathArr);
-                        if (p) Print.p(1265, x, y, sum, path[x][y]); 
+                        if (p) p(1265, x, y, sum, path[x][y]); 
                         return false;
                     }
                     resetCell(_sum[1], _sum[2], path, pathArr);
@@ -398,21 +474,21 @@ public class Recursion
         }
         else if (sum - grid[i][j] > 0)
         {
-            if (p) Print.p(1270, _sum[0], _sum[1], _sum[2], sum, grid[_sum[1]][_sum[2]]);
+            if (p) p(1270, _sum[0], _sum[1], _sum[2], sum, grid[_sum[1]][_sum[2]]);
             _sum[0] = Math.min(_sum[0], sum) - grid[i][j];
             _sum[1] = i;
             _sum[2] = j;
             if (_sum[0] == 0) return true;
         }
-        if (p) Print.p(1290, i, j, sum, path[i][j], level);
+        if (p) p(1290, i, j, sum, path[i][j], level);
         /*
         resetCell(i, j, path);
         //path[i][j] = (path[i][j] > 1 ? path[i][j]/10 : 0);
-        if (p) Print.p("["+curPath+"]");
+        if (p) p("["+curPath+"]");
         curPath = curPath.substring(0, curPath.length() - pt.length());
-        if (p) Print.p("["+curPath+"]");
+        if (p) p("["+curPath+"]");
         */
-        if (p) Print.p(1300, i, j, sum, path[i][j], 99999);
+        if (p) p(1300, i, j, sum, path[i][j], 99999);
         return false;
     }
     
@@ -437,7 +513,7 @@ public class Recursion
     public static boolean findSumsInMatrix(int[][]grid, int sum, int[][]path)
     {
         int solutions = findSumsInMatrix2(grid, sum, path, 0, 0, 0);
-        Print.p("Found "+solutions+" paths with sum = "+sum);
+        p("Found "+solutions+" paths with sum = "+sum);
         return solutions > 0;
     }
     // no recursion method to find path
@@ -445,13 +521,13 @@ public class Recursion
     {
         //p = true;
         int n = grid.length;
-        if (p) Print.p(1000, x, y, sum);
+        if (p) p(1000, x, y, sum);
         if (x == n) return solutions;   // end of matrix
         if (y == n) // end of a row
             return findSumsInMatrix2(grid, sum, path, x+1, 0, solutions);
         //if (x < 0 || y < 0 || x >= n || y >= n) return solutions;// verify cell in boundries
         int newSum = sum-grid[x][y];
-        if (p) Print.p(1100, x, y, newSum, grid[x][y]);
+        if (p) p(1100, x, y, newSum, grid[x][y]);
         boolean exist = (path[x][y] > 0);
         if (newSum < 0)
             newSum = sum;
@@ -461,15 +537,15 @@ public class Recursion
             exist = findPathInMatrix2(grid, n, x, y, exist, _newSum, path);
             newSum = _newSum[0];
         }
-        if (p) Print.p(1800, x, y, newSum, grid[x][y]);
+        if (p) p(1800, x, y, newSum, grid[x][y]);
         if (newSum == 0 && !exist)   // found a new solution
         {
             path[x][y] = 10 * path[x][y] + 1;
-            Print.p("1900, Found path starting at "+makePt(x,y)+" with sum "+sum+": true");
-            Print.p(path);
+            p("1900, Found path starting at "+makePt(x,y)+" with sum "+sum+": true");
+            p(path);
             solutions++;
         }
-        if (p) Print.p(2000, y, newSum, solutions);
+        if (p) p(2000, y, newSum, solutions);
         return findSumsInMatrix2(grid, sum, path, x, y+1, solutions);
     }        
     private static boolean findPathInMatrix2(int[][] grid, int n, int x, int y, 
@@ -477,7 +553,7 @@ public class Recursion
     {
         int newSum = _newSum[0];
         int savSum = newSum;
-        //if (p) Print.p(1200, x, y, newSum, grid[x][y], x+1);
+        //if (p) p(1200, x, y, newSum, grid[x][y], x+1);
         exist = setPath(grid, n, x+1, y, exist, _newSum, path);
         exist = setPath(grid, n, x-1, y, exist, _newSum, path);
         exist = setPath(grid, n, x, y+1, exist, _newSum, path);
@@ -485,13 +561,13 @@ public class Recursion
         newSum = _newSum[0];
         if (false && newSum > 0 && savSum != newSum) // not found, restore in reverse order
         {
-            if (p) Print.p(1700, x, y, newSum, grid[x][y]);
-            //Print.p(path);
+            if (p) p(1700, x, y, newSum, grid[x][y]);
+            //p(path);
             newSum = resetPath(grid, n, x, y-1, exist, newSum, path);
             newSum = resetPath(grid, n, x, y+1, exist, newSum, path);
             newSum = resetPath(grid, n, x-1, y, exist, newSum, path);
             newSum = resetPath(grid, n, x+1, y, exist, newSum, path);
-            //Print.p(path);                    
+            //p(path);                    
         }
         return exist;        
     }
@@ -500,7 +576,7 @@ public class Recursion
         int newSum = _newSum[0];
         if (isValid(n, i, j) && newSum >= grid[i][j])
         {
-            if (p) Print.p(1300+10*i, i, j, newSum, grid[i][j]);
+            if (p) p(1300+10*i, i, j, newSum, grid[i][j]);
             newSum -= grid[i][j];
             if (path[i][j] == 0 || !exist)
             {
@@ -527,10 +603,10 @@ public class Recursion
     {
         //p = true;
         int n = grid.length;
-        if (p) Print.p(1000, x, y, sum);
+        if (p) p(1000, x, y, sum);
         //if (x < 0 || y < 0 || x >= n || y >= n) return solutions;// verify cell in boundries
         int newSum = sum-grid[x][y];
-        if (p) Print.p(1100, x, y, newSum, grid[x][y]);
+        if (p) p(1100, x, y, newSum, grid[x][y]);
         boolean exist = (path[x][y] > 0);
         if (newSum < 0)
             newSum = sum;
@@ -540,31 +616,27 @@ public class Recursion
             exist = findPathInMatrix2(grid, n, x, y, exist, _newSum, path);
             newSum = _newSum[0];
         }
-        if (p) Print.p(1800, x, y, newSum, grid[x][y]);
+        if (p) p(1800, x, y, newSum, grid[x][y]);
         if (newSum == 0 && !exist)   // found a new solution
         {
             path[x][y] = 10 * path[x][y] + 1;
-            Print.p("1900, Found path starting at "+makePt(x,y)+" with sum "+sum+": true");
-            Print.p(path);
+            p("1900, Found path starting at "+makePt(x,y)+" with sum "+sum+": true");
+            p(path);
             solutions++;
         }
-        if (p) Print.p(2000, y, newSum, solutions);
+        if (p) p(2000, y, newSum, solutions);
         if (++y == n && x < n-1) // finished the row
         {
-            if (p) Print.p(2100, y, newSum, solutions);
+            if (p) p(2100, y, newSum, solutions);
             y = 0;
             x++;
         }
         else if (x == n-1 && y == n)
             return solutions;   // finished the matrix
-        if (p) Print.p(2200, x, y, sum);
+        if (p) p(2200, x, y, sum);
             // continue in the matrix
         return findSumsInMatrix(grid, sum, path, x, y, solutions);
     }        
-    private static boolean isValid(int n, int x, int y)
-    {
-        return !(x < 0 || y < 0 || x >= n || y >= n);
-    }
 
     /**
      * Given a 2-dim matrix with cells marked with 'x' or '1' as occupied.
@@ -598,9 +670,9 @@ public class Recursion
         if (gxy == STAIN_FREE)  // not counting empty cells
             return 0;
               // alrady visited or not occupied 
-        if (p) Print.p(100, x, y, gxy);
+        if (p) p(100, x, y, gxy);
         visited[x][y] = true;
-        if (p) Print.p(1000, x, y, gxy);
+        if (p) p(1000, x, y, gxy);
         return 1 + 
             stains(grid, x, y-1, visited)+
                 stains(grid, x+1, y, visited)+
@@ -635,24 +707,24 @@ public class Recursion
         int gxy = grid[x][y];
         //if (x == n-1 && y == m-1) return 0;// end of matrix
               // alrady visited or not occupied 
-        if (p) Print.p(100, x, y, gxy); 
+        if (p) p(100, x, y, gxy); 
         if (gxy > STAIN_OCCUPIED || gxy == STAIN_VISITED) return 0;
         // verify current cell has at least one more neighbour, otherwise
         // finished the stain.
         // In order not to count grid twice we mark it as visited
         // find if it is part of stain we already started
-        if (p) Print.p(1000, x, y, gxy);
+        if (p) p(1000, x, y, gxy);
         if (gxy == STAIN_OCCUPIED) // check if a new stain or part of an existing one
         {
             numOfStains++;
             if (p) 
             {
-                Print.p(1100, numOfStains);
-                Print.p(grid);
-                Print.p("----------------------");
+                p(1100, numOfStains);
+                p(grid);
+                p("----------------------");
             }
             markSstains(grid, x, y, visited, numOfStains + STAIN_OCCUPIED + 10);
-            if (p) Print.p(grid);
+            if (p) p(grid);
             /*
             int[] _numOfStains = new int[]{numOfStains};
             int stainId = STAIN_FREE;
@@ -678,7 +750,7 @@ public class Recursion
         }
         else
             grid[x][y] = STAIN_VISITED;
-        if (p) Print.p(2000, x, y, grid[x][y]); 
+        if (p) p(2000, x, y, grid[x][y]); 
         int numOfStains1 = maxOf4(findStains(grid, x, y-1, numOfStains, visited),
                 findStains(grid, x+1, y, numOfStains, visited),
                 findStains(grid, x, y+1, numOfStains, visited),
@@ -699,9 +771,9 @@ public class Recursion
         if (gxy == STAIN_FREE || gxy == STAIN_VISITED)  // not counting empty cells
             return 0;
               // alrady visited or not occupied 
-        if (p) Print.p(100, x, y, gxy);
+        if (p) p(100, x, y, gxy);
         visited[x][y] = true;
-        if (p) Print.p(1000, x, y, gxy);
+        if (p) p(1000, x, y, gxy);
         if (gxy == STAIN_OCCUPIED) grid[x][y] = mark;
         return 1 + // count size of stain
             markSstains(grid, x, y-1, visited, mark)+
@@ -725,7 +797,7 @@ public class Recursion
             // we thought it is a new stain, but it is not
         if (stainId > STAIN_OCCUPIED && grid[x][y] > stainId)
         {
-           Print.p("fixing cell"+makePt(x,y)+" cur "+grid[x][y]+" but stain belongs to " + stainId);
+           p("fixing cell"+makePt(x,y)+" cur "+grid[x][y]+" but stain belongs to " + stainId);
            grid[x][y] = stainId;
            numOfStains[0]--;
            return stainId;
@@ -793,35 +865,35 @@ public class Recursion
     }
     private static int princeToVilanOLD(int[][] m, int i, int j, int prev, int steps, String path)
     {
-        if (p) Print.p(100, i, j, m.length);
-        if (p) if (i >= 0 && i < m.length) Print.p(m[i].length);
+        if (p) p(100, i, j, m.length);
+        if (p) if (i >= 0 && i < m.length) p(m[i].length);
         if (i >= m.length || i < 0 || j < 0 || j >= m[i].length) return Integer.MAX_VALUE;
         int mij = m[i][j];
         if (mij <= -10) return Integer.MAX_VALUE;   // already visited
-        if (p) Print.p(1000, i, j, mij);
+        if (p) p(1000, i, j, mij);
         String point = makePt(i, j);
         if (mij == -1) 
         {
             path += point;
-            Print.p(path);
-            if (p) Print.p(1500, steps);
+            p(path);
+            if (p) p(1500, steps);
             return steps;  // valid path
         }
-        if (p) Print.p(2000, prev, mij);
+        if (p) p(2000, prev, mij);
         if (!(prev == mij ||  // same height
                 Math.abs(prev - mij) == 1 || // can go up or down 1 level
                 prev - mij == 2))
                 return Integer.MAX_VALUE;
         path += point;
         m[i][j] = -mij - 10;    // mark as used
-        if (p) Print.p(3000, i, j, m[i][j]);
+        if (p) p(3000, i, j, m[i][j]);
         int min = minOf4(princeToVilanOLD(m, i, j + 1, mij, steps+1, path),// move right
             princeToVilanOLD(m, i, j - 1, mij, steps+1, path), // move left
             princeToVilanOLD(m, i + 1, j, mij, steps+1, path), // move down
             princeToVilanOLD(m, i - 1, j, mij, steps+1, path)); // move up
         m[i][j] = -m[i][j] - 10;
-        if (p) Print.p(4000, i, j, m[i][j]);
-        if (p) Print.p(5000, min);
+        if (p) p(4000, i, j, m[i][j]);
+        if (p) p(5000, min);
         return min;
     }
     private static int minOf4(int num1, int num2, int num3, int num4)
@@ -830,7 +902,7 @@ public class Recursion
     }
     public static int minOf4Old(int n1, int n2, int n3, int n4)
     {   // need to ignore -1 which it returns if reached vilan
-        if (p) Print.p(6000, n1, n2, n3);//, n4);
+        if (p) p(6000, n1, n2, n3);//, n4);
         int min = n1;
         min = (n2 == -1 ? min : min == -1 ? n2 : Math.min(min, n2));
         min = (n3 == -1 ? min : min == -1 ? n3 : Math.min(min, n3));
@@ -856,19 +928,19 @@ public class Recursion
         int n = m.length;
         if (x >= n || x < 0 || y < 0 || y >= m[x].length)
         {
-            if (p) Print.p(x, y, code);
+            if (p) p(x, y, code);
             return 0;
         }
         int mxy = m[x][y];
         if (x == n-1 && y == m[x].length-1)
         {
-            if (p) Print.p(x, y, mxy, code);
+            if (p) p(x, y, mxy, code);
             return 1;
         }
         if (mxy == 0) return 0;
         int d = mxy % 10;
         int t = mxy / 10;
-        if (p) Print.p(""+x+", "+y+", "+mxy+", "+d+", "+t+", "+code);
+        if (p) p(""+x+", "+y+", "+mxy+", "+d+", "+t+", "+code);
         return (countPathsInMatrix(m, x+d, y+t, 1) +
                     countPathsInMatrix(m, x+t, y+d, 2));
     }
@@ -885,7 +957,7 @@ public class Recursion
         int n = a.length;
         if (sum == target) return true; // must be before out of boundries, in case sum=0 at the last item
         if (i >= n || sum > target || a[i] <= 0) return false; // only +ve numbers
-        if (p) Print.p(i, sum, a[i], target);
+        if (p) p(i, sum, a[i], target);
         if (areThereNumbersEqualSumWithRepeatition(a, sum+a[i], i+1, target) || // use this number
             areThereNumbersEqualSumWithRepeatition(a, sum, i+1, target) ||  // do not use this number
             areThereNumbersEqualSumWithRepeatition(a, sum+a[i], i, target)) // add the same number again
@@ -906,7 +978,7 @@ public class Recursion
         int n = a.length;
         if (sum == target) return true; // must be before out of boundries, in case sum=0 at the last item
         if (i >= n) return false;
-        if (p) Print.p(i, sum, a[i]);
+        if (p) p(i, sum, a[i]);
         if (areThereNumbersEqualSum(a, sum+a[i], i+1, target) || // use this number
             areThereNumbersEqualSum(a, sum, i+1, target))  // do not use this number
             return true;
@@ -918,7 +990,7 @@ public class Recursion
         int n = a.length;
         if (sum == 0) return true; // must be before out of boundries, in case sum=0 at the last item
         if (i >= n) return false;
-        if (p) Print.p(i, sum, a[i]);
+        if (p) p(i, sum, a[i]);
         if (areThereNumbersEqualSum(a, sum-a[i], i+1) || // use this number
             areThereNumbersEqualSum(a, sum, i+1))  // do not use this number
             return true;
@@ -933,7 +1005,7 @@ public class Recursion
         int n = a.length;
         if (pivot >= n || i >= n) return false;
         if (sum == a[pivot]+a[i]) return true;
-        //Print.p(pivot, i, sum);
+        //p(pivot, i, sum);
         return (areThere2NumbersEqualSum(a, sum, pivot, i+1) ||
             //areThere2NumbersEqualSum(a, sum, pivot+1, 0));  // using extra redundant calls
             areThere2NumbersEqualSum(a, sum, pivot+1, pivot+2));  // using extra redundant calls
@@ -946,7 +1018,7 @@ public class Recursion
     }
     private static int ladderSoccer1(int n, int m)
     {
-        //Print.p(n, m);
+        //p(n, m);
         if (n == 0 && m == 0)
             return 1;
         if (n < 0 || m < 0) return 0;
@@ -973,7 +1045,7 @@ public class Recursion
         {
             for (int i=0; i<n;i++)
             {
-                //Print.p(i, grid[i].length, n);
+                //p(i, grid[i].length, n);
                 if (grid[i].length != n)
                 {
                     grid = new int[][] {};
@@ -984,9 +1056,9 @@ public class Recursion
         }
         /*
         int [][] solution = new int[n][n];
-        Print.p("solution");
+        p("solution");
         boolean solved = maze(grid, 0, 0, solution);
-        Print.p(solution);
+        p(solution);
         return solved;
         */
        return maze(grid, 0, 0);
@@ -1050,7 +1122,7 @@ public class Recursion
         if (paths)
         {
             steps = ladder(n, 0, 0, "", path);
-            Print.p(path[0].substring(0, path[0].length()-1));
+            p(path[0].substring(0, path[0].length()-1));
         }
         else
             steps = ladder(n, 0); // without keeping the paths
@@ -1102,7 +1174,7 @@ public class Recursion
             // inside the method
         smallestSumIn2Arrays(m, 0, 0, 0, "", 1, minPath, m[0][0]); // start in 1st array
         smallestSumIn2Arrays(m, 0, 1, 0, "", 2, minPath, m[0][0]); // start in 2nd array
-        Print.p(minPath[0], m[0][0]);//, minSum[0]);
+        p(minPath[0], m[0][0]);//, minSum[0]);
         int result = m[0][0];
         m[0][0] = temp00;
         return result;
@@ -1112,8 +1184,8 @@ public class Recursion
     {
         String point = makePt(x, y);
         path += point;
-        if (p) Print.p(x, y, sum, temp00);
-        if (p) Print.p(path, m[x][y]);
+        if (p) p(x, y, sum, temp00);
+        if (p) p(path, m[x][y]);
         int xy = (x==0 && y==0 ? temp00 : m[x][y]);
         if (y == m[0].length - 1)
         {
@@ -1123,27 +1195,27 @@ public class Recursion
                 m[0][0] = sum;
                 minPath[0] = path;
             }
-            if (p) Print.p(1000, m[0][0], sum);
+            if (p) p(1000, m[0][0], sum);
             return;
         }
         //sum = smallestSumIn2Arrays(a, b, sum + a[i], i+1, step);
         if (y < m[0].length)
         {
-            if (p) Print.p("calling R " + point, sum);
+            if (p) p("calling R " + point, sum);
             smallestSumIn2Arrays(m, sum + xy, x, y+1, path, step, minPath, temp00);
-            if (p) Print.p("returning R " + point, sum);
+            if (p) p("returning R " + point, sum);
         }
         if (step == 1 && x < m.length-1)//1st array moves to the 2nd array
         {
-            if (p) Print.p("calling D " + point, sum);
+            if (p) p("calling D " + point, sum);
             smallestSumIn2Arrays(m, sum + xy, x+1, y+1, path, step, minPath, temp00);
-            if (p) Print.p("returning D " + point, sum);
+            if (p) p("returning D " + point, sum);
         }
         if (step == 2 && x == m.length-1)//2nd array moves to the 1st array
         {
-            if (p) Print.p("calling U " + point, sum);
+            if (p) p("calling U " + point, sum);
             smallestSumIn2Arrays(m, sum + xy, x-1, y+1, path, step, minPath, temp00);
-            if (p) Print.p("returning U " + point, sum);
+            if (p) p("returning U " + point, sum);
         }
         return;
     }
@@ -1155,11 +1227,11 @@ public class Recursion
     public static int smallest(int[] a, int i)
     {
         //p = false;
-        if (p) Print.p(1000, i, a.length);        
+        if (p) p(1000, i, a.length);        
         if (i == a.length - 1)
             return i;
         int val = smallest(a, i + 1);
-        if (p) Print.p(2000, i, a[val], a[i]);
+        if (p) p(2000, i, a[val], a[i]);
         if (a[val] < a[i])
             return val;
         return i;
@@ -1170,14 +1242,14 @@ public class Recursion
         //p = true;
         if (arr.length == 0) return -1;
         int index = 0; // first item in array
-        if (p) Print.p(1000, i, arr.length);
+        if (p) p(1000, i, arr.length);
         if (i < arr.length)
         {
             index = findSmallestIndex(arr, i + 1);
-            if (p) Print.p(2000, i, index, arr.length);
+            if (p) p(2000, i, index, arr.length);
             if (arr[index] > arr[i])
                 index = i;
-            if (p) Print.p(2100, i, index, arr[i]);
+            if (p) p(2100, i, index, arr[i]);
         }
         return index;
     }
@@ -1187,16 +1259,16 @@ public class Recursion
     {
         //p = true;
         if (arr.length == 0) return 0;
-        if (p) Print.p(1000, i, val, arr.length);
+        if (p) p(1000, i, val, arr.length);
         if (i < arr.length)
         {
-            if (p) Print.p(1500, i, val, arr.length);
+            if (p) p(1500, i, val, arr.length);
             val = findSmallestVal(arr, i + 1);
             if (val > arr[i])
                 val = arr[i];
-            if (p) Print.p(2000, i, val, arr[i]);
+            if (p) p(2000, i, val, arr[i]);
         }
-        if (p) Print.p(3000, i, val);
+        if (p) p(3000, i, val);
         return val;
     }
     // To find all combinations of numbers from 1 to `n` having sum 'n' 
@@ -1213,7 +1285,7 @@ public class Recursion
     {
         if (nDigits > n) return used.substring(0, used.length()-1);
         used += findNumbersEqualSum(nDigits, n, false).substring(1);
-        if (p) Print.p("910," + used);
+        if (p) p("910," + used);
         return findAllNumsEqualN(nDigits + 1, n);
     }
     public static String findAllNumsEqualNLoop(int n)
@@ -1221,9 +1293,9 @@ public class Recursion
         for (int i=1; i<=n;i++)
         {
             used += findNumbersEqualSum(i, n, false).substring(1);
-            if (p) Print.p("900," + used);
+            if (p) p("900," + used);
         }
-        Print.p(count);
+        p(count);
         return used.substring(0, used.length() - 1);
     }
     // Find all n–digit numbers with a given sum of digits equal
@@ -1233,7 +1305,7 @@ public class Recursion
         used = " ";
         //count = 0;
         findNdigitNums("", 0, n, _sum, 0, allowZero, 0);
-        if (allowZero) Print.p(count);
+        if (allowZero) p(count);
         return used;
     }
     private static void findNdigitNums(String result, int index, int n, 
@@ -1241,15 +1313,15 @@ public class Recursion
     {
         // if the number is less than n–digit and its sum of digits is
         // less than the given sum
-        if (p) Print.p(1000,index, n, _sum);
-        if (p) Print.p("1500,[" + result + "]");
+        if (p) p(1000,index, n, _sum);
+        if (p) p("1500,[" + result + "]");
         count++;
         if (index < n && _sum >= 0)
         {
             int d = (index == 0 ? 1 : 0);  // special case: number cannot start from 0
             // consider every valid digit and put it in the current
             // index and recur for the next index
-            if (p) Print.p("1800," + (index + 1) + ","+ d + ",[" + value + "]");
+            if (p) p("1800," + (index + 1) + ","+ d + ",[" + value + "]");
             if (index + 1 == n)
                 d = _sum - value;
             if (!allowZero && d == 0) d = 1;
@@ -1257,19 +1329,19 @@ public class Recursion
             {
                 //if (index + 1 == n)
                 //result = "" + d + result;
-                if (p) Print.p("Calling 2000," + index + ","+ d + ",[" + result);
+                if (p) p("Calling 2000," + index + ","+ d + ",[" + result);
                 if (_sum - d < 0) break;
                 if (!allowZero)
                 {
-                    //if (p) Print.p("1900," + highest + ","+ d );                
+                    //if (p) p("1900," + highest + ","+ d );                
                     if (d < highest) 
                         return;
                     highest = d;
-                    if (p) Print.p("1950," + highest + ","+ d );                
+                    if (p) p("1950," + highest + ","+ d );                
                 }
                 findNdigitNums(result + d, index + 1, n, _sum - d, value, 
                     allowZero, highest);
-                if (p) Print.p("Returning 2000," + index + ","+d + ",[" + result);
+                if (p) p("Returning 2000," + index + ","+d + ",[" + result);
                 d++;
             }
         }
@@ -1287,7 +1359,7 @@ public class Recursion
         int maxSum = 9;
         for (int j=1; j<n; j++) 
             maxSum += 9;
-        //Print.p(max, _sum);
+        //p(max, _sum);
         if (_sum > maxSum) return "";
         int start = pow(10,n-1);//(int)Math.pow(10,n-1);
         int max = pow(10,n)-1;//(int)Math.pow(10,n)-1;
@@ -1297,7 +1369,7 @@ public class Recursion
         for (int i=start; i<=max; i++) // go over all values of sum of digits
         {
             count++;
-            if (p) Print.p(1000, i, n, _sum);
+            if (p) p(1000, i, n, _sum);
             int sumToTens = 0;
              // to save calls to getSumUpToTenDigit()
             if (lastCalledSumToTen < 0 || i-lastCalledSumToTen > 1)
@@ -1307,13 +1379,13 @@ public class Recursion
                 lastCalledSumToTen = i;
                 sumToTens++;
             }
-            if (p) Print.p(1503, i, _sum, sumToTens);
+            if (p) p(1503, i, _sum, sumToTens);
             if (sumToTens + 9 < _sum)
             {
                 i += 10 - 1;
                 continue;
             }
-            if (p) Print.p(1504,_sum, sumToTens);
+            if (p) p(1504,_sum, sumToTens);
             if (_sum - sumToTens <= 9)
             {
                 boolean exit = false;
@@ -1323,8 +1395,8 @@ public class Recursion
                     if (sumToTens + j == _sum)
                     {
                         used += "," + (i + j);
-                        if (p) Print.p(used);
-                        //Print.p(i, j, 10-j, i+9);
+                        if (p) p(used);
+                        //p(i, j, 10-j, i+9);
                         i += 9;
                         exit = true;
                         break;
@@ -1333,11 +1405,11 @@ public class Recursion
                 if (exit) continue;
             }
             // finished all possible values with tens now move to hundreds
-            if (p) Print.p(2003, i, sumToTens, _sum);
+            if (p) p(2003, i, sumToTens, _sum);
             i = goTo99(i, n);
-            if (p) Print.p(2004, i, sumToTens, _sum);
+            if (p) p(2004, i, sumToTens, _sum);
         }
-        Print.p(count);
+        p(count);
         return (used.length() > 2 ? used.substring(1) + " " : "  "); // allow print with skipping space and comma
     }
     private static int goTo99(int i, int n)
@@ -1355,7 +1427,7 @@ public class Recursion
             int power = pow(10, n);//(int) Math.pow(10, n);
             int digit = (i / power) % 10;
             sum += digit;
-            //Print.p(i, n, digit);
+            //p(i, n, digit);
             n--;
             count++;
         }
@@ -1380,19 +1452,19 @@ public class Recursion
         //permutationWithOutLoop(X.toCharArray(), 0);
         //permutationWithLoop(X.toCharArray(), 0); // s
         X = "123";
-        Print.p("myPermutationWithLoop");
+        p("myPermutationWithLoop");
         myPermutationWithLoop(X, "");
-        Print.p(used);
+        p(used);
         used = "";
-        Print.p("myPermutationWithOutLoop");
+        p("myPermutationWithOutLoop");
         myPermutationWithOutLoop(X, "");
-        //Print.p(used.length()/(1 + X.length()));
+        //p(used.length()/(1 + X.length()));
         return used.substring(1);
     }
     private static void myPermutationWithOutLoop(String X, String curr)
     {
         //char a = (char)0;
-        if (p) Print.p(X + ", curr=[" + curr + "]");
+        if (p) p(X + ", curr=[" + curr + "]");
         if (X.length() == 0)
         {
             used +=  "," + curr;
@@ -1413,9 +1485,9 @@ public class Recursion
         if (i < X.length())
         {
             char a = X.charAt(i);
-            if (p) Print.p("100,"+i+","+X);
-            if (p) Print.p("1000,"+i+","+X.substring(0,i));
-            if (p) Print.p("2000,"+i+","+X.substring(i+1));
+            if (p) p("100,"+i+","+X);
+            if (p) p("1000,"+i+","+X.substring(0,i));
+            if (p) p("2000,"+i+","+X.substring(i+1));
             String remainingX = X.substring(0,i) + X.substring(i+1);
             myPermutationWithOutLoop(remainingX, curr + a);
             
@@ -1425,7 +1497,7 @@ public class Recursion
     // the following my solution using for-loop
     private static void myPermutationWithLoop(String X, String curr)
     {
-        if (p) Print.p(X + ", curr=[" + curr + "]");
+        if (p) p(X + ", curr=[" + curr + "]");
         if (X.length() == 0)
         {
             used +=  "," + curr;
@@ -1434,9 +1506,9 @@ public class Recursion
         for (int i=0; i<X.length(); i++)
         {
             char a = X.charAt(i);
-            if (p) Print.p("100,"+i+","+X);
-            if (p) Print.p("1000,"+i+","+X.substring(0,i));
-            if (p) Print.p("2000,"+i+","+X.substring(i+1));
+            if (p) p("100,"+i+","+X);
+            if (p) p("1000,"+i+","+X.substring(0,i));
+            if (p) p("2000,"+i+","+X.substring(i+1));
             String remainingX = X.substring(0,i) + X.substring(i+1);
             myPermutationWithLoop(remainingX, curr + a);
         }
@@ -1455,9 +1527,9 @@ public class Recursion
     {
         if (i < str.length)
         {
-            MyLibrary.swap(str, index, i); // Swap the characters at index and i
+            swap(str, index, i); // Swap the characters at index and i
             permutationWithOutLoop(str, index + 1); // Recurse for the next index
-            MyLibrary.swap(str, index, i); // Backtrack by swapping back
+            swap(str, index, i); // Backtrack by swapping back
         
             recursiveLoop(str, index, i + 1); // Continue with the next value of i
         }
@@ -1473,9 +1545,9 @@ public class Recursion
         // Recursively generate permutations by swapping characters
         for (int i = index; i < str.length; i++)
         {
-            MyLibrary.swap(str, index, i);  // Swap the characters at index and i
+            swap(str, index, i);  // Swap the characters at index and i
             permutationWithLoop(str, index + 1);  // Recurse for the next index
-            MyLibrary.swap(str, index, i);  // Backtrack by swapping the characters back
+            swap(str, index, i);  // Backtrack by swapping the characters back
         }
     }
     /*  Not working, keeping code for the usage of a TREE
@@ -1485,22 +1557,22 @@ public class Recursion
     {
         // head = tail = null;
         if (index < X.length()) Y = X.substring(index, index + 1);
-        if (p) Print.p("index=[" + index + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
+        if (p) p("index=[" + index + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
         if (index >= X.length())
         {
             if (false && X.length() > 0)
             {
-                if (p) Print.p("Calling 3, index=[" + index + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
+                if (p) p("Calling 3, index=[" + index + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
                 String newX = X.substring(1);
                 index = 0;
-                if (p) Print.p("Calling 3A, index=[" + index + "], X=["+newX+ "], Y=["+Y+"], curr=["+curr+"]");
+                if (p) p("Calling 3A, index=[" + index + "], X=["+newX+ "], Y=["+Y+"], curr=["+curr+"]");
                 permutation(curr, newX, Y, 0, 0);
-                if (p) Print.p("Returning 3A, index=[" + index + "], X=["+newX+ "], Y=["+Y+"], curr=["+curr+"]");
+                if (p) p("Returning 3A, index=[" + index + "], X=["+newX+ "], Y=["+Y+"], curr=["+curr+"]");
                 return used;
             }
             // Base case: We've considered all elements
             //used += "," + Y;
-            //Print.p(used);
+            //p(used);
             return Y;//used;
         }
         // Recursive case: Exclude the current element
@@ -1518,34 +1590,35 @@ public class Recursion
             System.out.println(tail);
             System.out.println(cell.getDown());
             // end of nested comment
-        Print.p(toString(head));
-        if (p) Print.p("Calling 1, index=[" + index + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
+        p(toString(head));
+        if (p) p("Calling 1, index=[" + index + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
         //Y = X.substring(index, index + 1); // Add the element to the current subset
-        Print.p("1000," + permutation(curr, X, Y, index + 1, level));
+        p("1000," + permutation(curr, X, Y, index + 1, level));
         level++;
-        Print.p(level);
-        if (p) Print.p("Returning 1, index=[" + index + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
+        p(level);
+        if (p) p("Returning 1, index=[" + index + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
         if (X.length() > 0)
         {
-            //if (p) Print.p("Calling 4, index=[" + index + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
+            //if (p) p("Calling 4, index=[" + index + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
             String newX = X.substring(0, index) + X.substring(index + 1);
             index = 0;
             //Y += X.substring(index, index + 1);
-            if (p) Print.p("Calling 4A, index=[" + index + "], X=["+newX+ "], Y=["+Y+"], curr=["+curr+"]");
+            if (p) p("Calling 4A, index=[" + index + "], X=["+newX+ "], Y=["+Y+"], curr=["+curr+"]");
             permutation(curr, newX, Y, 0, level);
-            if (p) Print.p("Returning 4A, index=[" + index + "], X=["+newX+ "], Y=["+Y+"], curr=["+curr+"]");
+            if (p) p("Returning 4A, index=[" + index + "], X=["+newX+ "], Y=["+Y+"], curr=["+curr+"]");
             curr += Y;
-            Print.p(curr);
+            p(curr);
         }
         if (true) return used;
         // Recursive case: Include the current element
         Y += X.substring(index, index + 1); // Add the element to the current subset
-        if (p) Print.p("Calling 2, index=[" + index + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
+        if (p) p("Calling 2, index=[" + index + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
         permutation(curr, X.substring(1), Y, index + 1, level);
-        if (p) Print.p("Returning 2, index=[" + index + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
+        if (p) p("Returning 2, index=[" + index + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
         return used;
     }
     */
+   /*
     private static String toString(IntNodeMat head)
     {
         IntNodeMat cell = head;
@@ -1554,19 +1627,20 @@ public class Recursion
         {
             //if (p) System.out.println(cell);
             s += cell.toString();
-            //Print.p(s);
+            //p(s);
             cell = cell.getDown();
             s += ",";
         }
         return s;
     }
+    */
     public static int factorial(int n)
     {
-        //Print.p(1000, n);
+        //p(1000, n);
         if (n < 0) return 0;
         if (n < 2) return 1;
         int newN = n * factorial(n-1);
-        //Print.p(2000, newN);
+        //p(2000, newN);
         return newN;
     }
 
@@ -1584,7 +1658,7 @@ public class Recursion
         {
             // Base case: We've considered all elements
             used += "," + Y;
-            //Print.p(used);
+            //p(used);
             return used;
         }
         // Recursive case: Exclude the current element
@@ -1610,7 +1684,7 @@ public class Recursion
         {
             // Base case: We've considered all elements
             used += "," + makeSet(currentSet,currentSize);
-            //Print.p(used);
+            //p(used);
             return used;
         }
         // Recursive case: Exclude the current element
@@ -1654,44 +1728,44 @@ public class Recursion
         {
             if (used.indexOf(curr) < 0)
                 used += "," + curr;
-            if (p) Print.p(used);
+            if (p) p(used);
             return "";//used;
         }
         // if the string `X` is not empty, append its first character in the
         // result and recur for the remaining substring
         if (X.length() > 0) {
-            //if (p) Print.p("1000," + curr + " ,["+X.substring(1)+"]");
-            //if (p) Print.p("1100," + used);
-            if (p) Print.p("Calling 1, curr=[" + curr + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
+            //if (p) p("1000," + curr + " ,["+X.substring(1)+"]");
+            //if (p) p("1100," + used);
+            if (p) p("Calling 1, curr=[" + curr + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
             findInterleavings(curr + X.charAt(0), X.substring(1), Y);
-            //if (p) Print.p("1200," + X);
-            if (p) Print.p("Returning 1, curr=[" + curr + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
+            //if (p) p("1200," + X);
+            if (p) p("Returning 1, curr=[" + curr + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
         }
         // if the string `Y` is not empty, append its first character in the
         // result and recur for the remaining substring
         if (Y.length() > 0) {
-            //if (p) Print.p("2000, " + curr + " [" + Y);
-            //if (p) Print.p("2100," + used);
-            if (p) Print.p("Calling 2, curr=[" + curr + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
+            //if (p) p("2000, " + curr + " [" + Y);
+            //if (p) p("2100," + used);
+            if (p) p("Calling 2, curr=[" + curr + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
             findInterleavings(curr + Y.charAt(0), X, Y.substring(1));
-            //if (p) Print.p("2200," + Y);
-            if (p) Print.p("Returning 2, curr=[" + curr + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
+            //if (p) p("2200," + Y);
+            if (p) p("Returning 2, curr=[" + curr + "], X=["+X+ "], Y=["+Y+"], curr=["+curr+"]");
         }
-        if (p) Print.p("3000 " +used);
+        if (p) p("3000 " +used);
         return used;
     }
     static String DA[][] = null, DB[][] = null;
     private static void initD(String S, int i, int j, String[][] D)
     {
         boolean p = false;
-        if (p) Print.p(1000, i, j);
+        if (p) p(1000, i, j);
         int lenj = S.length() - i;
-        if (p) Print.p(2000, j, lenj);
+        if (p) p(2000, j, lenj);
         if (j + lenj > S.length()) lenj = 0;
         String subj = S.substring(j, j + lenj); 
-        if (p) Print.p(subj);
+        if (p) p(subj);
         D[i][j] = subj;
-        if (p) Print.p(Arrays.deepToString(D));
+        if (p) p(Arrays.deepToString(D));
         if (j-- > 0)
             initD(S, i, j, D);
         else

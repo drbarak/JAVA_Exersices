@@ -1,3 +1,7 @@
+package תרגילים_נוספים;
+
+import static Library.Print.p;
+import static Library.MyLibrary.*;
 import java.util.Arrays;
 /**
  * Class Efficiancy is a collection of examples of writing a method which is efficient
@@ -47,7 +51,7 @@ public class Efficiancy
                 }
             }
         }
-        Print.p("count=" + count);
+        p("count=" + count);
         result[0] = result[1] = -1;
         return result;
     }
@@ -89,7 +93,7 @@ public class Efficiancy
             // just use the method containsKey() pf HashMap to find the 
             // key=(sumMap-target) which we stored as key the value we currently
             // save in map[i][0]
-            if (p) Print.p(i, sumMap, sumMap-target);
+            if (p) p(i, sumMap, sumMap-target);
             for (j=0; j<=i;j++)
             {
                 count++;
@@ -104,11 +108,11 @@ public class Efficiancy
             map[i+1][0] = sumMap;
             map[i+1][1] = i;
             map[i+1][2] = sumMap - target;
-            if (p) Print.p("i+1="+(i+1)+",target="+target+", "+Arrays.toString(map[i+1]));
+            if (p) p("i+1="+(i+1)+",target="+target+", "+Arrays.toString(map[i+1]));
             //Print.p("i="+i+"count="+count);
         }
         //for (i=0;i<a.length;i++)  Print.p(Arrays.toString(map[i]));
-        Print.p("count=" + count);
+        p("count=" + count);
         result[0] = result[1] = -1;
         return result;
     }

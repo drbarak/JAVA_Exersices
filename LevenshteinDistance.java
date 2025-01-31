@@ -1,3 +1,8 @@
+package תרגילים_נוספים;
+
+import static Library.Print.p;
+import static Library.MyLibrary.*;
+
 import java.util.Arrays;
 /**
  * EditDistance does Approximated String Matching.
@@ -55,7 +60,7 @@ public class LevenshteinDistance
     public static boolean p = true;;
     public static int approximatedStringMatching(String[] dict, boolean ignoreCase)
     {
-        Print.p(Arrays.toString(dict));
+        p(Arrays.toString(dict));
         String A = dict[0];
         int index = 1, minimum = A.length();
         for (int k = 1; k < dict.length; k++)
@@ -84,7 +89,7 @@ public class LevenshteinDistance
                 }
             }
             if (p) System.out.println(A + "," + B);
-            if (p) Print.p(D);
+            if (p) p(D);
             if (p) System.out.println("minOperations="+minimum+" now="+D[lenA][lenB]+" k="+k+" index="+index);
             if (minimum > D[lenA][lenB])
             {
@@ -104,7 +109,7 @@ public class LevenshteinDistance
     }
     public static void __editDistance(String A, String B)
     {
-        Print.p(1000, _editDistance(A, B));
+        p(1000, _editDistance(A, B));
     }
     public static int _editDistance(String A, String B)
     {
@@ -120,18 +125,18 @@ public class LevenshteinDistance
         String prefB = B.substring(0, lenB - 1);
         int p = (A.charAt(lenA - 1) == B.charAt(lenB - 1) ? 0 : 1);
         /*
-        Print.p(A);
-        Print.p(B);
-        Print.p(prefA);
-        Print.p(prefB);
-        Print.p(p);
+        p(A);
+        p(B);
+        p(prefA);
+        p(prefB);
+        p(p);
         */
         int d1 = _editDistance(prefA, prefB) + p;
-        Print.p(1000, d1);
+        p(1000, d1);
         int d2 = _editDistance(A, prefB) + 1;
-        Print.p(1000, d2);
+        p(1000, d2);
         int d3 = _editDistance(prefA, B) + 1;
-        Print.p(1000, d3);
+        p(1000, d3);
         return d1;
     }
 }

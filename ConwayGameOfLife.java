@@ -1,3 +1,8 @@
+package תרגילים_נוספים;
+
+import static Library.Print.p;
+import static Library.MyLibrary.*;
+
 import java.util.Random;
 import java.util.Arrays;
 //import java.util.*;
@@ -31,21 +36,21 @@ public class ConwayGameOfLife
         while (runs-- > 0)
         {
             newGrid = newGeneration(grid);
-            Print.p("-------new Grid " + (maxRuns - runs) + "----------");
-            Print.p(newGrid);
+            p("-------new Grid " + (maxRuns - runs) + "----------");
+            p(newGrid);
             if (Arrays.deepEquals(grid, newGrid))
             {
-                Print.p("identical");
+                p("identical");
                 break;
             }
             if (Arrays.deepEquals(originalGrid, newGrid))
             {
-                Print.p("Oscillator = same as original");
+                p("Oscillator = same as original");
                 break;
             }
             grid = newGrid;
         }
-        if (runs < 1) Print.p("exhausted runs");
+        if (runs < 1) p("exhausted runs");
     }
     private static char[][] deepCopy(char[][] original)
     {

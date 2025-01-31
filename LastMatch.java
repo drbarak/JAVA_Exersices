@@ -1,4 +1,9 @@
+package תרגילים_נוספים;
+
+import static Library.Print.p;
+import static Library.MyLibrary.*;
 import java.util.Scanner;
+
 /**
  * The LastMatch manages a series of games between 2 players where in each game
  * there is a given number of matches on the table and maxMatches is the maximum

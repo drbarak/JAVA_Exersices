@@ -1,3 +1,7 @@
+package תרגילים_נוספים;
+
+import static Library.Print.p;
+import static Library.MyLibrary.*;
 /**
  * Disco class, from lectures of the course, to find whether a set of lights
  * can be equsl to another set by pressing on lights of the first set, starting
