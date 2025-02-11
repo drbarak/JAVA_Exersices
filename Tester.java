@@ -20,9 +20,61 @@ public class Tester
         int[] arr;
         int ar[][] = new int[117][];
         
-        int runMethod = 37;
+        int runMethod = 39;
         run[runMethod] = 1;
         
+        if (run[39] == 1)
+        {
+            p("------ Efficiency 6 - orderCrossedArray(int[] a) ------");
+            int i = 0;
+            ar[i++] = new int[]{1, 9, 2, 8, 4};
+            ar[i++] = new int[]{1, 9, 2, 8, 4, 7};
+            ar[i++] = new int[]{1, 9, 2, 8, 4, 7, 7};
+            ar[i++] = new int[]{1, 9, 2, 8, 4, 7, 7, 4};
+            ar[i++] = new int[]{1,9,2,8,4,7,7,4,12};
+            ar[i++] = new int[]{1,9,2,8,4,7,7,-4,12};
+            ar[i++] = new int[]{1,9,2,8,4,3,7,-4,12};
+            int n = 10;
+            ar[i++] = new int[n];
+            int end = (n%2 == 0 ? 1 : 2);
+            for (int j=0; j < n; j+=2)
+            {
+                ar[i-1][j] = j;
+                if (j < n-end) ar[i-1][j+1] = n - j - end;
+            }
+            ar[i++] = new int[]{1,19,2,17,4,15,7,-4,8};
+            ar[i++] = new int[]{1,19,2,17,4,-3,7,-4,8};
+            ar[i++] = new int[]{1,-1,2,-2,4,-3,7,-4,8};
+            int j = --i;
+            for (; i >= j-2; i--)
+                p("new array " + i + " = ", Efficiency.orderCrossedArray(ar[i]));
+        }
+        if (run[38] == 1)
+        {
+            p("------ Efficiency 5 - findMinAbsSum(int[] a) ------");
+            arr = new int[]{1};
+            arr = new int[]{-2};
+            arr = new int[]{1, 100};
+            arr = new int[]{-1, 100};
+            arr = new int[]{-2, -1};
+            arr = new int[]{1, 2, 3};
+            arr = new int[]{-10, -5, -3};
+            arr = new int[]{-1, 2, 3};
+            arr = new int[]{-1, 2, 3, 4};
+            arr = new int[]{-1, 2, 3, 4, 5};
+            arr = new int[]{-3, -2, -1, 1,2,3};
+            /*
+            arr = new int[]{-13, -12, -11, 1,2,3};
+            arr = new int[]{-13, -12, -11, 1,2,3,4,5,6,7};
+            arr = new int[]{-13, -12, -11, 1};
+            arr = new int[]{-13, -2, -1, 10};
+            arr = new int[]{-3,1,2,3};
+            arr = new int[]{-4,-3,1,2,3};
+            arr = new int[]{-5,-4,-3,10,12,13};
+            */
+            p(arr);
+            p("lowest sum = "+Efficiency.findMinAbsSum(arr));
+        }
         if (run[37] == 1)
         {
             p("------ LinkList 1 - isPalindrom() ------");
@@ -424,43 +476,43 @@ public class Tester
         }
         if (run[17] == 1)
         {
-            p("------ Efficiancy 4- findSubarray ------");
+            p("------ Efficiency 4 - findSubarray ------");
             arr  = new int[]{2,6,1,9,7,3,1,4,1,2,8};
             arr = new int[]{3,3,-7,-1,3,3,1,-4};
-            int[] result = Efficiancy.findSubarraySumTarget(arr, 7);
+            int[] result = Efficiency.findSubarraySumTarget(arr, 7);
             p(Arrays.toString(arr)+",findSubarray="+Arrays.toString(result));
-            result = Efficiancy.findSubarrayAlsoNegative(arr, 100);
+            result = Efficiency.findSubarrayAlsoNegative(arr, 100);
             p(Arrays.toString(arr)+",findSubarrayAlsoNegative="+Arrays.toString(result));
         }
         if (run[16] == 1)
         {
-            p("------ Efficiancy 3 - findLargestAverageDiff ------");
+            p("------ Efficiency 3 - findLargestAverageDiff ------");
             arr  = new int[]{5,7,-2,10};
-            int index = Efficiancy.findLargestAverageDiff(arr);
+            int index = Efficiency.findLargestAverageDiff(arr);
             p(Arrays.toString(arr)+",findLargestAverageDiff="+index);
         }
         if (run[15] == 1)
         {
-            p("------ Efficiancy 2 - findDuplicateNumInArray ------");
+            p("------ Efficiency 2 - findDuplicateNumInArray ------");
             arr  = new int[]{2,3,1,4,3,5};
-            int num = Efficiancy.findDuplicateNumInArray(arr);
+            int num = Efficiency.findDuplicateNumInArray(arr);
             p(Arrays.toString(arr)+",findDuplicateNumInArray="+num);
         }
         if (run[14] == 1)
         {
-            p("------ Efficiancy 1 - SuperIncreasing ------");
+            p("------ Efficiency 1 - SuperIncreasing ------");
             arr  = new int[]{1, 2, 4, 8, 16};
-            boolean ok = Efficiancy.isSuperIncreasing(arr);
+            boolean ok = Efficiency.isSuperIncreasing(arr);
             p(Arrays.toString(arr)+",isSuperIncreasing="+ok);
             if (ok)
                 p("superIncreasingRepresentation="+ 
-                    Arrays.toString(Efficiancy.superIncreasingRepresentation(arr, 32)));//16,20,15,32
+                    Arrays.toString(Efficiency.superIncreasingRepresentation(arr, 32)));//16,20,15,32
             arr = new int[]{1, 2, 3, 8, 16};
-            ok = Efficiancy.isSuperIncreasing(arr);
+            ok = Efficiency.isSuperIncreasing(arr);
             p(Arrays.toString(arr)+",isSuperIncreasing="+ok);
             if (ok)
                 p("superIncreasingRepresentation="+ 
-                    Efficiancy.superIncreasingRepresentation(arr, 16));
+                    Efficiency.superIncreasingRepresentation(arr, 16));
         }
         if (run[13] == 1)
         {
