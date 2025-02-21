@@ -1,371 +1,907 @@
-package ירושה;
+package תרגילים_נוספים;
 
-import static Library.Print.*;
-
+import static Library.Print.p;
+//import static Library.Print.pNothing;
+//import static Library.Print.pProtected;
+//import static Library.Print.*;
+//import Library.Print;
+//import static Library.MyLibrary.*;
+//import Library.MyPoint.*;
+ 
+import java.util.Arrays;
+/**
+ * Write a description of class Tester here.
+ *
+ * @author (your name)
+ * @version (a version number or a date)
+ */
 public class Tester
 {
     public static void main()
     {
-        B3 g4 = new B3();
-        if (false)
+        //p("1");   // OK
+        //pNothing("2");  //compilation error - undeclared
+        //pProtected("3");  //compilation error - undeclared
+        //Print.pProtected("4");  //compilation error - protected access
+        boolean p = false;
+        int[] run = new int[100];
+        int[] arr;
+        int ar[][] = new int[117][];
+        
+        int runMethod = 51;
+        run[runMethod] = 1;
+
+        if (run[51] == 1)
         {
-            Girrafe g1 = new Girrafe(450);
-            Girrafe g2 = new Girrafe(460);
-            //p(g1._height); // compilation error - private access
+            p("------ Efficiency 9 - hasDivisor(int[] arr) ------");
+            int[] a = {25,-20,-100,10,5};
+            //a = new int[] {25,-20,6,-100,10};
+            a = new int[] {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024};
+            a = new int[] {100, 101, 102, 103, 104, 105, 106, 107, 108, 109};
+            a = new int[] {2, 2, 2, 2, 2, 2, 2, 2, 2, 3};
+            a = new int[] {10,8,6,4,2};
+            a = new int[] {20,18,16,14,12,10,8,6,4,2};
+            //p(2%4, 4%2); // to check if neede a>b or a<b
+            p("index = "+ Efficiency.hasDivisorMine(a) + ", ", a);
             /*
-            p(g1._height2);       // OK because Girrafe in the same package
-            
-            p(g1.compareTo(g2));
-            p(g2.compareTo(g1));
+            int b = 123, a1 = 77, k = 1000000;
+            boolean c;
+            long startTime = System.currentTimeMillis();
+            for (int i=0; i < k; i++){
+                c = (a1 % b != 0);
+            }
+            long endTime = System.currentTimeMillis();
+            long elapsedTime = endTime - startTime;
+            p("Elapsed time: " + elapsedTime + " milliseconds");
+            startTime = System.currentTimeMillis();
+            for (int i=0; i < k; i++){
+                c = (a1 == b);
+            }
+            endTime = System.currentTimeMillis();
+            elapsedTime = endTime - startTime;
+            p("Elapsed time: " + elapsedTime + " milliseconds");
             */
-            B3 g3 = new B3();
-            p(g3._c);       // OK because B3 in the same package
-            //p(g1.compareTo(g3));
+            //conclusion: time to calcualte % is a bit slower than < but
+            // if we must check for = then to add also % does not add much time
+            // thus if the array does not have duplicates, % is enough
         }
-        if (false)
+        if (run[50] == 1)
         {
-            B3 b3 = new B3();
-            A3 a3 = b3;
-            b3.f1(a3);
+            p("------ Recursion 30 - equalSum(int[] arr) ------");
+            int[] a = {2,1,6,4,5};
+            //a = new int[] {2,1,3,5,4};
+            //a = new int[] {3,1,2};
+            p("index = "+ Recursion.equalSum(a) + ", ", a);
         }
-        if (false)
+        if (run[49] == 1)
         {
-            AA a = new AA();
-            System.out.println(a._x);
-            System.out.println(a.getX());
-        
-            BB b = new BB();
-            System.out.println(b._x);
-            System.out.println(b.getX());
-    
-            a = new BB();
-    System.out.println(a._x);
-    System.out.println(a.getX());
-            
-            b = (BB)a;
-    /*7*/   //System.out.println(b._x);
-    /*8*/   //System.out.println(b.getX());
-    
-            Object o = new BB();
-    /*9*/   //System.out.println(o._x);
-    /*10*/  //System.out.println(o.getX());
-    
+            p("------ Recursion 29 - howManySorted(int n, int max) ------");
+            int n = 2, max = 3;
+            p("howManySorted for n = "+n+" and max = " + max + " is = " +
+                        Recursion.howManySorted(n, max));
         }
-
-        //B b = new A(1);
-        A a = new B(1);
-        if (false)
+        if (run[48] == 1)
         {
-            testABC();
-            testA1B1();
-            testInstanceof();
-            testEquals();
+            p("------ Recursion 28 - one(String s1, String s2) ------");
+            String s1 = "abc"; String s2 = "abcd";
+            s2 = "abd";
+            s2 = "dbc";
+            s2 = "axc";
+            p("One = "+Recursion.one(s1, s2));
         }
-        if (false)
+        if (run[47] == 1)
         {
-            testA2B2C2D2();
+            p("------ Recursion 27 - maxInMat(int[][]) ------");
+            int[][] grid = new int[][]{
+                {3, 13, 15, 28,30}, // line 0
+                {50,51,52,29,30}, // line 1
+                {51,10,53,54,55}, // line 2
+                {53,12,14,53,111}}; // line 3
+            p("max = "+Recursion.maxInMat(grid), grid);
         }
-        if (false) // from lecture by Hen
+        if (run[46] == 1)
         {
-            Father f = new Son();
-            Son s = new GrandSon();
-            f.equals(s);
-            s.equals(f);
-            
-            f = new GrandSon();
-            s.equals(f);
-            
-            GrandSon gs = new GrandSon();
-            s.equals(gs);
-            
-            f.foo(5);
-            //s.bar(4,5);   compilation error
+            p("------ Recursion 26 - zigzag(int[] a) ------");
+            int[] a = {45,3,69,97,82,16,73,81,40,88,32};
+            a = new int[] {10,9,8,7,6,5,4,3,2,1,0};
+            a = new int[] {4,18,2,7,4,7,0,3};
+            a = new int[] {4,18,19,7,4,7,0,3};
+            p("Zigzag array = " + Recursion.zigzag(a));
         }
-        if (false)
+        if (run[45] == 1)
         {
-            Father f1 = new Father();
-            Father f2 = new Father();
-            f1.equals(f2);
-            
-            GrandFather g = new GrandFather();
-            f1.equals(g);
-    
-            g = new Father();
-            f1.equals(g);
-            //f1.equals((Son)f2);   runtime error - can not downcast from Father to Son
-            GrandSon gs1 = new GrandSon();
-            GrandSon gs2 = new GrandSon();
-            gs1.equals(gs2);
-            
-            Object o = new GrandSon();
-            GrandSon gs = new GrandSon();
-            o.equals(gs);
-            
-            //Son s = new Father(); compliation error - Father does not contains Son
-            Son s = new Son();
-            gs.equals(s);
-            
-            f1 = new GrandSon();
-            f2 = new Son();
-            //f1.equals((GrandSon)f2); runtime error since Son does not include GS
-            f1.equals(f2);
-            
-            f1 = new Daughter();
-            //f1 = new Father();
-            GrandFather gf = new GrandFather();
-            f1.equals(gf);
-            f1.equals(f2);
-            o.equals(gs);
+            p("------ Recursion 25 - quickSort(int[] a) ------");
+            int[] a = {45,3,69,97,82,16,73,81,40,88,32};
+            a = new int[] {10,9,8,7,6,5,4,3,2,1,0};
+            //a = new int[] {10,9,8,0};
+            p("Sorted array ", Recursion.quickSort(a));
         }
-    }
-    private static void testA2B2C2D2()
-    {
-        A2 a = new A2(1);   // 1
-        p(" <= A2 a = new A2(1);");
-        B2 b = new B2(1);   // 2
-        p(" <= B2 b = new B2(1);");
-        C2 c = new C2(1);   // 2
-        p(" <= C2 c = new C2(1);");
-        D2 d = new D2(1);   // 3
-        p(" <= D2 d = new D2(1);");
-        D2 d2 = new D2(1);  // 3
-        p(" <= D2 d2 = new D2(1);");
-        B2 b1 = new D2(1);  // 3
-        p(" <= B2 b1 = new D2(1);");
-        
-        Object c1 = new C2(1);  // 2
-        p(" <= Object c1 = new C2(1);");
-        Object d1 = new D2(1);  // 3
-        p(" <= Object d1 = new D2(1);");
-        
-        a = c;
-        p(b1.equals(b)); // "B2 false"
-            //At compilation: b1 is type B2 and parameter b of type B2
-            //so equals of B2 is ok and it's signature is checked at runtime.
-            //At runtime: b1 is type D2 and b stays type B2. So equals of
-            //D2 is looked but requires (D2 other) so no match so looks at
-            //superclass B2 that has equals that matches so B.equals is used
-            //inside B2.equals():_i=3 for D2 and other._i is of B2 which is 2,
-            //so false
-        p(""+(b1.equals(b))+" <= b1.equals(b);");
-        p(c1.equals(c)); // "C2 true"
-            //At compilation: c1 is type Object and parameter c of type C2
-            //so equals of Object is ok and it's signature is checked at runtime.
-            //At runtime: c1 is type C2 and c stays type C2. So equals of
-            //C2 is checked and it overrides Object equals so it is used.
-            //though requires (Object other) becuase C2 is of type Object
-            //inside C2.equals(): other is type C2, _i==other._i becuase both type C2
-        p(""+(c1.equals(c))+" <= c1.equals(c);");
-        p(d1.equals(d)); // "false"
-            //At compilation: d1 is type Object and parameter d of type D2
-            //is an Object so equals of Object signature is checked at runtime.
-            //At runtime: d1 is type D2 and d stays type D2. So equals of
-            //D2 is checked ONLY IF IT OVERIDES equals of Objects. But requires
-            //(D2 other) so does not overrides so equals of B2 checked. Also does
-            //not overrides Object.equals and also A2.equals() does not overrides,
-            //so equals of Object is used.
-            //inside Object.equals(): addresses are not equal
-        p(""+(d1.equals(d))+" <= d1.equals(d);");
-        p(d.equals(d1)); // "false"
-            //At compilation: d is type D2 and parameter d1 of type Object.
-            //D.equals has D2 parameter which no match so equals of B2 is checked.
-            //It requires B2 parameter so no match so checks equals of A2. No
-            //match too. So equals of Object signature is used at runtime.
-            //At runtime: d, and d1 are type D2. So equals of D2 is checked 
-            //to see if it OVERIDES equals of Objects. But requires (D2 other)
-            //so does not overrides thus equals of B2 and A2 checked but still
-            //do not override equals of Object, soObject is used.
-            //inside Object.equals(): addresses are not equal
-        p(""+(d.equals(d1))+" <= d.equals(d1);");
-        p(d.equals(d2)); // "D2 true"
-            //At compilation: d and d2 are type D2 and parameter d2 of 
-            //D.equals has D2 parameter which matches so D2 signature is used at
-            //runtime.
-            //At runtime: d and d1 are type D2. So equals of D2 is checked and used.
-            //inside D2.equals(): other is type D2, _i==other._i becuase both type D2
-        p(""+(d.equals(d2))+" <= d.equals(d2);");
-        p(c.equals(c1)); // "C2 true"
-            //At compilation: c of type C2 and c1 is type Object. C2.equals
-            //has parameter of Object so it's signature is used at runtime.
-            //At runtime: c and c1 are type C2. So equals of C2 is checked
-            //and it OVERRIDES equals of Object so C2.equals() is used.
-        //Michal says: C2.equals has no equals that accepts C2 so we use
-            //the method signature of compilation which is C2.equals(object)
-            //which can be used because C2 is also an Object.
-            //inside C2.equals(): other is type C2, _i==other._i becuase both type C2
-        p(""+(c.equals(c1))+" <= c.equals(c1);");
-        p("a=c");
-        p(a.equals(c)); // "A2 true"
-            //At compilation: a of type A2 and c is type C2. A2.equals
-            //has parameter of A2 and since C2 is subclass of A2 it is ok and
-            //it's signature is used at runtime.
-            //At runtime: a and c are type C2. So equals of C2 is checked but
-            //compared to A2.equals(). Since C2.equals(Object other) it does
-            //overrides A2.equals(A2 other). Going up to B2, still no override
-            //since B2.equals(B2 other). So A2.equals is used.
-            //inside A2.equals(): other is type C2, _i==other._i becuase both type C2
-        p(""+(a.equals(c))+" <= a.equals(c);");
-        p(c.equals(a)); // "A2 true"
-            //At compilation: c is type C2 and a of type A2. C2.equals
-            //has parameter of Object and since A2 is subclass of Object it
-            //is ok and C2.equals signature is used at runtime 
-            //BUT WITH A2 PARAMETER.
-            //At runtime: a and c are type C2. So equals of C2 is checked 
-            //but it has Object paramenter so no match, same for B2 but A2 matches.
-            //inside A2.equals(): other is type C2, _i==other._i becuase both type C2
-        p(""+(c.equals(a))+" <= c.equals(a);");
-        p(b.equals(c)); //"B2 true"
-            //At compilation: b is type B2 and c of type C2. B2.equals
-            //has parameter of B2 and since c is of class C2 no match.
-            //But C2 is subclass of B2 so it contains B2 so it is ok.
-            //Thus, B2.equals signature is used at runtime BUT WITH C2 PARAMETER.
-            //At runtime: b is Type B2 and c is type C2. So equals of B2 is 
-            //checked. It has B2 paramenter so it is ok because B2 is part
-            //of C2,  thus B2.equals is used.
-            //inside B2.equals():_i=2 for B2 and other._i is of C2 which is 2,
-        p(""+(b.equals(c))+" <= b.equals(c);");
-        p(b.equals(b1)); //"B2 false"
-            //At compilation: b is type B2 and b1 of type B2. B2.equals
-            //has parameter of B2 so there is a match and B2.equals signature
-            //is used with parameter type B2.
-            //At runtime: b is Type B2 and b1 is type D2. So equals of B2 is 
-            //checked. It has B2 paramenter so it is ok because B2 is part
-            //of D2, thus B2.equals is used.
-            //inside B2.equals():_i=2 for B2 and other._i is of D2 which is 3,
-            //so false
-        p(""+(b.equals(b1))+" <= b.equals(b1);");
-        p(b.equals(a)); // "A2 true"
-            //At compilation: b is type B2 and a of type A2. B2.equals has
-            //parameter of B2 so there is a no match because B2 is not part
-            //of A2. Thus B2.equals signature is used with parameter type A2.
-            //At runtime: b is Type B2 and a is type C2. So equals of B2 is 
-            //checked. It has B2 paramenter so it is not ok because B2 is 
-            //not part of A2. So A2.equals is checked and there is a match.
-            //inside A2.equals():_i=2 for B2 and other._i is of C2 which is 2,
-        p(""+(b.equals(a))+" <= b.equals(a);");
-        p(d1.equals(b)); // "false"
-            //At compilation: d1 is type Object and b of type B2. Object.equals
-            //has parameter of Object so there is a a match.
-            //Thus Object.equals signature is used with parameter type B2.
-            //At runtime: d1 is Type D2 and b is type B2. So equals of D2 is 
-            //checked. It has D2 paramenter so it does not overrides 
-            //Object.equals and the same for B2 and A2. So Object.equals is used
-            //inside Object.equals(): addresses are not equal
-        p(""+(d1.equals(b))+" <= d1.equals(b);");
-    }
-    private static void testABC()
-    {
-        A y1 = new B(5);    // implicit upcasting
-        B y2 = new B(5);
-        A z1 = new C(5);    // implicit upcasting
-        C z2 = new C(5);
-
-        //C z3 = new B(5);   // invalid, compilation error of incompatible types 
-        //C c = (C)y2;       // invalid, compilation error of incompatible types 
-        p(y1.getNum());
-//        p(y1.getNumber());   // compliation error - unknown method (does not exists in A)
-        B b = (B) y1;    // downcasting allowed since B is subclass of A
-        p(b.getNumber());   // allowed since getNumber() is a method of B
-        p(b.getNum());  // valid - getNUm() in A but also in B because subclass of A
-        
-        A a = new A(5);
-        //B bb = (B) a;       //invalid - runtime error because A cannot downcast to B
-            // but
-        B bbb = (B) y1;     // valid because y1 is of type B
-        
-        p(y1._num == y2._num);  // TRUE
-        p(""+(y1._num == y2._num)+" <= y1._num == y2._num;");
-        
-        p("Runtime error: C cannot cast to B"+" <= y1.getNum() == ((B)z1).getNum();");
-        //p(y1.getNum() == ((B)z1).getNum()); // runtime error - C cannot cast to B
-                            // it is not downcasting since C is not a sub-class of B
-
-        p(y1.equals(z2));   // TRUE - equals() of A is used because y1 is type A, and
-                            // parameters of that equals is ok because C is subclass of A
-        p(""+(y1.equals(z2))+" <= y1.equals(z2);");
-        
-        p(y2.equals(z2));   // TRUE -  y2 is of type B but no equals in B so equals of A is
-                            // used, and the rest as above
-        p(""+(y2.equals(z2))+" <= y2.equals(z2);");
-        
-        p(z2.equals(y2));   // FALSE - z2 type C so equals of C is used which requires parameter
-                            // of type A, but gets y2 which is of type B which is also A
-                            // so equals of C is used: (a instanceof C) is false
-        p(""+(z2.equals(y2))+" <= z2.equals(y2);");
-        
-        //p(z2.equals((C)y2));                             
-        p("Compilation error: B cannot cast to B"+" <= z2.equals((C)y2);");
-    }
-    private static void testEquals()
-    {
-        A y1 = new A(2);
-        Object y2 = new A(2);
-           //will use the method in Object because the one in A 
-           //does not override it and the pointer y2 is of type Object
-           //at compilation time - that is the time when the method
-           //to be exceuted is chose
-        p(y2.equals(y1));
-           //will use the method in A because pointer y2 is of type A
-           //at compilation time - that is the time when the method to be
-           //exceuted is chosen, and the parameters type match the call
-        p(((A)y2).equals(y1));
-        return;
-    }    
-    private static void testA1B1() // B1 subclass of A1
-    {
-        A1 a = (A1) new B1();   // AB
-        p(" <= A1 a = (A1) new B1();");
-        A1 aa = new A1();   // A
-        p(" <= "+"A1 aa = new A1(); ");
-        A1 ab = new B1();   // AB
-        p(" <= "+"A1 ab = new B1();");
-        //B1 ba = new A1();   // compiler error B1 is not part of A1
-        B1 bb = new B1();   // AB
-        p(" <= "+"B1 bb = new B1();");
-        /*
-        aa.yosef();    // Arik_A
-        p(" <= "+"aa.yosef();");
-        ab.yosef();    // Yosef
-        p(" <= "+"ab.yosef();");
-        bb.yosef();    // Yosef
-        p(" <= "+"bb.yosef();");
-        ((A1)aa).yosef();    // Arik_A
-        p(" <= "+"((A1)aa).yosef();");
-        ((A1)ab).yosef();    // Arik_A->no, Yosef
-        p(" <= "+"((A1)ab).yosef();");
-        ((A1)bb).yosef();    // Arik_A->no, Yosef
-        p(" <= "+"((A1)bb).yosef();");
-        */
-        //((B1)aa).yosef();        // Arik_A -> runtime error because A can not be cast to B
-        p(" <= "+"((B1)aa).yosef(); - runtime error because A can not be cast to B");
-        //((B1)aa).superYosef();    // run time error 
-        p(" <= "+"((B1)aa).superYosef(); - runtime error because A can not be cast to B");
-        ((B1)ab).yosef();    // Yosef 
-        p(" <= "+"((B1)ab).yosef();");
-        ((B1)ab).superYosef();    // Arik_A - no, Arik_B
-        p(" <= "+"((B1)ab).superYosef();");
-        ((B1)bb).superYosef();    // Arik_A - no, Arik_B
-        p(" <= "+"((B1)bb).superYosef();");
-    }
-    private static void testInstanceof()
-    {
-        // usage of instanceof
-        A[] array = new A[3]; 
-        array[0] = new C(0); 
-        array[1] = new B(1);
-        array[2] = new B(2);
-        B b2 = new B(5);
-        int n0 = b2.justInB();
-        B temp = (B) array[2];
-        int n1 = temp.justInB();
-        int n = ((B)array[2]).justInB();
-        for (int i=0; i<array.length; i++) 
-            if (array[i] instanceof B)
-               ((B)array[i]).justInB();
-        A a0 = new A(1);
-        p(a0 instanceof B);
-        p(array[0] instanceof B);
-        p(array[1] instanceof B);
-        p(b2 instanceof A);
+        if (run[44] == 1)
+        {
+            p("------ Recursion 24 - odd(int num) ------");
+            p(1234, Recursion.odd(1234));
+            p(120, Recursion.odd(120));
+            int k = 111;//84224;
+            p(k, Recursion.odd(k));
+        }
+        if (run[43] == 1)
+        {
+            p("------ Recursion 23 - necklace(int n) ------");
+            int k = 6;
+            for (int i=0; i<k+1;i++)
+                p(i, Recursion.necklace(i));
+        }
+        if (run[42] == 1)
+        {
+            p("------ Efficiency 8 - findSubarray(int[] arr, int target) ------");
+            int[] a = {-1, 1, -3, 3};
+            Efficiency.findSubarray(a, -11);
+            Efficiency.findSubarray(a, 1);
+            Efficiency.findSubarray(a, -2);
+            //Efficiency.findSubarray(a, 0);
+        }
+        if (run[41] == 1)
+        {
+            p("------ Recursion 22 - binaryNumbers(int n) ------");
+            for (int i=0; i<8;i++)
+                Recursion.binaryNumbers(i);
+        }
+        if (run[40] == 1)
+        {
+            p("------ Efficiency 7 - sortMod(int[] a, int k) ------");
+            int[] a = {35, 17, 13, 252, 4, 128, 7, 3, 81};
+            a = new int[]{39, 18, 17, 256, 5, 124, 3, 2, 81};
+            int n = 20;
+            a = new int[n];
+            for (int i=0;i<n;i++)
+                a[i] = n-i;
+            int[] b = a.clone();
+            int k = 10;
+            //p("new array chatGPT mod = " + k + ", ", Efficiency.sortMod(a, k));
+            //p("new array school mod = " + k + ", ", Efficiency.sortModSchool(a, k));
+            p("new array mine mod = " + k + ", ", Efficiency.sortModOK(a, k, false));
+            //need to be fixed, but looks like it is not not improving
+            //p("new array mine mod = " + k + ", ", Efficiency.sortModOK(b, k, true));
+        }
+        if (run[39] == 1)
+        {
+            p("------ Efficiency 6 - orderCrossedArray(int[] a) ------");
+            int i = 0;
+            ar[i++] = new int[]{1, 9, 2, 8, 4};
+            ar[i++] = new int[]{1, 9, 2, 8, 4, 7};
+            ar[i++] = new int[]{1, 9, 2, 8, 4, 7, 7};
+            ar[i++] = new int[]{1, 9, 2, 8, 4, 7, 7, 4};
+            ar[i++] = new int[]{1,9,2,8,4,7,7,4,12};
+            ar[i++] = new int[]{1,9,2,8,4,7,7,-4,12};
+            ar[i++] = new int[]{1,9,2,8,4,3,7,-4,12};
+            int n = 10;
+            ar[i++] = new int[n];
+            int end = (n%2 == 0 ? 1 : 2);
+            for (int j=0; j < n; j+=2)
+            {
+                ar[i-1][j] = j;
+                if (j < n-end) ar[i-1][j+1] = n - j - end;
+            }
+            ar[i++] = new int[]{1,19,2,17,4,15,7,-4,8};
+            ar[i++] = new int[]{1,19,2,17,4,-3,7,-4,8};
+            ar[i++] = new int[]{1,-1,2,-2,4,-3,7,-4,8};
+            int j = --i;
+            for (; i >= 0; i--)
+                p("new array " + i + " = ", Efficiency.orderCrossedArray(ar[i]));
+        }
+        if (run[38] == 1)
+        {
+            p("------ Efficiency 5 - findMinAbsSum(int[] a) ------");
+            arr = new int[]{1};
+            arr = new int[]{-2};
+            arr = new int[]{1, 100};
+            arr = new int[]{-1, 100};
+            arr = new int[]{-2, -1};
+            arr = new int[]{1, 2, 3};
+            arr = new int[]{-10, -5, -3};
+            arr = new int[]{-1, 2, 3};
+            arr = new int[]{-1, 2, 3, 4};
+            arr = new int[]{-1, 2, 3, 4, 5};
+            arr = new int[]{-3, -2, -1, 1,2,3};
+            arr = new int[]{-2,-1,3,5,7,8,11,17,25,31,36};
+            /*
+            arr = new int[]{-13, -12, -11, 1,2,3};
+            arr = new int[]{-13, -12, -11, 1,2,3,4,5,6,7};
+            arr = new int[]{-13, -12, -11, 1};
+            arr = new int[]{-13, -2, -1, 10};
+            arr = new int[]{-3,1,2,3};
+            arr = new int[]{-4,-3,1,2,3};
+            arr = new int[]{-5,-4,-3,10,12,13};
+            */
+            p(arr);
+            p("lowest sum = "+Efficiency.findMinAbsSum(arr));
+        }
+        if (run[37] == 1)
+        {
+            p("------ LinkList 1 - isPalindrom() ------");
+            arr = new int[]{3, 13, 15, -28, 30, 0,1};
+            arr = new int[]{10,4,2,3,4,10};
+            LinkList ls = new LinkList(arr);
+            p(ls.toString());
+            //p(ls.countList());
+            //ls.reveseList();
+            p("isPalindrom = "+ls.isPalindrom());
+        }
+        if (run[36] == 1)
+        {
+            p("------ Recursion 21 - LongestWorm(int[][]) ------");
+            int[][] grid = new int[][]{  // 4 solutions for sum = 4
+                {3, 13, 15, 28,30}, // line 0
+                {50,51,52,29,30}, // line 1
+                {51,10,53,54,55}, // line 2
+                {53,12,14,53,11}}; // line 3
+            p("Found worm of length "+Recursion.longestWorm(grid), grid);
+        }
+        if (run[35] == 1)
+        {
+            p("------ Recursion 20 - findSumInMatrix ------");
+            int[][] grid = new int[][]{  // 4 solutions for sum = 4
+                {4, 41, 2, 1}, // line 0
+                {2, 1, 1, 1}, // line 1
+                {2, 15, 10, 54}, // line 2
+                {63, 22, 2, 4}}; // line 3
+            int sum = 4;
+            grid = new int[][]{
+                {4, 41, 20, 1}, // line 0
+                {1, 10, 10, 1}, // line 1
+                {2, 15, 10, 54}, // line 2
+                {63, 22, 20, 40}}; // line 3
+            sum = 3;
+                /*
+            grid = new int[][]{   // 2 solutions for sum = 4
+                {2, 41, 3, 14}, // line 0
+                {2, 1, 24, 7}, // line 1
+                {3, 15, 1, 54}, // line 2
+                {63, 22, 2, 4}}; // line 3
+                /*
+            grid = new int[][]{ 
+                {1, 1, 3, 14}, // line 0
+                {2, 1, 24, 7}, // line 1
+                {3, 15, 1, 54}, // line 2
+                {63, 22, 2, 4}}; // line 3
+                */
+            //sum = 9;  // no solutions
+            p("Matrix: ");
+            p(grid);
+            int[][] path = new int[grid.length][grid.length];
+            p("Found path with sum "+sum+": "+Recursion.findSumInMatrix(grid, sum, path));
+            p(path);
+        }
+        if (run[34] == 1)
+        {
+            p("------ Recursion 19 - findSumsInMatrix ------");
+            int[][] grid = new int[][]{ // 6 solutions
+                {4, 41, 2, 1}, // line 0
+                {2, 1, 1, 1}, // line 1
+                {2, 15, 10, 54}, // line 2
+                {63, 22, 2, 4}}; // line 3
+            grid = new int[][]{ 
+                {2, 41, 3, 14}, // line 0
+                {2, 1, 24, 7}, // line 1
+                {3, 15, 10, 54}, // line 2
+                {63, 22, 2, 4}}; // line 3
+            int sum = 4;    // 3 solutions
+            //sum = 9;  // no solutions
+            p("Matrix: ");
+            p(grid);
+            int[][] path = new int[grid.length][grid.length];
+            p("Found path with sum "+sum+": "+Recursion.findSumsInMatrix(grid, sum, path));
+            p(path);
+        }
+        if (run[33] == 1)
+        {
+            p("------ Recursion 18 - findStains ------");
+            int[][] grid = {
+                {0, 1, 0, 0, 0, 0, 0, 1}, // line 0
+                {1, 0, 0, 0, 0, 0, 1, 1}, // line 1
+                {0, 0, 0, 0, 0, 1, 1, 0}, // line 2
+                {0, 1, 1, 0, 0, 0, 0, 0}, // line 3
+                {0, 0, 0, 1, 0, 0, 0, 0}, // line 4
+                {0, 0, 0, 0, 1, 1, 0, 0}, // line 5
+                {1, 0, 0, 0, 0, 0, 1, 0}, // line 6
+                {1, 1, 1, 0, 0, 0, 1, 0}};  // line 7
+            p("Matrix: ");
+            p(grid);
+            p("number of stains is: " + Recursion.findStains(grid));
+            p(grid);
+            grid = new int[][]{
+                {0,1,0,0,1}, // line 0
+                {1,0,0,1,1}, // line 1
+                {0,0,1,1,0}, // line 2
+                {1,0,0,0,0}, // line 3
+                {1,1,1,0,0}};// line 4
+            p(grid);
+            p("number of stains is: " + Recursion.findStains(grid));
+            p(grid);
+            grid = new int[][]{
+                {0,1,0,0,1}, // line 0
+                {1,0,0,0,1}, // line 1
+                {0,0,1,0,0}, // line 2
+                {1,0,0,0,1}, // line 3
+                {1,1,1,0,0}};// line 4
+            p(grid);
+            p("number of stains is: " + Recursion.findStains(grid));
+            p(grid);
+        }
+        if (run[32] == 1)
+        {
+            p("------ Recursion 17 - findStainSizeAtXY ------");
+            int[][] grid = {
+                {0, 1, 0, 0, 0, 0, 0, 1}, // line 0
+                {1, 0, 0, 0, 0, 0, 1, 1}, // line 1
+                {0, 0, 0, 0, 0, 1, 1, 0}, // line 2
+                {0, 1, 1, 0, 0, 0, 0, 0}, // line 3
+                {0, 0, 0, 1, 0, 0, 0, 0}, // line 4
+                {0, 0, 0, 0, 1, 1, 0, 0}, // line 5
+                {1, 0, 0, 0, 0, 0, 1, 0}, // line 6
+                {1, 1, 1, 0, 0, 0, 1, 0}};  // line 7
+            p("Matrix: ");
+            p(grid);
+            int x = 4, y = 3;
+            p("Size of stain at "+Recursion.makePt(x,y)+" is: " + Recursion.stains(grid, x, y));
+            grid = new int[][]{
+                {0,1,0,0,1}, // line 0
+                {1,0,0,1,1}, // line 1
+                {0,0,1,1,0}, // line 2
+                {1,0,0,0,0}, // line 3
+                {1,1,1,0,0}};// line 4
+            p(grid);
+            x = 2; y = 2;
+            p("Size of stain at "+Recursion.makePt(x,y)+" is: " + Recursion.stains(grid, x, y));
+            grid = new int[][]{
+                {0,1,0,0,1}, // line 0
+                {1,0,0,0,1}, // line 1
+                {0,0,1,0,0}, // line 2
+                {1,0,0,0,1}, // line 3
+                {1,1,1,0,0}};// line 4
+            p(grid);
+            x = 0; y = 0;
+            p("Size of stain at "+Recursion.makePt(x,y)+" is: " + Recursion.stains(grid, x, y));
+        }
+        if (run[31] == 1)
+        {
+            p("------ Recursion 16 - princeToVilan(int[][] m) ------");
+            int[][] grid = {
+                {2, 0, 1, 2, 3}, // line 0
+                {2, 3, 5, 5, 4}, // line 1
+                {8, -1, 6, 8, 7}, // line 2
+                {3, 4, 7, 2, 4}, // line 3
+                {2, 4, 3, 1, 2}, // line 4
+                }; // line 5
+            p("Matrix: ");
+            p(grid);
+            p("princeToVilan: "+Recursion.princeToVilan(grid, 0, 0));
+            p(grid);
+            grid = new int[][] { // no solution
+                {12, 0, 1, 2, 3}, // line 0
+                {2, 3, 5, 5, 4}, // line 1
+                {8, -1, 6, 8, 7}, // line 2
+                {3, 4, 7, 2, 4}, // line 3
+                {2, 4, 3, 1, 2}, // line 4
+                }; // line 5
+            p("Matrix: ");
+            p(grid);
+            p("princeToVilan: "+Recursion.princeToVilan(grid, 0, 0));
+            p(grid);
+        }
+        if (run[30] == 1)//true || 
+        {
+            p("------ Recursion 15 - countPathsInMatrix(int[][] m) ------");
+            int[][] grid = { // no solution
+                {12, 22, 23, 54}, // line 0
+                {43, 35, 21, 20}, // line 1
+                {34, 21, 43, 21}, // line 2
+                {25, 30, 0, 20}, // line 3
+                {0, 22, 10, 10}, // line 4
+                {20, 13, 3, 45}}; // line 5
+            p("Matrix: ");
+            p(grid);
+            p("countPathsInMatrix: "+Recursion.countPathsInMatrix(grid));
+        }
+        if (run[29] == 1)
+        {
+            p("------ Recursion 14 - areThereNumbersEqualSumWithRepeatition(int[] a, int sum) ------");
+            int i = 0;
+            int[] target = new int[20];
+            ar[i]  = new int[]{170, 45, 75, 90, 802, 24, 2, 66};
+            target[i++] = 92;
+            ar[i]  = new int[]{-1, 2, 75, 90, 802, 24, 2, 66};
+            target[i++] = 93;
+            ar[i]  = new int[]{170, 45, 75, 90, 802, 24, 2, 66};
+            target[i++] = 91;
+            ar[i]  = new int[]{101, 12, 5};
+            target[i++] = 118;
+            ar[i]  = new int[]{92,-1};
+            target[i++] = 91;
+            ar[i]  = new int[]{92,-1};
+            target[i++] = 80;
+            ar[i]  = new int[]{91};
+            target[i++] = 91;
+            ar[i]  = new int[]{-1};
+            target[i++] = 91;
+            ar[i]  = new int[]{};
+            target[i++] = 0;
+            for (int j=0; j<1; j++)
+                p("areThereNumbersEqualSumWithRepeatition: "+target[j]+" ["+
+                Recursion.areThereNumbersEqualSumWithRepeatition(ar[j], target[j])+
+                "]", ar[j]);
+        }
+        if (run[28] == 1)
+        {
+            p("------ Recursion 13 - areThereNumbersEqualSum(int[] a, int sum) ------");
+            int i = 0;
+            int[] target = new int[20];
+            ar[i]  = new int[]{170, 45, 75, 90, 802, 24, 2, 66};
+            target[i++] = 92;
+            ar[i]  = new int[]{-1, 2, 75, 90, 802, 24, 2, 66};
+            target[i++] = 93;
+            ar[i]  = new int[]{170, 45, 75, 90, 802, 24, 2, 66};
+            target[i++] = 91;
+            ar[i]  = new int[]{101, 12, 5};
+            target[i++] = 118;
+            ar[i]  = new int[]{92,-1};
+            target[i++] = 91;
+            ar[i]  = new int[]{91};
+            target[i++] = 91;
+            ar[i]  = new int[]{-1};
+            target[i++] = 91;
+            ar[i]  = new int[]{};
+            for (int j=0; j<1; j++)
+                p("areThereNumbersEqualSum: "+target[j]+" ["+
+                Recursion.areThereNumbersEqualSum(ar[j], target[j])+
+                //Recursion.cover(ar[j], target[j])+
+                "]", ar[j]);
+        }
+        if (run[27] == 1)
+        {
+            p("------ Recursion 12 - areThere2NumbersEqualSum(int[] a, int sum) ------");
+            int i = 0;
+            int[] target = new int[20];
+            ar[i]  = new int[]{170, 45, 75, 90, 802, 24, 2, 66};
+            target[i++] = 92;
+            ar[i]  = new int[]{170, 45, 75, 90, 802, 24, 2, 66};
+            target[i++] = 91;
+            ar[i]  = new int[]{101, 12, 5};
+            target[i++] = 118;
+            ar[i]  = new int[]{119,-1};
+            target[i++] = 118;
+            ar[i]  = new int[]{target[i-1]};
+            target[i++] = 91;
+            ar[i]  = new int[]{-1};
+            target[i++] = 91;
+            ar[i]  = new int[]{};
+            for (int j=0; j<i+1; j++)
+                p("areThere2NumbersEqualSum: "+target[j]+" ["+
+                Recursion.areThere2NumbersEqualSum(ar[j], target[j])+
+                "]", ar[j]);
+        }
+        if (run[26] == 1)
+        {
+            p("------ Recursion 11 - selectioSort(int[] n) ------");
+            arr  = new int[]{170, 45, 75, 90, 802, 24, 2, 66};
+            //arr  = new int[]{101, 12, 5};
+            //arr  = new int[]{3,-1};
+            //arr  = new int[]{-1};
+            //arr  = new int[]{};
+            p("Original array: ", arr);
+            Sort.selectionSort(arr);
+            p("Sorted array: ", arr);
+        }
+        if (run[25] == 1)
+        {
+            p("------ Recursion 10 - ladderSoccer(int n, int m) G1:G2 ------");
+            int G1 = 2, G2 = 1, test = 3;
+            //G1 = 3; G2 = 1; test = 4;
+            //G1 = G2 = test = 0;
+            //G1 = -1; G2 = 0; test = -1;
+            G1 = 2; G2 = 2; test = 6;
+            p("Steps to to get to score ["+G1+":"+G2+"] is: "+Recursion.ladderSoccer(G1, G2)+", test="+test);
+        }
+        if (run[24] == 1)
+        {
+            p("------ Recursion 9 - Maze מבוך ------");
+            int[][] grid = { // no solution
+                {1, 0, 0, 0, 0, 0, 0, 0}, // line 0
+                {1, 1, 0, 0, 0, 0, 0, 0}, // line 1
+                {0, 1, 0, 0, 0, 0, 0, 0}, // line 2
+                {0, 1, 1, 1, 0, 0, 0, 0}, // line 3
+                {0, 0, 0, 1, 0, 0, 0, 0}, // line 4
+                {0, 0, 0, 1, 1, 1, 1, 0}, // line 5
+                {0, 0, 0, 0, 0, 0, 1, 0}, // line 6
+                {0, 0, 0, 0, 0, 0, 1, 0}};  // line 7
+            grid = new int[][] {    // with solution
+                {1, 0, 0, 0, 0, 0, 0, 0}, // line 0
+                {1, 1, 0, 0, 0, 0, 0, 0}, // line 1
+                {0, 1, 1, 0, 0, 0, 0, 0}, // line 2
+                {0, 0, 1, 1, 1, 0, 0, 0}, // line 3
+                {0, 0, 0, 0, 1, 0, 0, 0}, // line 4
+                {0, 0, 0, 0, 1, 1, 1, 0}, // line 5
+                {0, 0, 0, 0, 0, 0, 1, 0}, // line 6
+                {0, 0, 0, 0, 0, 0, 1, 1}};  // line 7
+            grid = new int[][] { // with solution but on the way hit a wall and must go back
+                {1, 0, 0, 1, 1, 0, 0, 0}, // line 0
+                {1, 1, 1, 1, 0, 0, 0, 0}, // line 1
+                {0, 0, 0, 1, 0, 0, 0, 0}, // line 2
+                {0, 0, 1, 1, 1, 0, 0, 0}, // line 3
+                {0, 0, 0, 0, 1, 0, 0, 0}, // line 4
+                {0, 0, 0, 0, 1, 1, 1, 0}, // line 5
+                {0, 0, 0, 0, 0, 0, 1, 0}, // line 6
+                {0, 0, 0, 0, 0, 0, 1, 1}};  // line 7
+            p("Original maze: ");
+            p(grid);
+            boolean solution = Recursion.maze(grid);
+            if (grid.length == 0)
+                p("invalid grid - must be square matrix ");
+            else
+            {
+                if (!solution)
+                    p("No solution found!!!");
+                else
+                    p("Solution maze (the '2' show the path out): ");
+            }
+            p(grid);
+        }
+        if (run[23] == 1)
+        {
+            p("------ radixSort Loop ------");
+            arr  = new int[]{170, 45, 75, 90, 802, 24, 2, 66};
+            arr  = new int[]{101, 12, 5};
+            p("Original array: ", arr);
+            Sort.radixSort(arr);
+            p("Sorted array: ", arr);
+        }
+        if (run[22] == 1)
+        {
+            p("------ quickSort Recursion ------");
+            arr = new int[]{3, 8, 15, 1, 7};
+            arr = new int[]{-10,-3,-7,-1,9,8};
+            arr = new int[]{45,33,69,97,82,36,73,91,40,88,32};
+            arr = new int[]{45,44,43,42,41,40,39,38,37,36,35};
+            arr = new int[]{45,37,44,40,42,36,43,41,40,38,35};
+            int n=50;
+            arr = new int[n];
+            for (int i=0; i<n; i++)
+                arr[i] = i;
+            //arr = new int[] {3, 8, 15, 1, 7};    
+            p("Original array:", arr);
+            Sort.quickSort(arr, false);
+            p("Sorted array: ", arr);
+        }
+        if (run[21] == 1)
+        {
+            p("------ quickSortLoop ------");
+            arr = new int[]{3, 8, 15, 1, 7};
+            arr = new int[]{-10,-3,-7,-1,9,8};
+            arr = new int[]{45,33,69,97,82,36,73,91,40,88,32};
+            //arr = new int[]{45,44,43,42,41,40,39,38,37,36,35};
+            arr = new int[]{45,37,44,40,42,36,43,41,40,38,35};
+            p("Original array:", arr);
+            Sort.quickSortLoop(arr, false);
+            p("Sorted array: ", arr);
+        }
+        if (run[20] == 1)
+        {
+            p("------ My sort ------");
+            arr = new int[]{3, 8, 15, 1, 7};
+            //arr = new int[]{-10,-3,-7,-1,9,8};
+            //arr = new int[]{-10,-3,-1,-1,9,8};
+            //arr = new int[]{45,33,69,97,82,36,73,91,40,88,32};
+            //arr = new int[]{45,44,43,42,41,40,39,38,37,36,35};
+            arr = new int[]{45,37,44,40,42,36,43,41,40,38,35};
+            int n=50;
+            arr = new int[n];
+            for (int i=0; i<n; i++)
+                arr[i] = i;
+            p("Original array:", arr);
+            p("Sorted array: ", Sort.mySort(arr, false));
+        }
+        if (run[19] == 1)
+        {
+            p("------ Recursion 8 - ladder(int n) ------");
+            int n = 5;
+            //n = 6;
+            p("steps to climb a ladder of "+n+" steps is: "+Recursion.ladder(n));
+        }
+        if (run[18] == 1)
+        {
+            p("------ Recursion 7 - smallestSumIn2Arrays ------");
+            int[] a = new int[]{2,6,1,9,7,3,1,4};
+            int[] b = new int[]{3,3,-7,-1,3,3,1,-4};
+            a = new int[]{3,2,8};
+            b = new int[]{2,-1,6};
+            p(a);
+            p(b);
+            p("smallest="+Recursion.smallestSumIn2Arrays(a, b));
+        }
+        if (run[17] == 1)
+        {
+            p("------ Efficiency 4 - findSubarray ------");
+            arr  = new int[]{2,6,1,9,7,3,1,4,1,2,559};
+            //arr = new int[]{3,3,-7,-1,3,3,1,-4};
+            int[] result = Efficiency.findSubarraySumTarget(arr, 558);
+            p(Arrays.toString(arr)+", target = 7,findSubarray="+Arrays.toString(result));
+            //result = Efficiency.findSubarrayAlsoNegative(arr, 100);
+            //p(Arrays.toString(arr)+", target = 100,findSubarrayAlsoNegative="+Arrays.toString(result));
+        }
+        if (run[16] == 1)
+        {
+            p("------ Efficiency 3 - findLargestAverageDiff ------");
+            arr  = new int[]{5,7,-2,10};
+            int index = Efficiency.findLargestAverageDiff(arr);
+            p(Arrays.toString(arr)+",findLargestAverageDiff="+index);
+        }
+        if (run[15] == 1)
+        {
+            p("------ Efficiency 2 - findDuplicateNumInArray ------");
+            arr  = new int[]{2,3,1,4,3,5};
+            int num = Efficiency.findDuplicateNumInArray(arr);
+            p(Arrays.toString(arr)+",findDuplicateNumInArray="+num);
+        }
+        if (run[14] == 1)
+        {
+            p("------ Efficiency 1 - SuperIncreasing ------");
+            arr  = new int[]{1, 2, 4, 8, 16};
+            boolean ok = Efficiency.isSuperIncreasing(arr);
+            p(Arrays.toString(arr)+",isSuperIncreasing="+ok);
+            if (ok)
+                p("superIncreasingRepresentation="+ 
+                    Arrays.toString(Efficiency.superIncreasingRepresentation(arr, 32)));//16,20,15,32
+            arr = new int[]{1, 2, 3, 8, 16};
+            ok = Efficiency.isSuperIncreasing(arr);
+            p(Arrays.toString(arr)+",isSuperIncreasing="+ok);
+            if (ok)
+                p("superIncreasingRepresentation="+ 
+                    Efficiency.superIncreasingRepresentation(arr, 16));
+        }
+        if (run[13] == 1)
+        {
+            p("------ Recursion 6 - smallest ------");
+            arr = new int[]{10, 10, 3, 2};
+            arr = new int[]{10, 10, 1, 2, 9};
+            p(Arrays.toString(arr) + ",smallest=[" + 
+                    arr[Recursion.smallest(arr)]);
+                    //Recursion.findSmallestIndex(arr, 0));
+                    //Recursion.findSmallestVal(arr, 0));
+        }
+        // to review for 2nd exam
+        if (run[12] == 1)
+        {
+            p("------ Recursion 5 - findAllarrEqualN ------");
+            int n = 5;
+            p("n="+n+",numbers=[" + 
+                    Recursion.findAllNumsEqualN(n) + "]");
+        }
+        if (run[11] == 1)
+        {
+            p("------ Recursion 4 - findNumbersEqualSum ------");
+            int[][] nArr = {{0,1},{1,13},{1,3},{2,20},{2,13},{2,6},{2,18},
+                {3,6},{3,13},{3,20},{4,6},{4,13},{5,42}};
+            int n, sum;
+            int start = 0, last = (int) Math.min(30, nArr.length);
+            start = last - 1;
+            start = 5;
+            last = start + 1;
+            for (int i=start; i < last; i++)
+            {
+                n = nArr[i][0];
+                sum = nArr[i][1];
+                long startTime = System.currentTimeMillis();
+                String result = Recursion.findNumbersEqualSumLoop(n, sum, true).substring(1);
+                if (result == "") result = " ";
+                p("n="+n+",sum="+sum+",numbers=[" + 
+                    result.substring(0, result.length() - 1) + "]");
+                    long endTime = System.currentTimeMillis();
+                    long elapsedTime = endTime - startTime;
+                    System.out.println("Elapsed time: " + elapsedTime + " milliseconds");
+            }
+        }
+        if (run[10] == 1)
+        {
+            p("------ Recursion 3 - permutation ------");
+            //String X = "123";
+            p(Recursion.permutation("123"));
+        }
+        if (run[9] == 1)
+        {
+            p("------ Recursion 2 - power set ------");
+            //int[] X = {1,2,3};
+            //p(Recursion.powerSet(X));
+            p(Recursion.powerSet("123"));
+        }
+        // to review for 2nd exam without global var
+        if (run[8] == 1)
+        {
+            p("------ Recursion 1 - interleaving ------");
+            p(Recursion.findInterleavings("12", "34").substring(1));
+        }
+        if (run[7] == 1)
+        {
+            p("------ LevenshteinDistance ------");
+            String[] dict = {"applet","lake","banana","rice","mouse","bottle","apple",
+                "ape","applets","appel"};
+            //dict = new String[]{"A","b","aP"};//"APPLETS","APPLES"
+            int indexWord = LevenshteinDistance.approximatedStringMatching(dict, true);
+            p(dict[indexWord]);
+        }
+        if (run[6] == 1)
+        {
+            p("------ Conway Game Of Life ------");
+            char [][]grid = ConwayGameOfLife.createRandomGrid(10);
+            p("Original grid");
+            p(grid);
+            ConwayGameOfLife.run(grid, 20);
+        }
+        if (run[5] == 1)
+        {
+            p("------ Game of Last Match ------");
+            // These data need to be accepted from the user
+            int[] gameData = {5, 2, 3, 1};
+            int numMatches = gameData[0], maxMatches = gameData[1], 
+                numGames = gameData[2], startPlayer = gameData[3];
+            LastMatch.lastMatch(numMatches, maxMatches, numGames, startPlayer);
+        }
+        if (run[4] == 1)
+        {
+            p("------ array of lights ------");
+            boolean[] arr1 = {false, true, false, false, true};
+            boolean[] arr2 = {false, false, true, false, false};
+            p("" + Disco.disco(arr1, arr2, 0));
+        }
+        if (run[3] == 1)
+        {
+            Library.MyPoint pt = new Library.MyPoint(1,2);
+            System.out.println(pt);
+        }
+        if (run[2] == 1)
+        {
+            p("\n------Recursion 0 - factorial ------");
+            arr  = new int[]{-2, 0, 1, 2, 3, 5, 6};
+            arr = new int[]{4};
+            for (int n: arr)    
+                p("factorial of = " + n + " is: " + Recursion.factorial(n));
+        }
+        if (run[1] == 1)
+        {
+            p("\n------ how many ------");
+            // checking number of times a subsring appears in a string
+            // not using String methods to do it
+            // Page 8 in file Exercises
+            String string = "bccaaaab?yabcabb*caabcca";
+            String[] subStringArray = {"x", "a", "ab", "abc", "abcc"};
+            for (String subString: subStringArray)
+            {
+                int i = 0, j = 0, count = 0;
+                int len = string.length();
+                int lenSub = subString.length(); 
+                char a, b;
+                p = false;
+                while (i < len)
+                {
+                    while (j < lenSub)
+                    {
+                        a = string.charAt(i++);
+                        b = subString.charAt(j);
+                        boolean inside = false;
+                        while (a != b && i < len)
+                        {
+                            if (p) System.out.println("100: "+i+", "+a+","+j+", "+b+","+count);
+                            a = string.charAt(i++);
+                            j = 0;
+                            inside = true;
+                        }
+                        if (p) System.out.println("200: "+len+","+i+", "+a+","+j+", "+b+","+count);
+                        if (inside)
+                        {
+                            i--;
+                            continue;
+                        }
+                        if (p) System.out.println("300: "+len+","+i+", "+a+","+j+", "+b+","+count);
+                        if (i == len) break;
+                        if (j + 1 == lenSub)
+                        {
+                            count++;
+                            j = 0;
+                            continue;
+                        }
+                        if (a == b ||
+                            // if the substring has same chars together such as 'bcc'
+                                subString.charAt(j + 1) == b)
+                            j++;
+                    }
+                }
+                if (count > 0 ) count++;    // added 19/02/2025 without checking why count was 1 less than correct
+                    // did not work for "abcc" which occurs 1 time but returns 0
+                System.out.println("In [" + string + "] the sub string ["+ subString +
+                "]\toccurs " + count + " times");
+            }
+        }
+        if (run[0] == 1)
+        {
+            p("\n------ longest arrow ------");
+            p = false;
+            // Page 8 in file Exercises
+            // in a series of integers, an arrow is a subSeries with increasing numbers
+            // and we need to fins the longest arrow
+            // we do it for few possibles arrays which we put in a master array[]
+            int[][] array = {{},{1},{7,6},{-1,6},{1,6,12},{1,6,-12},{1,-6,-6},
+                {1,6,12,-2},{1,-6,4,12,-2,3,-8},{1,6,12,-2,3,5,-8,0,3,10}};
+            for (int[] subArray: array)
+            {
+                int a, b, len, longest, pos, maxPos, i;
+                len = longest = pos = maxPos = a = b = 0;
+                i = 0;
+                if (subArray.length > 0)
+                {
+                    maxPos = pos = len = longest = 1;
+                    a = b = subArray[i++];
+                }
+                while (i < subArray.length)
+                {
+                    b = subArray[i++];
+                    if (b > a) 
+                        len++;   // still monotone
+                    else // breaking a monotone sequence�
+                    {
+                        len = 1;    // a new sequence starts here, its length is 1
+                        pos = i;
+                    }
+                    if (len > longest)  // if we're currently breaking a record
+                    {
+                        longest = len;  // update records�
+                        maxPos = pos;
+                    }
+                    a = b;
+                }
+                pos = maxPos;
+                /*
+                int i, pos, len, longest, a, b;
+                i = pos = len = longest = a = b = 0;
+                if (subArray.length > 0)
+                {
+                    pos = len = 1;
+                    a = b = subArray[i++];
+                    //if (subArray.length > 7 ? true : false);
+                }
+                while (i < subArray.length)
+                {
+                    b = subArray[i]; 
+                    if (p) System.out.println(""+1000+","+a+","+b+","+i+","+pos+","+len+","+longest);
+                    if (a > b)
+                    {
+                        if (longest < len)
+                        {
+                            if (longest > 0) pos = i + 1 - len;
+                            if (p) System.out.println(""+1100+","+a+","+b+","+i+","+pos);
+                            longest = len;
+                        }
+                        while (a > b && i < subArray.length)
+                        {
+                            a = b;
+                            if (i < subArray.length - 1)
+                                b = subArray[++i];
+                        }
+                        if (p) p(2000, a, b);
+                        len = (i < subArray.length - 1? 1 : 0);
+                    }
+                    len++;
+                    a = subArray[i++];
+                }
+                if (p) System.out.println(""+3000+","+a+","+b+","+i+","+pos+","+len+","+longest);
+                if (longest < len)
+                {
+                    if (longest > 0) pos = i + 1 - len;
+                    if (p) System.out.println(""+1100+","+a+","+b+","+i+","+pos);
+                    longest = len;
+                }
+                */
+                System.out.println("The longest arrow is of length " + longest + 
+                " starting at position " + pos + " in " + Arrays.toString(subArray));
+            }
+        }
     }
 }

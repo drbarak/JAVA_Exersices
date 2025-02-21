@@ -1,6 +1,6 @@
 package תרגילים_נוספים;
 
-import static Library.Print.p;
+import static Library.Print.*;
 import static Library.MyLibrary.*;
 import java.util.Arrays;
 /**
@@ -11,13 +11,210 @@ import java.util.Arrays;
  */
 public class Recursion
 {
-    static boolean p = false;
+    private static boolean p = false;
     static int count = 0;
+    public static int equalSum(int[] _arr)// array is sorted
+    {
+        return equalSum (_arr, 0, _arr.length - 1, _arr[0], _arr[_arr.length - 1]);
+    }
+    private static int equalSum(int[] _arr, int left, int right, int sumLeft, int sumRight)
+    {
+        if (left >= right) return -1;
+        if (sumLeft == sumRight)
+        {
+            if (left + 1 == right) return left;
+            return equalSum(_arr, left + 1, right - 1, sumLeft + _arr[left + 1], 
+                                            sumRight + _arr[right - 1]);
+        }
+        if (sumLeft < sumRight)
+          return equalSum(_arr, left + 1, right, sumLeft + _arr[left + 1], sumRight);
+        return equalSum(_arr, left, right - 1, sumLeft, sumRight + _arr[right - 1]);
+    }     
+    public static int equalSumNoGood(int[] arr)
+    {
+        p(arr);
+        int total = equalSum(arr, 0, 0);
+        if (total % 2 == 1) return -1;
+        return equalSum(arr, 0, total, 0);
+    }
+    private static int equalSum(int[] a, int i, int total)
+    {
+       if (i == a.length) return total;
+       return equalSum(a, i + 1, total + a[i]);
+    }
+    private static int equalSum(int[] a, int i, int total, int sum)
+    {
+       if (i == a.length) return -1;
+       sum += a[i];
+       if (2 * sum == total) return i;
+       return equalSum(a, i + 1, total, sum);
+    }
+    
+    public static int howManySorted(int n, int max)    
+    {
+        //int[] a = new int[n];
+        return howManySorted(null, 0, 1, n, max, 0);
+    }
+    private static int howManySorted(int[] a, int i, int start, 
+                int n, int max, int counter)
+    {
+        if (i == n)
+        {
+            //p(a);
+            return counter + 1;
+        }
+        return fillArray(a, i, start, n, max, counter);
+    }
+    private static int fillArray(int[] a, int i, int start, 
+            int n, int max, int counter)
+    {
+        if (start <= max)
+        {
+            //a[i] = start;
+            counter = howManySorted(a, i + 1, start, n, max, counter);
+            return fillArray(a, i, start + 1, n, max, counter);
+        }
+        return counter;
+    }
+    
+    public static boolean one(String s1, String s2)
+    {
+        pN(s1); pN(","); p(s2);
+        if (s1.length() != s2.length()) return false;
+        return one(s1, s2, 0);
+    }
+    private static boolean one(String s1, String s2, int i)
+    {
+        if (i == s1.length()) return true;
+        if (s1.charAt(i) == s2.charAt(i))
+            return one(s1, s2, i + 1);
+        return (s1.substring(i+1).equals(s2.substring(i+1))); // found one ch not equal, the rest must be equals
+    }
+
+    public static int maxInMat(int[][]grid)
+    {
+        return maxInMat(grid, 0, 0, Integer.MIN_VALUE);
+    }
+    public static int maxInMat(int[][]grid, int x, int y, int max)
+    {
+        int n = grid.length;
+        if (x == n) return max;   // end of matrix
+        int m = grid[x].length;
+        if (y == m) // end of a row
+            return maxInMat(grid, x+1, 0, max);
+        max = Math.max(max, grid[x][y]);
+        return maxInMat(grid, x, y+1, max);
+    }
+    public static boolean zigzag(int[] a)
+    {
+        p(a);
+        if (a.length == 1)
+          return true;
+        return zigzag(a,1);
+    }
+    private static boolean zigzag(int[] a, int i)
+    {
+        if (i == a.length) return true;
+        if (i % 2 == 1 && a[i] <= a[i-1]) return false;
+        if (i % 2 != 1 && a[i] >= a[i-1]) return false;
+        return zigzag(a,i + 1);
+    }
+    public static int[] quickSort(int[] a)
+    {
+        p(a);
+        // step 1: arrange the arry such that all members smaller
+        // then the first member are to it's left and all higher to it's right
+        int lo = 0, hi = a.length - 1;
+        quickSort(a, lo, hi);
+        return a;
+    }
+    public static void quickSort(int[] a, int lo, int hi)
+    {
+        // step 1: arrange the arry such that all members smaller
+        // then the first member are to it's left and all higher to it's right
+        if (lo < hi)
+        {
+            int mid = partition(a, lo, hi);
+        if(p) p(mid, a[mid], lo, hi);
+        if(p) p(a);
+            quickSort(a, lo, mid - 1);
+            quickSort(a, mid + 1, hi);
+        }
+    }
+    private static int partition(int[] a, int lo, int hi)
+    {
+        if (lo < 0 || lo >= a.length) return lo;
+        int pivot = a[lo];
+        while (lo < hi)
+        {
+            while (lo < hi && a[lo] < pivot)
+                lo++;
+            while (a[hi] > pivot)
+                hi--;
+            //if(p) p(lo, hi);
+            if (lo < hi)
+                swap(a, lo, hi);
+            //if(p) p(a);
+            //if(p) p(lo, hi, a[lo],a[hi]);
+        }
+        return lo;
+    }    
+    public static int odd(int num)
+    {
+        return odd(num, 0);
+    }
+    public static int odd(int num, int counter)
+    {
+        if (num == 0) return counter;
+        if (num % 10 % 2 == 1) counter += 1;
+        return odd(num / 10, counter);
+    }
+    
+    public static int necklace(int n)
+    {
+        //return necklace(n, 0, "");
+        return necklace(n, 0);
+    }
+    private static int necklace(int n, int counter)
+    {
+        if (n <= 1) return counter + 1;
+        counter = necklace(n-1, counter);
+        //if (n > 1)
+            counter = necklace(n-2, counter);
+        return counter;
+    }
+    private static int necklace(int n, int counter, String s)
+    {
+        if (n <= 0)
+        {
+            p(s);
+            return counter + 1;
+        }
+        else
+        {
+            counter = necklace(n-1, counter, s+"1");
+            if (n > 1)
+                counter = necklace(n-2, counter, s+"2");
+        }
+        return counter;
+    }
+    
+    public static void binaryNumbers(int n)
+    {
+        p("binary numbers for n = "+n);
+        binaryNumbers(n, "");
+    }
+    private static void binaryNumbers(int n, String s)
+    {
+        if (n == 0) p(s);
+        else if (n == 1) binaryNumbers(n-1, s + "0");
+        else binaryNumbers(n-2, s + "01");
+    }
     /**
      * Given a 2-dim rectangular matrix with whole numbers.
-     * The method will find all the longest path from all paths formed by
+     * The method will find the longest path from all paths formed by
      * moving up/down/left/right from a cell to its neighbour, and from any of
-     * these cell move to the next valid cell, such that all cells in the path
+     * these cells move to the next valid cell, such that all cells in the path
      * form a continuous path and each new cell has a value larger by 1 than
      * the previuos cell in the path. Thus the path can not move to cell which
      * is less or equal the current one, so that it prevents duplicates or 
@@ -915,43 +1112,46 @@ public class Recursion
      * A valid path, starting from 0,0 to n,n to the next cell based on the
      * value in the current cell such that can move right or down based on the
      * value of the last digit in the number = d or move right/down based on the
-     * value of the tenth digit = t. That is x+=d, y+=t or x+=t, y+=t.
-     * Return the numbr of possible paths.
+     * value of the tenth digit = t. That is x+=d, y+=t or x+=t, y+=d.
+     * Return the number of possible paths.
      * The signature of the original question is cntPaths(int[][] m).
      */
     public static int countPathsInMatrix(int[][] m)
     {
-        return countPathsInMatrix(m, 0, 0, 1);
+        return countPathsInMatrix(m, 0, 0, 1); // code is used just to know which recursive call are we processing
     }
-    private static int countPathsInMatrix(int[][] m, int x, int y, int code)
+    private static int countPathsInMatrix(int[][] m, int x, int y, int code0)
     {
         int n = m.length;
         if (x >= n || x < 0 || y < 0 || y >= m[x].length)
         {
-            if (p) p(x, y, code);
+            if (p) p(x, y);//, code);
             return 0;
         }
         int mxy = m[x][y];
-        if (x == n-1 && y == m[x].length-1)
+        if (x == n-1 && y == m[x].length-1) // last cell
         {
-            if (p) p(x, y, mxy, code);
+            if (p) p(x, y, mxy);//, code);
             return 1;
         }
         if (mxy == 0) return 0;
         int d = mxy % 10;
         int t = mxy / 10;
-        if (p) p(""+x+", "+y+", "+mxy+", "+d+", "+t+", "+code);
+        if (p) p(""+x+", "+y+", "+mxy+", "+d+", "+t);//+", "+code);
         return (countPathsInMatrix(m, x+d, y+t, 1) +
                     countPathsInMatrix(m, x+t, y+d, 2));
     }
+    
+        // can not have -ve mumbers otherwise do not know when to stop
+        // the repetition, thus if find -ve number do not use it
     public static boolean areThereNumbersEqualSumWithRepeatition(int[] a, int sum)
     {
         boolean addToGetToTarget = true;
         //if (addToGetToTarget)
+                // adding from 0 to reach target
             return areThereNumbersEqualSumWithRepeatition(a, 0, 0, sum);
         //return areThereNumbersEqualSumWithRepeatition(a, sum, 0);
     }
-    // adding from 0 to reach target
     private static boolean areThereNumbersEqualSumWithRepeatition(int[] a, int sum, int i, int target)
     {
         int n = a.length;
@@ -964,41 +1164,45 @@ public class Recursion
             return true;
         return false;
     }
-    // same as cover() learned in class if subtractin from target
+    // same as cover() learned in class if subtracting from target
     public static boolean areThereNumbersEqualSum(int[] a, int sum)
     {
-        boolean addToGetToTarget = false;
+        pN(sum+", ");
+        p(a);
+        p = true;
+        boolean addToGetToTarget = true;
         if (addToGetToTarget)
-            return areThereNumbersEqualSum(a, 0, 0, sum);
-        return areThereNumbersEqualSum(a, sum, 0);
+            return areThereNumbersEqualSumAdd(a, 0, 0, sum);
+        return areThereNumbersEqualSumSub(a, sum, 0);
     }
     // adding from 0 to reach target
-    private static boolean areThereNumbersEqualSum(int[] a, int sum, int i, int target)
+    private static boolean areThereNumbersEqualSumAdd(int[] a, int sum, int i, int target)
     {
         int n = a.length;
         if (sum == target) return true; // must be before out of boundries, in case sum=0 at the last item
         if (i >= n) return false;
         if (p) p(i, sum, a[i]);
-        if (areThereNumbersEqualSum(a, sum+a[i], i+1, target) || // use this number
-            areThereNumbersEqualSum(a, sum, i+1, target))  // do not use this number
+        if (areThereNumbersEqualSumAdd(a, sum+a[i], i+1, target) || // use this number
+            areThereNumbersEqualSumAdd(a, sum, i+1, target))  // do not use this number
             return true;
         return false;
     }
     // subtracting from target
-    private static boolean areThereNumbersEqualSum(int[] a, int sum, int i)
+    private static boolean areThereNumbersEqualSumSub(int[] a, int sum, int i)
     {
         int n = a.length;
         if (sum == 0) return true; // must be before out of boundries, in case sum=0 at the last item
         if (i >= n) return false;
         if (p) p(i, sum, a[i]);
-        if (areThereNumbersEqualSum(a, sum-a[i], i+1) || // use this number
-            areThereNumbersEqualSum(a, sum, i+1))  // do not use this number
+        if (areThereNumbersEqualSumSub(a, sum-a[i], i+1) || // use this number
+            areThereNumbersEqualSumSub(a, sum, i+1))  // do not use this number
             return true;
         return false;
     }
+    
     public static boolean areThere2NumbersEqualSum(int[] a, int sum)
     {
-        return areThere2NumbersEqualSum(a, sum, 0, 0);
+        return areThere2NumbersEqualSum(a, sum, 0, 1);
     }
     private static boolean areThere2NumbersEqualSum(int[] a, int sum, int pivot, int i)
     {
@@ -1006,24 +1210,29 @@ public class Recursion
         if (pivot >= n || i >= n) return false;
         if (sum == a[pivot]+a[i]) return true;
         //p(pivot, i, sum);
-        return (areThere2NumbersEqualSum(a, sum, pivot, i+1) ||
-            //areThere2NumbersEqualSum(a, sum, pivot+1, 0));  // using extra redundant calls
+        if (i == n - 1)
+            return areThere2NumbersEqualSum(a, sum, pivot + 1, pivot+2);
+        return areThere2NumbersEqualSum(a, sum, pivot, i+1);
+        /*
+            //areThere2NumbersEqualSum(a, sum, pivot+1, i));  // using extra redundant calls
             areThere2NumbersEqualSum(a, sum, pivot+1, pivot+2));  // using extra redundant calls
+        */
     }
+    
     public static int ladderSoccer(int n, int m)
     {
         if (n < 0 || m < 0) return -1;
         if (n == 0 && m == 0) return 0;
-        return ladderSoccer1(n, m);
+        return ladderSoccerCount(n, m);
     }
-    private static int ladderSoccer1(int n, int m)
+    private static int ladderSoccerCount(int n, int m)
     {
         //p(n, m);
         if (n == 0 && m == 0)
             return 1;
         if (n < 0 || m < 0) return 0;
-        return ladderSoccer1(n - 1, m) + 
-            ladderSoccer1(n, m - 1);
+        return ladderSoccerCount(n - 1, m) + 
+            ladderSoccerCount(n, m - 1);
     }
     /**
      * A method to find a path from starting point (0,0) of a grid size nXn
@@ -1072,8 +1281,7 @@ public class Recursion
         if (grid[x][y] != MAZE_FREE)    // verify not visited yet
             return false;
         grid[x][y] = MAZE_VISITED; // mark as used
-        if (x == n-1 && y == x)
-            return true;
+        if (x == n-1 && y == x)  return true; // last cell
         if (maze(grid, x, y-1) ||
                 maze(grid, x+1, y) ||
                 maze(grid, x, y+1) ||
@@ -1108,7 +1316,7 @@ public class Recursion
 
     /**
      * Find the number of possible ways to climb a ladder of n steps,
-     * where at each step one can go up 2 or 2 steps at once
+     * where at each step one can go up 1 or 2 steps at once
      * 
      * Example: a ladder with 5 steps has 5 possible ways:
      *  1111,112,121,211,22
@@ -1118,7 +1326,7 @@ public class Recursion
         if (n < 1) return 1;
         String[] path = new String[]{""};
         int steps;
-        boolean paths = true;
+        boolean paths = false;
         if (paths)
         {
             steps = ladder(n, 0, 0, "", path);
@@ -1160,6 +1368,38 @@ public class Recursion
      * The path is 1,-1,6 which gives 6
      */
     public static int smallestSumIn2Arrays(int[] a, int[] b)
+    {
+        if (a.length != b.length) return Integer.MAX_VALUE;
+        if (a.length == 1) return Math.min(a[0], b[0]);
+        int sumA = sumArray(a, 0, 0);
+        int sumB = sumArray(b, 0, 0);
+        if (p) p(sumA, sumB);
+        // start at array a
+        int minA = smallestSum(a, b, 0, sumB, 0, Integer.MAX_VALUE);
+        int minB = smallestSum(b, a, 0, sumA, 0, Integer.MAX_VALUE);
+        //p(sumA, sumB, minA, minB);
+        return minOf4(sumA, sumB, minA, minB);
+    }
+    private static int smallestSum(int[] a, int[] b, int i, int sumB, 
+                        int sumA, int min)
+    {
+        if (i == a.length) return min;
+        sumA += a[i];
+        sumB -= b[i];
+        int sum = sumA + sumB;
+        if (min > sum) min = sum;
+        if (p) p(i, sum, sumA, sumB, min);
+        min = smallestSum(a, b, i + 1, sumB, sumA, min);
+        return min;
+        
+    }
+    private static int sumArray(int[] a, int i, int sum)
+    {
+        if (i == a.length) return sum;
+        sum = sumArray(a, i + 1, sum + a[i]);
+        return sum;
+    }
+    public static int smallestSumIn2Arrays1(int[] a, int[] b)
     {
         if (a.length != b.length) return Integer.MAX_VALUE;
         if (a.length == 1) return (int)Math.min(a[0], b[0]);
@@ -1223,17 +1463,25 @@ public class Recursion
     {
         return "(" + x + "," + y + ")";
     }
-    // to find smallest number in array of int, using recursion and noglobal variable
-    public static int smallest(int[] a, int i)
+    // to find smallest number in array of int, using recursion and no global variable
+    public static int smallest(int[] a)
     {
-        //p = false;
-        if (p) p(1000, i, a.length);        
-        if (i == a.length - 1)
-            return i;
-        int val = smallest(a, i + 1);
-        if (p) p(2000, i, a[val], a[i]);
-        if (a[val] < a[i])
-            return val;
+        p(a);
+        p( smallest(a, 0, Integer.MAX_VALUE));
+        return 0;
+    }
+    private static int smallest(int[] a, int i, int min)
+    {
+        if (i == a.length) return min;
+        if (min > a[i]) min = a[i];
+        min = smallest(a, i + 1, min);
+        return min;
+    }
+    private static int smallest1(int[] a, int i)
+    {
+        if (i == a.length - 1) return i;
+        int smallest = smallest1(a, i + 1);
+        if (a[smallest] < a[i]) return smallest;
         return i;
     }
     // does not use global variable and returns index pointing to smallest value
@@ -1271,17 +1519,67 @@ public class Recursion
         if (p) p(3000, i, val);
         return val;
     }
-    // To find all combinations of numbers from 1 to `n` having sum 'n' 
+    /* To find all combinations of numbers from 1 to `n` having sum 'n' 
     // but not including the digit '0' and only one permutation per number
     // that is '41' is not allowed if '14' is already in the list by 
     // allowing only numbers with increasing values of the digits, thus '41'
-    // has decreasing digits: start with 4 then 1
-    static String used = "";    // to prevent duplicates
+    // has decreasing digits: starts with 4 then 1
+    Example: 
+        For n = 5, the following combinations are possible:
+        { 5 }{ 1, 4 }{ 2, 3 }{ 1, 1, 3 }{ 1, 2, 2 }
+    The idea is to consider every integer i from 1 to n and add it to the 
+    output and recur for remaining elements [i…n] with reduced sum n-i. 
+    To avoid printing permutations, each combination will be constructed in 
+    non-decreasing order. If a combination with the given sum is reached, 
+    print it.        
+    */
     public static String findAllNumsEqualN(int n)
     {
-        return findAllNumsEqualN(1, n);
+        return findAllNumsEqualN(n, n, "");
     }
-    public static String findAllNumsEqualN(int nDigits, int n)
+    private static String findAllNumsEqualN(int nDigits, int sum, String set)
+    {
+        if (nDigits > sum) return set;
+        set += findNumbersEqualSum(nDigits, sum, set);
+        return findAllNumsEqualN(nDigits + 1, sum, set);
+    }
+    public static String findNumbersEqualSum(int n, int sum, String set)
+    {
+        return findNdigitNums("", 0, n, sum, 0, 0, set);
+    }
+    private static String findNdigitNums(String curr, int index, int n, 
+            int sum, int value, int highest, String set)
+    {
+        // if the number is less than n–digit and its sum of digits is
+        // less than the given sum
+        if (index < n && sum >= 0)
+        {
+            int d = (index == 0 ? 1 : 0);  // special case: number cannot start from 0
+            // consider every valid digit and put it in the current
+            // index and recur for the next index
+            if (index + 1 == n)
+                d = sum - value;
+            if (d == 0) d = 1;
+            while (d <= 9)
+            {
+                if (sum - d < 0) break;
+                if (d < highest) 
+                    return set;
+                highest = d;
+                set = findNdigitNums(curr + d, index + 1, n, sum - d, value, 
+                    highest, set);
+                d++;
+            }
+        }
+        // if the number becomes n–digit and its sum of digits is
+        // equal to the given sum, print it
+        else if (index == n && sum == 0)
+            set += curr + ",";
+        return set;
+    }
+    
+    static String used = "";    // to prevent duplicates
+    private static String findAllNumsEqualN(int nDigits, int n)
     {
         if (nDigits > n) return used.substring(0, used.length()-1);
         used += findNumbersEqualSum(nDigits, n, false).substring(1);
@@ -1355,7 +1653,7 @@ public class Recursion
     {
         used = " ";
         count = 0;
-        p = true;        
+        p = false;        
         int maxSum = 9;
         for (int j=1; j<n; j++) 
             maxSum += 9;
@@ -1445,54 +1743,29 @@ public class Recursion
         count++;
         return (i / pow(10, n-2) % 10); //(int) Math.pow(10, n-2) % 10);
     }
+    
     public static String permutation(String X)
     {
-        used = "";
-        p = false;
-        //permutationWithOutLoop(X.toCharArray(), 0);
-        //permutationWithLoop(X.toCharArray(), 0); // s
-        X = "123";
-        p("myPermutationWithLoop");
-        myPermutationWithLoop(X, "");
-        p(used);
-        used = "";
-        p("myPermutationWithOutLoop");
-        myPermutationWithOutLoop(X, "");
-        //p(used.length()/(1 + X.length()));
-        return used.substring(1);
+        return permutation(X, "", "");
     }
-    private static void myPermutationWithOutLoop(String X, String curr)
+    private static String permutation(String X, String curr, String set)
     {
-        //char a = (char)0;
-        if (p) p(X + ", curr=[" + curr + "]");
-        if (X.length() == 0)
+        if (X.length() == 0) // finished a permutation
         {
-            used +=  "," + curr;
-            return;
+            if (set.length() > 0) set += ",";
+            return set + curr; 
         }
-        myRecursiveLoop(X, curr, 0); // Start the recursive loop
-        /*
-        for (int i=0; i<X.length(); i++)
-        {
-            a = X.charAt(i);
-            String remainingX = X.substring(0,i) + X.substring(i+1);
-            myPermutationWithOutLoop(remainingX, curr + a);
-        }
-        */
+        return permutation(X, curr, 0, set); // Start the recursive loop
     }
-    private static void myRecursiveLoop(String X, String curr, int i)
+    private static String permutation(String X, String curr, int i, String set)
     {
-        if (i < X.length())
-        {
-            char a = X.charAt(i);
-            if (p) p("100,"+i+","+X);
-            if (p) p("1000,"+i+","+X.substring(0,i));
-            if (p) p("2000,"+i+","+X.substring(i+1));
-            String remainingX = X.substring(0,i) + X.substring(i+1);
-            myPermutationWithOutLoop(remainingX, curr + a);
-            
-            myRecursiveLoop(X, curr, i + 1); // Continue with the next value of i
-        }
+        if (i == X.length()) return set;
+            // Take out current char and recursive with the remaining X
+        char a = X.charAt(i);
+        String remainingX = X.substring(0,i) + X.substring(i+1);
+             // add the char to the current String
+        set = permutation(remainingX, curr + a, set);
+        return permutation(X, curr, i + 1, set); // Continue with the next value of i
     }
     // the following my solution using for-loop
     private static void myPermutationWithLoop(String X, String curr)
@@ -1550,6 +1823,7 @@ public class Recursion
             swap(str, index, i);  // Backtrack by swapping the characters back
         }
     }
+    
     /*  Not working, keeping code for the usage of a TREE
      * need to do "head = tail = null;" before calling the method
     static IntNodeMat head, tail;
@@ -1618,7 +1892,7 @@ public class Recursion
         return used;
     }
     */
-   /*
+    /*
     private static String toString(IntNodeMat head)
     {
         IntNodeMat cell = head;
@@ -1634,56 +1908,37 @@ public class Recursion
         return s;
     }
     */
-    public static int factorial(int n)
-    {
-        //p(1000, n);
-        if (n < 0) return 0;
-        if (n < 2) return 1;
-        int newN = n * factorial(n-1);
-        //p(2000, newN);
-        return newN;
-    }
-
+   
     public static String powerSet(String X)
     {
-        used = "";
-        X = "123";//234";
-        powerSet(X, "", 0);
-        return used;
+        return powerSet(X, "", 0, "");
     }
-
-    private static String powerSet(String X, String Y, int index)
+    private static String powerSet(String X, String curr, int index, String Set)
     {
         if (index == X.length())
-        {
-            // Base case: We've considered all elements
-            used += "," + Y;
-            //p(used);
-            return used;
-        }
+            return Set + "," + curr;
         // Recursive case: Exclude the current element
-        powerSet(X, Y, index + 1);
+        Set = powerSet(X, curr, index + 1, Set);
         // Recursive case: Include the current element
-        Y += X.substring(index, index + 1); // Add the element to the current subset
-        powerSet(X, Y, index + 1);
-        return used;
+        curr += X.substring(index, index + 1); // Add the element to the current subset
+        return powerSet(X, curr, index + 1, Set);
     }
-
+    
     public static String powerSet(int[] inputSet)
     {
         used = "";
-        inputSet = new int[]{1,2,3};//"12";//234";
+        //inputSet = new int[]{1,2,3};//"12";//234";
         int[] currentSet = new int[inputSet.length];
         powerSet(inputSet, currentSet, 0, 0);
         return used;
     }
-
     private static String powerSet(int[] inputSet, int[] currentSet, int index, int currentSize)
     {
         if (index == inputSet.length)
         {
             // Base case: We've considered all elements
-            used += "," + makeSet(currentSet,currentSize);
+            if (used.length() > 0) used += ",";
+            used += makeSet(currentSet, currentSize);
             //p(used);
             return used;
         }
@@ -1694,12 +1949,10 @@ public class Recursion
         powerSet(inputSet, currentSet, index + 1, currentSize + 1);
         return used;
     }
-
     private static String makeSet(int[] arr)
     {
         return makeSet(arr, arr.length);
     }
-
     private static String makeSet(int[] arr, int len)
     {
         String result = "{";
@@ -1707,23 +1960,31 @@ public class Recursion
             result += arr[i] + (i + 1 < len ? "," : "");
         return result + "}";
     }
-
     private static String makeSet(String arr)
     {
         String result = "{" + arr;
         return result + "}";
     }
+    
+    public static int factorial(int n)
+    {
+        //p(1000, n);
+        if (n < 0) return 0;
+        if (n < 2) return 1;
+        int newN = n * factorial(n-1);
+        //p(2000, newN);
+        return newN;
+    }
     // Function to find all interleaving of string `X` and `Y`
     public static String findInterleavings(String X, String Y)
     {
-        p = true;
+        p = false;
         used = "";
         return findInterleavings("", X, Y);
     }
-
     public static String findInterleavings(String curr, String X, String Y)
     {
-        // insert `curr` into the set if the end of both strings is reached
+            // insert `curr` into the set if the end of both strings is reached
         if (X.length() == 0 && Y.length() == 0)
         {
             if (used.indexOf(curr) < 0)

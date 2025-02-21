@@ -1,9 +1,10 @@
 package תרגילים_נוספים;
 
-import static Library.Print.p;
+import static Library.Print.*;
 import static Library.MyLibrary.*;
 import java.util.Arrays;
-/**
+
+ /**
  * Class Efficiancy is a collection of examples of writing a method which is efficient
  * Based on example from lectures by DR. Amir Goren
  *
@@ -12,8 +13,263 @@ import java.util.Arrays;
  */
 public class Efficiency
 {
-    private static int count = 0;
+    private static int count = 0, count2 = 0;;
     private static boolean p = false;
+    public static int hasDivisorMine(int[] arr)
+    {
+        int n = arr.length;
+        if (n == 0) return -1;
+        count = 0;
+        int res = -1;
+        if (p) p(arr);
+        for (int i=0; i<n; i++)
+        {
+            int a = Math.abs(arr[i]);
+            if (a == 1) continue;   // 1 divide all numbers
+            boolean found = true;
+            for (int j=0; j<n; j++)
+            {
+                if (i == j) continue;
+                count++;
+                int b = Math.abs(arr[j]);
+                if (b == 1) continue; 
+                if (p) p(i, j, a, b, count);
+                if (p && a >= b)
+                    p(b % a);
+                if (a >= b || b % a != 0)
+                {
+                    found = false;
+                    break;
+                }
+            }
+            if (p) p(found);
+            if (found)
+            {
+                res = arr[i];
+                break;
+            }
+        }
+        p("count = " + count);
+        return res;
+    }
+    // Function to check if any element divides all others
+    public static int hasDivisor(int[] arr) // chatGTP
+    {
+        if (arr.length == 0) return -1;
+        count = 0;
+        // Compute GCD of the entire array
+        int gcdValue = arr[0];
+        for (int i = 1; i < arr.length; i++) {
+            gcdValue = gcd(gcdValue, arr[i]);
+        }
+        count += arr.length;
+        // Check if the GCD exists in the array
+        int res = -1;
+        for (int num : arr) {
+            count++;
+            if (num == gcdValue) {
+                res = num;
+                break;
+            }
+        }
+        p("count = " + count);
+        return res;
+    }
+    // Function to compute GCD using Euclidean algorithm
+    private static int gcd(int a, int b) {
+        while (b != 0) {
+            count++;
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+    /**
+     * Find ALL subarrays that their sum equals target - school solution not working
+     * for my array (maybe because it ahs -ve numbers) - no time to find out, exam tomorrow
+     */
+    public static void findSubarray(int[] arr, int target) {
+        int sum = 0;
+        int temp = 0;
+        boolean isRun = false;
+        p(arr);
+        for (int i = 0; i < arr.length; i++) {
+            count++;
+            pN(""+i+", "+isRun+", ");
+            p(sum, sum+arr[i], target);
+            if (!isRun) {
+                temp = i;
+                isRun = true;
+                sum = 0;
+            }
+            sum += arr[i];
+            if (sum > target) {
+                sum = 0;
+                temp++;
+                i = temp - 1;
+                isRun = false;
+            }
+            if (sum == target) {
+                System.out.println(temp + " and " + i);
+                sum = 0;
+                temp++;
+                i = temp - 1;
+                isRun = false;
+            }
+        }
+        p("count = " + count + ", len = " + arr.length);
+    }
+
+    /**
+     * Given an array of +ve integers, rerrange the array such that it is sorted
+     * by k-mod of each member of the array, that is, all k-mod = 0 first,
+     * k-mod = 1 next and so on.
+     * 
+     * Time Complexity: O(n^2) or O(k*n) for k < n = school solution
+     * Space Complexity: O(1)
+     */
+    public static int[] sortMod(int[] a, int k) // by chatGTP (not better than mine)
+    {
+        p(a);
+        count = 0;
+        count2 = 0;
+        int correctPos;
+        for (int i = 1; i < a.length; i++) {
+            while (true) {
+                //count2++;
+                count += (2 + 1 + 1);
+                //correctPos = findCorrectPos(a, i, k);
+                correctPos = 0;
+                int mod = a[i] % k;
+                for (int j = 0; j < i; j++) {
+                    if (a[j] % k <= mod) correctPos++;
+                    count2++;
+                    count += (2 + 1);
+                }
+                if (correctPos == i) break; // Already in the right place
+                count += 3;
+                swap(a, i, correctPos);
+            }
+        }
+        return printTest(a, k);
+    }
+    // Finds the correct position for a[i] based on its k-mod
+    private static int findCorrectPos1(int[] a, int index, int k)
+    {
+        int mod = a[index] % k;
+        int num = 0;
+        // Count how many elements should be before this mod group
+        for (int i = 0; i < index; i++) {
+            if (a[i] % k <= mod) num++;
+            count2++;
+            count += (2 + 1);
+        }
+        return num;
+    }
+    
+    public static int[] sortModSchool(int a[], int k) {
+        p(a);
+        count = 0;
+        int count2 = 0;
+        int current = 0;
+        for (int i = 0; i < k; i++) {
+            //count++;
+            for (int j = 0; j < a.length; j++) {
+                count += (2 + 2 + 4);
+                count2++;
+                if (a[j] % k == i) {
+                    int temp = a[j];
+                    a[j] = a[current];
+                    a[current++] = temp;
+                }
+            }
+        }
+        return printTest(a, k);
+    }
+    private static int[] printTest(int[] a, int k)
+    {
+        for (int i = 0; i < a.length-1; i++)
+            System.out.print(""+ (a[i] % k) + ",");
+        p("");
+        p("count = " + count + ", len = " + a.length);
+        p("count2 = " + count2 + ", len = " + a.length);
+        return a;
+    }
+    public static int[] sortModOK(int a[], int k, boolean useBinarySearch)   // my solution
+    {
+        if (a == null) return a;
+        int n = a.length;
+        if (n < 1) return a;
+        count = 0;
+        count2 = 0;
+        if (useBinarySearch) p = false;
+        p(a);
+        int kMod, temp, max = 0, newPos;
+        for (int i=1; i<n; i++)
+        {
+            //count++;
+            kMod = a[i] % k;
+            if (max < kMod) max = kMod;
+            if (p) p(i, a[i], kMod, max);
+            temp = a[i];
+            // find place to insert
+            if (kMod < max || i == 1) // new number has to be inserted into sub-array up to current
+            {
+                if (useBinarySearch)
+                {
+                    newPos = binarySearch(a, kMod, k, i);
+                    if (p) p(newPos);
+                    if (newPos < 0) newPos = 0;
+                    else if (newPos >= n) newPos = n-1;
+                    else if (a[newPos] % k >= kMod) newPos--;
+                    if (p) p(newPos, a[newPos], i, a[i]);
+                }
+                else {
+                    newPos = i;
+                    for (int j=0; j<i && newPos == i; j++)
+                    {
+                        count += (2+7+2+1);
+                        count2++;
+                        //if (p) p(j, kMod, (a[j] % k));
+                        if (kMod < (a[j] % k))
+                            newPos = j;
+                    }
+                }
+                if (p) p(i, newPos);
+                for (int j=i; j > newPos; j--)
+                    a[j] = a[j-1]; // move members to make room for new item
+                a[newPos] = temp;
+                count += (i - newPos) * 3 + 1;
+                count2 += (i - newPos);
+            }
+            if (p) p(a);
+        }
+        return printTest(a, k);
+    }
+    private static int binarySearch(int[]a, int x, int k, int hi)
+    {
+            // find where -ve numbers end
+        int lo = 0, mid = 0, result = -1;
+        count += 3;
+        while (lo <= hi)
+        {
+            count += (1+1+2+2);
+            count2++;
+            mid = lo + (hi - lo) / 2;
+            if (p) p(lo, mid, hi, a[mid]);
+            if ((a[mid] % k) == x) //return mid;
+            {   // modify to find last occurence of duplicates
+                result = mid;   // possible answer
+                hi = mid - 1;
+            }
+            if ((a[mid] % k) < x) lo = mid+1;
+            else if ((a[mid] % k) > x) hi = mid-1;
+            if (p) p(100, mid, lo, hi);
+        }
+        if (p) p(mid, lo, hi, result);
+        return result;
+    }
     /**
      * Given an array of integers (+ve, 0 and -ve) such that in even positions
      * the numbers are in increasing order and in odd positions the numbers
@@ -38,6 +294,16 @@ public class Efficiency
             left += 2;
             right -= 2;
         }
+        p(a);
+        // simpler method then the one down with one pointer
+        for (int ptr=0; ptr<n-1; ptr++)
+        {
+            if (a[ptr] > a[ptr+1])
+                bubbleSwap(a, ptr+1);
+            //pN(ptr + ", ");
+            //p(a);
+        }
+        if (true) return a;
         // Use two pointers to merge the even and odd indexed elements
         int e = (n%2 == 0 ? n-2 : n-1);
         int o = (n%2 == 0 ? n-1 : n-2);
@@ -58,6 +324,14 @@ public class Efficiency
                 bubbleSwap(a, e++, o, !LEFT);
         }
         return a;
+    }
+    private static void bubbleSwap(int[] a, int i)
+    {
+        while (i>0 && a[i] < a[i-1])
+        {
+            swap(a, i, i-1);
+            i--;
+        }
     }
     private static void bubbleSwap(int[] a, int i, int j, boolean right)
     {
@@ -198,7 +472,7 @@ public class Efficiency
      * Write a method to find lowest sum of 2 absolute value of neighbours
      *  (if a member is -ve then look at it's absolute value before adding)
      * 
-     * Time Complexity: O(logn)
+     * Time Complexity: O(log n)
      * Space Complexity: O(1) becuase the loops do not uses additional memory
      */
     public static int findMinAbsSum(int[] a)
@@ -209,16 +483,11 @@ public class Efficiency
         if (n == 2) return Math.abs(a[0]) + Math.abs(a[1]);
         if (a[0] >= 0) return a[0] + a[1];   // in case only +ve numbers
         if (a[n-1] < 0) return -a[n-1] - a[n-2];  // in case only -ve numbers
-            // find where -ve numbers end
-        int lo = 0, hi = n-1, mid = 0;
-        while (lo <= hi)
-        {
-            mid = (lo + hi) / 2;
-            p(lo, mid, hi, a[mid]);
-            if (a[mid] == 0) break;
-            if (a[mid] < 0) lo = mid+1;
-            else if (a[mid] > 0) hi = mid-1;
-        }
+        /* can\t use a binarySearch() that returns -1 if 0 is not in the array
+         * because if 0 is not in the array mid returns -1 without 
+         * information where was the 0 supposed to be
+         */
+        int mid = binarySearch(a, 0);
         p(mid, a[mid]);
         int num1, num2, num3 = Integer.MAX_VALUE;
         if (mid == n-1) {
@@ -241,6 +510,22 @@ public class Efficiency
         }
         //return minOf3(num1, num2, num3);
         return Math.min(Math.min(num1, num2), num3);
+    }
+    private static int binarySearch(int[]a, int x)
+    {
+            // find where -ve numbers end
+        int lo = 0, hi = a.length-1, mid = 0;
+        while (lo <= hi)
+        {
+            mid = (lo + hi) / 2;
+            //p(lo, mid, hi, a[mid]);
+            if (a[mid] == x) return mid;
+            if (a[mid] < x) lo = mid+1;
+            else if (a[mid] > x) hi = mid-1;
+            //p(100, mid, lo, hi);
+        }
+        //p(mid, lo, hi);
+        return mid;
     }
     /**
      * A helper method to calculate the minimum out of 3 integer numbers
@@ -275,28 +560,33 @@ public class Efficiency
         for (;i<a.length;i++)
         {
             count++;
+            //p(i, count);
             sum += a[i];
             //Print.p(i, sum, target, a[i]);
             if (sum == target)
             {
                 result[1] = i;
-                return result;
+                break;
             }
             if (sum > target) // here we assume all numbers are non negetive
             {
                 j = result[0];
                 while (sum > target) // also here we assume all numbers are non negetive
+                {
+                    count++;
                     sum -= a[j++];
+                }
                 result[0] = j;
                 if (sum == target)
                 {
                     result[1] = i;
-                    return result;
+                    break;
                 }
             }
         }
         p("count=" + count);
-        result[0] = result[1] = -1;
+        if (result[0] > result[1] || (result[0] == 0 && result[1] == 0))
+            result[0] = result[1] = -1;
         return result;
     }
     
@@ -362,29 +652,48 @@ public class Efficiency
     /**
      * Given an array of integers.
      * Write a method to split the array into 2 sub-arrays, based on an index i,
-     * such that the left-array includes all the numbers to the laft of position i
+     * such that the left-array includes all the numbers to the left of position i
      * (i included) and right-array with all the other numbers (to the right of the
      * ith position). Find difference (in absolute value) between the average of
      * the 2 parts. Find the largest difference and returns it's index.
      * Example {5,7,-2,10}
      * 
-     * Efficiancy is of n + (1+n-1)*(n-1)/2 = n + (n*n-n)/2 -> O(n^2)
+     * No good: Efficiancy is of n + (1+n-1)*(n-1)/2 = n + (n*n-n)/2 -> O(n^2)
+     * Efficiancy is of n + (n-2) = 2n - 2 -> O(n)
      * Complexity is O(1) becuase the loops do not uses additional memory
      */
     public static int findLargestAverageDiff(int[] a)
     {
+        int count = 0;
         int index = 0;
         double maxAverageDiff =-1;
         int sumOfArray = 0;
-        for (int i=0;i<a.length;i++)
+        int n = a.length;
+        for (int i=0;i<n;i++)
             sumOfArray += a[i];
+        count += n;
+        int leftSum = a[0];
+        double avgLeft, avgRight, diff; 
+        for (int i=1;i<a.length-1;i++)  // loop over all possible indicies
+        {
+            count++;
+            avgLeft = ((double)leftSum / (double)(i + 1));
+            avgRight = (double)(sumOfArray - leftSum) / (double)(a.length - 1 - i);
+            //Print.p(""+sumOfArray+", "+leftSum+", "+avgLeft+", "+avgRight);
+            diff = Math.abs(avgLeft - avgRight);
+            if (maxAverageDiff < diff)
+                index = i;
+        }
+        /* here is O(n^2)
         int leftSum;
         double avgLeft, avgRight, diff; 
-        for (int i=0;i<a.length-1;i++)  // loop over all possible indecies
+        for (int i=0;i<a.length-1;i++)  // loop over all possible indicies
         {
             leftSum = 0;
             for (int j=0; j<i+1;j++)
                leftSum += a[j];
+            count += (i+1);
+            //p(i, count);
             avgLeft = ((double)leftSum / (double)(i + 1));
             avgRight = (double)(sumOfArray - leftSum) / (double)(a.length - 1 - i);
             //Print.p(""+sumOfArray+", "+leftSum+", "+avgLeft+", "+avgRight);
@@ -393,6 +702,8 @@ public class Efficiency
                 index = i;
             //Print.p(""+i+", "+index+", "+diff);
         }
+        */
+        p("count = "+count + ", len = " + n);
         return index;
     }
     /**
@@ -434,7 +745,7 @@ public class Efficiency
      * binary representation of the subset (1 for each number included in the sum, 0 
      * otherwise). If no, return None.
      * Example: Sequence: [1, 2, 4, 8, 16] and number 23 returns [1, 1, 1, 0, 1]
-     *          Same sequence: [1, 2, 4, 8, 16] and number 3 returns null
+     *          Same sequence: [1, 2, 4, 8, 16] and numbers 0 or 32 return null
      */
     public static int[] superIncreasingRepresentation(int []a, int number)
     {
