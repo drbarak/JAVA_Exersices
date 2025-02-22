@@ -28,21 +28,42 @@ public class Tester
         int[] arr;
         int ar[][] = new int[117][];
         
-        int runMethod = 51;
+        int runMethod = 52;
         run[runMethod] = 1;
 
+        if (run[52] == 1)
+        {
+            p("------ Recursion 31 - findLCS(String s1, String s2, String s3) ------");
+            String s1 = "abcde";
+            String s2 = "acebdf";
+            String s3 = "acdbef";
+            s1 = "abcbdab"; s2 = "bdcaba"; s3 = "abcba";
+            //s1 = "a"; s2 = "2a"; s3 = "a";
+            p(s1+","+s2+","+s3);
+            p("Longest Common Semi-Substring: " + Recursion.findLCS(s1, s2, s3));
+        }
         if (run[51] == 1)
         {
             p("------ Efficiency 9 - hasDivisor(int[] arr) ------");
-            int[] a = {25,-20,-100,10,5};
-            //a = new int[] {25,-20,6,-100,10};
-            a = new int[] {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024};
-            a = new int[] {100, 101, 102, 103, 104, 105, 106, 107, 108, 109};
-            a = new int[] {2, 2, 2, 2, 2, 2, 2, 2, 2, 3};
-            a = new int[] {10,8,6,4,2};
-            a = new int[] {20,18,16,14,12,10,8,6,4,2};
-            //p(2%4, 4%2); // to check if neede a>b or a<b
-            p("index = "+ Efficiency.hasDivisorMine(a) + ", ", a);
+            int i = 0;
+            int a[];
+            ar[i++] = new int[] {25,-20,-100,10,5};
+            ar[i++] = new int[] {25,-20,6,-100,10};
+            ar[i++] = new int[] {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024};
+            ar[i++] = new int[] {100, 101, 102, 103, 104, 105, 106, 107, 108, 109};
+            ar[i++] = new int[] {2, 2, 2, 2, 2, 2, 2, 2, 2, 3};
+            ar[i++] = new int[] {10,8,6,4,2};
+            ar[i++] = new int[] {20,18,16,14,12,10,8,2,6,2,6};
+            ar[i++] = new int[] {20,18,16,14,12,10,8,2,6,4,2};
+            ar[i++] = new int[] {2, 3, 5, 7, 11};
+            ar[i++] = new int[] {2, 4, 8, 16, 32};
+            ar[i++] = new int[] {256*256, 256,16,4,2};
+            //p(2%4, 4%2, 256%16); // to check if neede a>b or a<b
+            for (int j=i-1; j<i; j++){
+                a = ar[j];
+                p("index = "+ Efficiency.hasDivisor(a) + ", ", a);
+                p("index = "+ Efficiency.hasDivisorChatGPT(a) + ", ", a);
+            }
             /*
             int b = 123, a1 = 77, k = 1000000;
             boolean c;

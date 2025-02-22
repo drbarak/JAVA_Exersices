@@ -13,6 +13,38 @@ public class Recursion
 {
     private static boolean p = false;
     static int count = 0;
+    /**
+     * A method to find the longest common semi-substring LCS among three given
+     * strings. 
+     * A semi-substring is defined as a sequence of characters that appears in 
+     * all three strings in the same order but not necessarily continuously.
+     */
+    public static String findLCS(String s1, String s2, String s3)
+    {
+        return findLCS(s1, s2, s3, 0,0,0, "");
+    }
+    private static String findLCS(String s1, String s2, String s3, 
+                        int i, int j, int k, String current)
+    {
+        if (i == s1.length()|| j == s2.length() || k == s3.length())
+            return current;
+        if (s1.charAt(i) == s2.charAt(j) && s2.charAt(j) == s3.charAt(k))
+            return findLCS(s1, s2, s3, i+1, j+1, k+1, current + s1.charAt(i));
+        String lcs1 = findLCS(s1, s2, s3, i + 1, j, k, current);
+        String lcs2 = findLCS(s1, s2, s3, i, j + 1, k, current);
+        String lcs3 = findLCS(s1, s2, s3, i, j, k+1, current);
+        return maxString(lcs1, lcs2, lcs3);
+    }
+    private static String maxString(String a, String b, String c)
+    {
+        int lenA = a.length();
+        int lenB = b.length();
+        int lenC = c.length();
+        if (lenA>= lenB && lenA >= lenC) return a;
+        if (lenB >= lenA && lenB >= lenC) return b;
+        return c;
+    }
+    
     public static int equalSum(int[] _arr)// array is sorted
     {
         return equalSum (_arr, 0, _arr.length - 1, _arr[0], _arr[_arr.length - 1]);

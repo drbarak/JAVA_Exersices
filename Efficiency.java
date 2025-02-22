@@ -15,12 +15,13 @@ public class Efficiency
 {
     private static int count = 0, count2 = 0;;
     private static boolean p = false;
-    public static int hasDivisorMine(int[] arr)
+    public static int hasDivisor(int[] arr)
     {
         int n = arr.length;
         if (n == 0) return -1;
         count = 0;
         int res = -1;
+        p = true;
         if (p) p(arr);
         for (int i=0; i<n; i++)
         {
@@ -34,15 +35,17 @@ public class Efficiency
                 int b = Math.abs(arr[j]);
                 if (b == 1) continue; 
                 if (p) p(i, j, a, b, count);
-                if (p && a >= b)
-                    p(b % a);
-                if (a >= b || b % a != 0)
+                //if (p && a >= b) p(100, a % b);
+                //p("b<=a "+ (b <= a) + ", b % a != 0 " + (b % a != 0)); 
+                //if (b == a && j == n - 1) continue;
+                if (b < a || b % a != 0 || (b == a && i > j))
                 {
+                    //if (p) p(200, a, b);
                     found = false;
                     break;
                 }
             }
-            if (p) p(found);
+            //if (p) p(found);
             if (found)
             {
                 res = arr[i];
@@ -53,7 +56,7 @@ public class Efficiency
         return res;
     }
     // Function to check if any element divides all others
-    public static int hasDivisor(int[] arr) // chatGTP
+    public static int hasDivisorChatGPT(int[] arr) // chatGTP
     {
         if (arr.length == 0) return -1;
         count = 0;
@@ -62,11 +65,12 @@ public class Efficiency
         for (int i = 1; i < arr.length; i++) {
             gcdValue = gcd(gcdValue, arr[i]);
         }
+        if (p) p(count);
         count += arr.length;
         // Check if the GCD exists in the array
         int res = -1;
         for (int num : arr) {
-            count++;
+            //count++;
             if (num == gcdValue) {
                 res = num;
                 break;
@@ -77,12 +81,17 @@ public class Efficiency
     }
     // Function to compute GCD using Euclidean algorithm
     private static int gcd(int a, int b) {
+        int bb = b;
+        int aa = a;
         while (b != 0) {
             count++;
             int temp = b;
             b = a % b;
             a = temp;
+            //p(count, aa, bb, a, b);
         }
+        if (p) p(count, aa, bb);
+        //p("GCD = " + a + ", " + aa, bb);
         return a;
     }
     /**
